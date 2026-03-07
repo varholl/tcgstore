@@ -1,35 +1,35 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>Reservation #<%= @reservation.id %></h1>
-  <%= link_to "Back to Reservations", admin_reservations_path, class: "btn btn-outline-secondary" %>
+  <h1><%= t('admin.reservations.show_title', id: @reservation.id) %></h1>
+  <%= link_to t('admin.reservations.back'), admin_reservations_path, class: "btn btn-outline-secondary" %>
 </div>
 
 <div class="card mb-4">
   <div class="card-body">
-    <h5>User Info</h5>
-    <p><strong>Name:</strong> <%= @reservation.user.name %></p>
-    <p><strong>Email:</strong> <%= @reservation.user.email %></p>
-    <p><strong>Phone:</strong> <%= @reservation.user.phone_number || "N/A" %></p>
+    <h5><%= t('admin.reservations.user_info') %></h5>
+    <p><strong><%= t('admin.reservations.name') %></strong> <%= @reservation.user.name %></p>
+    <p><strong><%= t('admin.reservations.email_label') %></strong> <%= @reservation.user.email %></p>
+    <p><strong><%= t('admin.reservations.phone_label') %></strong> <%= @reservation.user.phone_number || t('admin.reservations.na') %></p>
 
     <hr>
 
     <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
-    <p><strong>Status:</strong> <span class="badge bg-<%= status_colors[@reservation.status] %>"><%= @reservation.status.capitalize %></span></p>
-    <p><strong>Date:</strong> <%= @reservation.created_at.strftime("%b %d, %Y %H:%M") %></p>
+    <p><strong><%= t('admin.reservations.status_label') %></strong> <span class="badge bg-<%= status_colors[@reservation.status] %>"><%= t("statuses.#{@reservation.status}") %></span></p>
+    <p><strong><%= t('admin.reservations.date_label') %></strong> <%= @reservation.created_at.strftime("%b %d, %Y %H:%M") %></p>
     <% if @reservation.message.present? %>
-      <p><strong>Message:</strong> <%= @reservation.message %></p>
+      <p><strong><%= t('admin.reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>
   </div>
 </div>
 
-<h4>Items</h4>
+<h4><%= t('admin.reservations.items_title') %></h4>
 <div class="table-responsive">
   <table class="table table-striped">
     <thead class="table-dark">
       <tr>
-        <th>Card Name</th>
-        <th>Edition</th>
-        <th>Condition</th>
-        <th>Quantity</th>
+        <th><%= t('admin.reservations.card_name') %></th>
+        <th><%= t('admin.reservations.edition') %></th>
+        <th><%= t('admin.reservations.condition') %></th>
+        <th><%= t('admin.reservations.quantity') %></th>
       </tr>
     </thead>
     <tbody>
@@ -47,7 +47,7 @@
 
 <% if @reservation.pending? %>
   <div class="mt-3 d-flex gap-2">
-    <%= button_to "Mark as Fulfilled", fulfill_admin_reservation_path(@reservation), method: :patch, class: "btn btn-success" %>
-    <%= button_to "Mark as Expired", expire_admin_reservation_path(@reservation), method: :patch, class: "btn btn-warning" %>
+    <%= button_to t('admin.reservations.fulfill'), fulfill_admin_reservation_path(@reservation), method: :patch, class: "btn btn-success" %>
+    <%= button_to t('admin.reservations.expire'), expire_admin_reservation_path(@reservation), method: :patch, class: "btn btn-warning" %>
   </div>
 <% end %>

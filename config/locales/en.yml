@@ -1,33 +1,171 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-# To learn more, please read the Rails Internationalization guide
-# available at https://guides.rubyonrails.org/i18n.html.
-
 en:
-  hello: "Hello world"
+  nav:
+    brand: "TCG Store"
+    cards: "Cards"
+    cart: "Cart"
+    my_reservations: "My Reservations"
+    admin: "Admin"
+    profile: "Profile"
+    sign_out: "Sign Out"
+    sign_in: "Sign In"
+    sign_up: "Sign Up"
+
+  cards:
+    title: "Cards for Sale"
+    search_placeholder: "Search by name..."
+    all_editions: "All Editions"
+    search: "Search"
+    clear: "Clear"
+    cards_found:
+      one: "%{count} card found"
+      other: "%{count} cards found"
+    list: "List"
+    grid: "Grid"
+    name: "Name"
+    edition: "Edition"
+    condition: "Condition"
+    language: "Language"
+    collector_number: "Collector #"
+    price: "Price"
+    qty: "Qty"
+    no_price: "No price"
+    out_of_stock: "Out of Stock"
+    add_to_cart: "Add to Cart"
+    sign_in_to_buy: "Sign in to buy"
+    foil: "Foil"
+    sort:
+      name_asc: "Name (A-Z)"
+      name_desc: "Name (Z-A)"
+      price_asc: "Price (Low to High)"
+      price_desc: "Price (High to Low)"
+      edition_asc: "Edition (A-Z)"
+      edition_desc: "Edition (Z-A)"
+
+  cart_items:
+    title: "Your Cart"
+    unavailable_heading: "Some items are not available in the requested quantity:"
+    unavailable_item: "requested %{requested}, only %{available} available"
+    card_name: "Card Name"
+    edition: "Edition"
+    condition: "Condition"
+    price: "Price"
+    quantity: "Quantity"
+    subtotal: "Subtotal"
+    update: "Update"
+    remove: "Remove"
+    total_items: "Total items: %{count}"
+    estimated_total: "Estimated Total: %{total}"
+    message_label: "Message (optional)"
+    message_placeholder: "Any notes or special requests..."
+    disclaimer: "This is an estimated price based on current Card Kingdom retail values and may vary at the time of fulfillment."
+    submit_reservation: "Submit Reservation Request"
+    empty_cart: "Your cart is empty."
+    browse_cards: "Browse cards"
+    empty_cart_message: "to add some!"
+
+  reservations:
+    title: "My Reservations"
+    date: "Date"
+    items_count: "# Items"
+    status: "Status"
+    view: "View"
+    no_reservations: "You have no reservations yet."
+    browse_cards: "Browse cards"
+    no_reservations_message: "and add them to your cart to get started."
+    show_title: "Reservation #%{id}"
+    back: "Back to Reservations"
+    status_label: "Status:"
+    date_label: "Date:"
+    message_label: "Message:"
+    items_title: "Items"
+    card_name: "Card Name"
+    edition: "Edition"
+    condition: "Condition"
+    quantity: "Quantity"
+    cancel: "Cancel Reservation"
+    cancel_confirm: "Are you sure you want to cancel this reservation?"
+
+  admin:
+    reservations:
+      title: "Admin - Reservations"
+      all: "All"
+      date: "Date"
+      user: "User"
+      email: "Email"
+      phone: "Phone"
+      items_count: "# Items"
+      status: "Status"
+      view: "View"
+      no_reservations: "No reservations found."
+      show_title: "Reservation #%{id}"
+      back: "Back to Reservations"
+      user_info: "User Info"
+      name: "Name:"
+      email_label: "Email:"
+      phone_label: "Phone:"
+      na: "N/A"
+      status_label: "Status:"
+      date_label: "Date:"
+      message_label: "Message:"
+      items_title: "Items"
+      card_name: "Card Name"
+      edition: "Edition"
+      condition: "Condition"
+      quantity: "Quantity"
+      fulfill: "Mark as Fulfilled"
+      expire: "Mark as Expired"
+
+  profiles:
+    title: "Edit Profile"
+    name: "Name"
+    email: "Email"
+    phone_number: "Phone Number"
+    password_hint: "Leave password blank to keep it unchanged."
+    new_password: "New Password"
+    password_confirmation: "Password Confirmation"
+    submit: "Update Profile"
+
+  devise_views:
+    sign_in: "Sign In"
+    sign_up: "Sign Up"
+    email: "Email"
+    password: "Password"
+    remember_me: "Remember me"
+    min_password:
+      one: "(%{count} character minimum)"
+      other: "(%{count} characters minimum)"
+    password_confirmation: "Password Confirmation"
+    log_in: "Log in"
+    forgot_password: "Forgot your password?"
+    no_confirmation: "Didn't receive confirmation instructions?"
+    no_unlock: "Didn't receive unlock instructions?"
+    sign_in_with: "Sign in with %{provider}"
+
+  controllers:
+    cart_items:
+      added: "%{name} added to cart."
+      add_error: "Could not add card to cart."
+      updated: "Cart updated."
+      update_error: "Could not update quantity."
+      removed: "Item removed from cart."
+    reservations:
+      created: "Reservation request submitted successfully!"
+      unavailable: "Some items are not available in the requested quantity."
+      empty_cart: "Your cart is empty."
+      cancelled: "Reservation cancelled."
+      cancel_error: "Only pending reservations can be cancelled."
+    admin:
+      reservations:
+        fulfilled: "Reservation marked as fulfilled."
+        fulfill_error: "Only pending reservations can be fulfilled."
+        expired: "Reservation marked as expired."
+        expire_error: "Only pending reservations can be expired."
+        access_denied: "Access denied."
+    profiles:
+      updated: "Profile updated successfully."
+
+  statuses:
+    pending: "Pending"
+    fulfilled: "Fulfilled"
+    expired: "Expired"
+    cancelled: "Cancelled"

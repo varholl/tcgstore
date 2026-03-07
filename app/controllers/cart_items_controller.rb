@@ -3,6 +3,12 @@ class CartItemsController < ApplicationController
 
   def index
     @cart_items = current_user.cart_items.includes(:card)
+    card_ids = @cart_items.map(&:card_id)
+    @reserved_quantities = ReservationItem
+      .joins(:reservation)
+      .where(reservations: { status: "pending" }, card_id: card_ids)
+      .group(:card_id)
+      .sum(:quantity)
   end
 
   def create
@@ -16,27 +22,24 @@ class CartItemsController < ApplicationController
     end
 
     if @cart_item.save
-      respond_to do |format|
-        format.html { redirect_back fallback_location: cards_path, notice: "#{@card.name} added to cart." }
-        format.js
-      end
+      redirect_back fallback_location: cards_path, notice: t('controllers.cart_items.added', name: @card.name)
     else
-      redirect_back fallback_location: cards_path, alert: "Could not add card to cart."
+      redirect_back fallback_location: cards_path, alert: t('controllers.cart_items.add_error')
     end
   end
 
   def update
     @cart_item = current_user.cart_items.find(params[:id])
     if @cart_item.update(quantity: params[:cart_item][:quantity])
-      redirect_to cart_items_path, notice: "Cart updated."
+      redirect_to cart_items_path, notice: t('controllers.cart_items.updated')
     else
-      redirect_to cart_items_path, alert: "Could not update quantity."
+      redirect_to cart_items_path, alert: t('controllers.cart_items.update_error')
     end
   end
 
   def destroy
     @cart_item = current_user.cart_items.find(params[:id])
     @cart_item.destroy
-    redirect_to cart_items_path, notice: "Item removed from cart."
+    redirect_to cart_items_path, notice: t('controllers.cart_items.removed')
   end
 end

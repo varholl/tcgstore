@@ -1,4 +1,4 @@
-<h2 class="mb-4">Sign Up</h2>
+<h2 class="mb-4"><%= t('devise_views.sign_up') %></h2>
 
 <div class="row">
   <div class="col-md-6">
@@ -6,35 +6,35 @@
       <%= render "devise/shared/error_messages", resource: resource %>
 
       <div class="mb-3">
-        <%= f.label :name, class: "form-label" %>
+        <%= f.label :name, t('profiles.name'), class: "form-label" %>
         <%= f.text_field :name, class: "form-control", autofocus: true %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :email, class: "form-label" %>
+        <%= f.label :email, t('devise_views.email'), class: "form-label" %>
         <%= f.email_field :email, class: "form-control", autocomplete: "email" %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :phone_number, class: "form-label" %>
+        <%= f.label :phone_number, t('profiles.phone_number'), class: "form-label" %>
         <%= f.telephone_field :phone_number, class: "form-control" %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :password, class: "form-label" %>
+        <%= f.label :password, t('devise_views.password'), class: "form-label" %>
         <% if @minimum_password_length %>
-          <em>(<%= @minimum_password_length %> characters minimum)</em>
+          <em><%= t('devise_views.min_password', count: @minimum_password_length) %></em>
         <% end %>
         <%= f.password_field :password, class: "form-control", autocomplete: "new-password" %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :password_confirmation, class: "form-label" %>
+        <%= f.label :password_confirmation, t('devise_views.password_confirmation'), class: "form-label" %>
         <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password" %>
       </div>
 
       <div class="mb-3">
-        <%= f.submit "Sign Up", class: "btn btn-primary" %>
+        <%= f.submit t('devise_views.sign_up'), class: "btn btn-primary" %>
       </div>
     <% end %>
 

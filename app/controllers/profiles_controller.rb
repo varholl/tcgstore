@@ -14,7 +14,7 @@ class ProfilesController < ApplicationController
 
     if @user.update(profile_params)
       bypass_sign_in(@user) if params[:user][:password].present?
-      redirect_to edit_profile_path, notice: "Profile updated successfully."
+      redirect_to edit_profile_path, notice: t('controllers.profiles.updated')
     else
       render :edit
     end

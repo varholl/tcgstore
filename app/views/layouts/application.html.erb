@@ -7,28 +7,35 @@
     <%= csp_meta_tag %>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <div class="container">
-        <%= link_to "TCG Store", root_path, class: "navbar-brand" %>
+        <%= link_to t('nav.brand'), root_path, class: "navbar-brand" %>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <%= link_to "Cards", cards_path, class: "nav-link" %>
+              <%= link_to t('nav.cards'), cards_path, class: "nav-link" %>
             </li>
           </ul>
           <ul class="navbar-nav">
+            <li class="nav-item">
+              <% if I18n.locale == :es %>
+                <span class="nav-link"><strong>ES</strong> | <%= link_to "EN", set_language_path(:en), class: "text-light" %></span>
+              <% else %>
+                <span class="nav-link"><%= link_to "ES", set_language_path(:es), class: "text-light" %> | <strong>EN</strong></span>
+              <% end %>
+            </li>
             <% if user_signed_in? %>
               <li class="nav-item">
                 <%= link_to cart_items_path, class: "nav-link" do %>
-                  Cart
+                  <%= t('nav.cart') %>
                   <% count = current_user.cart_items.sum(:quantity) %>
                   <% if count > 0 %>
                     <span class="badge bg-primary rounded-pill"><%= count %></span>
@@ -36,25 +43,25 @@
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to "My Reservations", reservations_path, class: "nav-link" %>
+                <%= link_to t('nav.my_reservations'), reservations_path, class: "nav-link" %>
               </li>
               <% if current_user.admin? %>
                 <li class="nav-item">
-                  <%= link_to "Admin", admin_reservations_path, class: "nav-link" %>
+                  <%= link_to t('nav.admin'), admin_reservations_path, class: "nav-link" %>
                 </li>
               <% end %>
               <li class="nav-item">
-                <%= link_to "Profile", edit_profile_path, class: "nav-link" %>
+                <%= link_to t('nav.profile'), edit_profile_path, class: "nav-link" %>
               </li>
               <li class="nav-item">
-                <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "nav-link" %>
+                <%= link_to t('nav.sign_out'), destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
               </li>
             <% else %>
               <li class="nav-item">
-                <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
+                <%= link_to t('nav.sign_in'), new_user_session_path, class: "nav-link" %>
               </li>
               <li class="nav-item">
-                <%= link_to "Sign Up", new_user_registration_path, class: "nav-link" %>
+                <%= link_to t('nav.sign_up'), new_user_registration_path, class: "nav-link" %>
               </li>
             <% end %>
           </ul>

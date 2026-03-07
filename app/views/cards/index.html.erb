@@ -1,36 +1,36 @@
-<h1 class="mb-4">Cards for Sale</h1>
+<h1 class="mb-4"><%= t('cards.title') %></h1>
 
 <%= form_tag cards_path, method: :get, class: "row g-3 mb-4" do %>
   <div class="col-md-4">
-    <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "Search by name..." %>
+    <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
   </div>
   <div class="col-md-3">
-    <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: "All Editions", class: "form-select" %>
+    <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select" %>
   </div>
   <div class="col-md-3">
-    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [v[:name], k] }, @current_sort), class: "form-select" %>
+    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), class: "form-select" %>
   </div>
   <div class="col-auto">
-    <%= submit_tag "Search", class: "btn btn-primary" %>
-    <%= link_to "Clear", cards_path(view: params[:view]), class: "btn btn-outline-secondary ms-1" %>
+    <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
+    <%= link_to t('cards.clear'), cards_path(view: params[:view]), class: "btn btn-outline-secondary ms-1" %>
   </div>
   <%= hidden_field_tag :view, params[:view] %>
 <% end %>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <p class="text-muted mb-0"><%= @cards.total_count %> cards found</p>
+  <p class="text-muted mb-0"><%= t('cards.cards_found', count: @cards.total_count) %></p>
   <div class="btn-group" role="group">
     <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{params[:view] != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
       </svg>
-      List
+      <%= t('cards.list') %>
     <% end %>
     <%= link_to cards_path(request.query_parameters.merge(view: "grid")), class: "btn btn-sm #{params[:view] == 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
         <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
       </svg>
-      Grid
+      <%= t('cards.grid') %>
     <% end %>
   </div>
 </div>
@@ -51,29 +51,29 @@
               <%= card.edition_name || card.edition.upcase %> (<%= card.edition.upcase %>) #<%= card.collector_number %><br>
               <%= card.condition %> · <%= card.language %>
               <% if card.foil.present? %>
-                · <span class="badge" style="background-color: #0d9488;">Foil</span>
+                · <span class="badge" style="background-color: #0d9488;"><%= t('cards.foil') %></span>
               <% end %>
             </small>
             <div class="mt-1">
               <% if card.price %>
                 <strong class="text-success"><%= number_to_currency(card.price) %></strong>
               <% else %>
-                <small class="text-muted">No price</small>
+                <small class="text-muted"><%= t('cards.no_price') %></small>
               <% end %>
               <% available = card.quantity - (@reserved_quantities[card.id] || 0) %>
-              <small class="text-muted ms-1">· Qty: <%= available %></small>
+              <small class="text-muted ms-1">· <%= t('cards.qty') %>: <%= available %></small>
               <% if available <= 0 %>
-                <span class="badge bg-danger ms-1">Out of Stock</span>
+                <span class="badge bg-danger ms-1"><%= t('cards.out_of_stock') %></span>
               <% end %>
             </div>
           </div>
           <div class="card-footer p-2">
             <% if available <= 0 %>
-              <button class="btn btn-sm btn-secondary w-100" disabled>Out of Stock</button>
+              <button class="btn btn-sm btn-secondary w-100" disabled><%= t('cards.out_of_stock') %></button>
             <% elsif user_signed_in? %>
-              <%= button_to "Add to Cart", cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-success w-100" %>
+              <%= button_to t('cards.add_to_cart'), cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-success w-100" %>
             <% else %>
-              <%= link_to "Sign in to buy", new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+              <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
             <% end %>
           </div>
         </div>
@@ -85,20 +85,20 @@
     <table class="table table-striped table-hover">
       <thead class="table-dark">
         <tr>
-          <th><%= link_to "Name #{@current_sort == 'name_asc' ? '▲' : (@current_sort == 'name_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'name_asc' ? 'name_desc' : 'name_asc')), class: "text-white text-decoration-none" %></th>
-          <th><%= link_to "Edition #{@current_sort == 'edition_asc' ? '▲' : (@current_sort == 'edition_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'edition_asc' ? 'edition_desc' : 'edition_asc')), class: "text-white text-decoration-none" %></th>
-          <th>Condition</th>
-          <th>Language</th>
-          <th>Collector #</th>
-          <th><%= link_to "Price #{@current_sort == 'price_asc' ? '▲' : (@current_sort == 'price_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'price_asc' ? 'price_desc' : 'price_asc')), class: "text-white text-decoration-none" %></th>
-          <th>Qty</th>
+          <th><%= link_to "#{t('cards.name')} #{@current_sort == 'name_asc' ? '▲' : (@current_sort == 'name_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'name_asc' ? 'name_desc' : 'name_asc')), class: "text-white text-decoration-none" %></th>
+          <th><%= link_to "#{t('cards.edition')} #{@current_sort == 'edition_asc' ? '▲' : (@current_sort == 'edition_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'edition_asc' ? 'edition_desc' : 'edition_asc')), class: "text-white text-decoration-none" %></th>
+          <th><%= t('cards.condition') %></th>
+          <th><%= t('cards.language') %></th>
+          <th><%= t('cards.collector_number') %></th>
+          <th><%= link_to "#{t('cards.price')} #{@current_sort == 'price_asc' ? '▲' : (@current_sort == 'price_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'price_asc' ? 'price_desc' : 'price_asc')), class: "text-white text-decoration-none" %></th>
+          <th><%= t('cards.qty') %></th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <% @cards.each do |card| %>
           <tr>
-            <td><%= card.name %><% if card.foil.present? %> <span class="badge" style="background-color: #0d9488;">Foil</span><% end %></td>
+            <td><%= card.name %><% if card.foil.present? %> <span class="badge" style="background-color: #0d9488;"><%= t('cards.foil') %></span><% end %></td>
             <td><%= card.edition_name || card.edition.upcase %></td>
             <td><%= card.condition %></td>
             <td><%= card.language %></td>
@@ -108,16 +108,16 @@
             <td>
               <%= available %>
               <% if available <= 0 %>
-                <span class="badge bg-danger">Out of Stock</span>
+                <span class="badge bg-danger"><%= t('cards.out_of_stock') %></span>
               <% end %>
             </td>
             <td>
               <% if available <= 0 %>
-                <button class="btn btn-sm btn-secondary" disabled>Out of Stock</button>
+                <button class="btn btn-sm btn-secondary" disabled><%= t('cards.out_of_stock') %></button>
               <% elsif user_signed_in? %>
-                <%= button_to "Add to Cart", cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-success" %>
+                <%= button_to t('cards.add_to_cart'), cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-success" %>
               <% else %>
-                <%= link_to "Sign in to buy", new_user_session_path, class: "btn btn-sm btn-outline-primary" %>
+                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary" %>
               <% end %>
             </td>
           </tr>

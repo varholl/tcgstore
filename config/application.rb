@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Tcgstore
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 8.0
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -18,5 +18,9 @@ module Tcgstore
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.autoload_paths << Rails.root.join("app/services")
+
+    config.i18n.default_locale = :es
+    config.i18n.available_locales = [:es, :en]
   end
 end

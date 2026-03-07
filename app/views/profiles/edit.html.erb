@@ -1,8 +1,8 @@
-<h1 class="mb-4">Edit Profile</h1>
+<h1 class="mb-4"><%= t('profiles.title') %></h1>
 
 <div class="row">
   <div class="col-md-6">
-    <%= form_with model: @user, url: profile_path, method: :patch, local: true do |f| %>
+    <%= form_with model: @user, url: profile_path, method: :patch do |f| %>
       <% if @user.errors.any? %>
         <div class="alert alert-danger">
           <% @user.errors.full_messages.each do |msg| %>
@@ -12,35 +12,35 @@
       <% end %>
 
       <div class="mb-3">
-        <%= f.label :name, class: "form-label" %>
+        <%= f.label :name, t('profiles.name'), class: "form-label" %>
         <%= f.text_field :name, class: "form-control" %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :email, class: "form-label" %>
+        <%= f.label :email, t('profiles.email'), class: "form-label" %>
         <%= f.email_field :email, class: "form-control" %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :phone_number, class: "form-label" %>
+        <%= f.label :phone_number, t('profiles.phone_number'), class: "form-label" %>
         <%= f.telephone_field :phone_number, class: "form-control" %>
       </div>
 
       <hr>
-      <p class="text-muted">Leave password blank to keep it unchanged.</p>
+      <p class="text-muted"><%= t('profiles.password_hint') %></p>
 
       <div class="mb-3">
-        <%= f.label :password, "New Password", class: "form-label" %>
+        <%= f.label :password, t('profiles.new_password'), class: "form-label" %>
         <%= f.password_field :password, class: "form-control", autocomplete: "new-password" %>
       </div>
 
       <div class="mb-3">
-        <%= f.label :password_confirmation, class: "form-label" %>
+        <%= f.label :password_confirmation, t('profiles.password_confirmation'), class: "form-label" %>
         <%= f.password_field :password_confirmation, class: "form-control" %>
       </div>
 
       <div class="mb-3">
-        <%= f.submit "Update Profile", class: "btn btn-primary" %>
+        <%= f.submit t('profiles.submit'), class: "btn btn-primary" %>
       </div>
     <% end %>
   </div>

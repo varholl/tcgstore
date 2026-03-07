@@ -1,13 +1,13 @@
-<h1 class="mb-4">My Reservations</h1>
+<h1 class="mb-4"><%= t('reservations.title') %></h1>
 
 <% if @reservations.any? %>
   <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead class="table-dark">
         <tr>
-          <th>Date</th>
-          <th># Items</th>
-          <th>Status</th>
+          <th><%= t('reservations.date') %></th>
+          <th><%= t('reservations.items_count') %></th>
+          <th><%= t('reservations.status') %></th>
           <th></th>
         </tr>
       </thead>
@@ -18,10 +18,10 @@
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td>
               <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
-              <span class="badge bg-<%= status_colors[reservation.status] %>"><%= reservation.status.capitalize %></span>
+              <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td>
-              <%= link_to "View", reservation_path(reservation), class: "btn btn-sm btn-outline-primary" %>
+              <%= link_to t('reservations.view'), reservation_path(reservation), class: "btn btn-sm btn-outline-primary" %>
             </td>
           </tr>
         <% end %>
@@ -32,6 +32,6 @@
   <%= paginate @reservations %>
 <% else %>
   <div class="alert alert-info">
-    You have no reservations yet. <%= link_to "Browse cards", cards_path %> and add them to your cart to get started.
+    <%= t('reservations.no_reservations') %> <%= link_to t('reservations.browse_cards'), cards_path %> <%= t('reservations.no_reservations_message') %>
   </div>
 <% end %>

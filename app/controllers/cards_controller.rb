@@ -1,11 +1,11 @@
 class CardsController < ApplicationController
   SORT_OPTIONS = {
-    "name_asc"    => { name: "Name (A-Z)",           order: "name ASC" },
-    "name_desc"   => { name: "Name (Z-A)",           order: "name DESC" },
-    "price_asc"   => { name: "Price (Low to High)",  order: "price ASC NULLS LAST" },
-    "price_desc"  => { name: "Price (High to Low)",  order: "price DESC NULLS LAST" },
-    "edition_asc" => { name: "Edition (A-Z)",        order: "edition ASC, name ASC" },
-    "edition_desc"=> { name: "Edition (Z-A)",        order: "edition DESC, name ASC" },
+    "name_asc"    => { order: "name ASC" },
+    "name_desc"   => { order: "name DESC" },
+    "price_asc"   => { order: "price ASC NULLS LAST" },
+    "price_desc"  => { order: "price DESC NULLS LAST" },
+    "edition_asc" => { order: "edition ASC, name ASC" },
+    "edition_desc"=> { order: "edition DESC, name ASC" },
   }.freeze
 
   def index

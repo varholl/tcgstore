@@ -13,12 +13,12 @@ class ReservationsController < ApplicationController
     creator = ReservationCreator.new(current_user, message: params[:message])
 
     if creator.call
-      redirect_to reservation_path(creator.reservation), notice: "Reservation request submitted successfully!"
+      redirect_to reservation_path(creator.reservation), notice: t('controllers.reservations.created')
     else
       @cart_items = current_user.cart_items.includes(:card)
       @unavailable_items = creator.unavailable_items
-      flash.now[:alert] = "Some items are not available in the requested quantity." if @unavailable_items.any?
-      flash.now[:alert] = "Your cart is empty." if @cart_items.empty?
+      flash.now[:alert] = t('controllers.reservations.unavailable') if @unavailable_items.any?
+      flash.now[:alert] = t('controllers.reservations.empty_cart') if @cart_items.empty?
       render "cart_items/index"
     end
   end
@@ -28,9 +28,9 @@ class ReservationsController < ApplicationController
 
     if @reservation.pending?
       @reservation.update!(status: :cancelled)
-      redirect_to reservations_path, notice: "Reservation cancelled."
+      redirect_to reservations_path, notice: t('controllers.reservations.cancelled')
     else
-      redirect_to reservations_path, alert: "Only pending reservations can be cancelled."
+      redirect_to reservations_path, alert: t('controllers.reservations.cancel_error')
     end
   end
 end

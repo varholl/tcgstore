@@ -17,9 +17,9 @@ class Admin::ReservationsController < ApplicationController
 
     if @reservation.pending?
       @reservation.update!(status: :fulfilled)
-      redirect_to admin_reservation_path(@reservation), notice: "Reservation marked as fulfilled."
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.fulfilled')
     else
-      redirect_to admin_reservation_path(@reservation), alert: "Only pending reservations can be fulfilled."
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.fulfill_error')
     end
   end
 
@@ -28,15 +28,15 @@ class Admin::ReservationsController < ApplicationController
 
     if @reservation.pending?
       @reservation.update!(status: :expired)
-      redirect_to admin_reservation_path(@reservation), notice: "Reservation marked as expired."
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.expired')
     else
-      redirect_to admin_reservation_path(@reservation), alert: "Only pending reservations can be expired."
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.expire_error')
     end
   end
 
   private
 
   def require_admin
-    redirect_to root_path, alert: "Access denied." unless current_user.admin?
+    redirect_to root_path, alert: t('controllers.admin.reservations.access_denied') unless current_user.admin?
   end
 end
