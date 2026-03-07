@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_03_07_023206) do
+ActiveRecord::Schema.define(version: 2026_03_07_030004) do
 
   create_table "cards", force: :cascade do |t|
     t.string "name"
@@ -24,8 +24,11 @@ ActiveRecord::Schema.define(version: 2026_03_07_023206) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.decimal "price", precision: 10, scale: 2
+    t.string "scryfall_id"
+    t.string "edition_name"
     t.index ["edition"], name: "index_cards_on_edition"
     t.index ["name"], name: "index_cards_on_name"
+    t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"
   end
 
   create_table "cart_items", force: :cascade do |t|
@@ -39,6 +42,26 @@ ActiveRecord::Schema.define(version: 2026_03_07_023206) do
     t.index ["user_id"], name: "index_cart_items_on_user_id"
   end
 
+  create_table "reservation_items", force: :cascade do |t|
+    t.integer "reservation_id", null: false
+    t.integer "card_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["card_id"], name: "index_reservation_items_on_card_id"
+    t.index ["reservation_id"], name: "index_reservation_items_on_reservation_id"
+  end
+
+  create_table "reservations", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "status", default: "pending", null: false
+    t.text "message"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["status"], name: "index_reservations_on_status"
+    t.index ["user_id"], name: "index_reservations_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -49,10 +72,14 @@ ActiveRecord::Schema.define(version: 2026_03_07_023206) do
     t.string "phone_number"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "cart_items", "cards"
   add_foreign_key "cart_items", "users"
+  add_foreign_key "reservation_items", "cards"
+  add_foreign_key "reservation_items", "reservations"
+  add_foreign_key "reservations", "users"
 end

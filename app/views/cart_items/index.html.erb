@@ -1,5 +1,16 @@
 <h1 class="mb-4">Your Cart</h1>
 
+<% if defined?(@unavailable_items) && @unavailable_items.any? %>
+  <div class="alert alert-danger">
+    <h5>Some items are not available in the requested quantity:</h5>
+    <ul class="mb-0">
+      <% @unavailable_items.each do |item| %>
+        <li><strong><%= item[:card].name %></strong> (<%= item[:card].edition_name || item[:card].edition.upcase %>): requested <%= item[:requested] %>, only <%= item[:available] %> available</li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <% if @cart_items.any? %>
   <div class="table-responsive">
     <table class="table table-striped">
@@ -8,7 +19,9 @@
           <th>Card Name</th>
           <th>Edition</th>
           <th>Condition</th>
+          <th>Price</th>
           <th>Quantity</th>
+          <th>Subtotal</th>
           <th></th>
         </tr>
       </thead>
@@ -16,14 +29,16 @@
         <% @cart_items.each do |item| %>
           <tr>
             <td><%= item.card.name %></td>
-            <td><%= item.card.edition.upcase %></td>
+            <td><%= item.card.edition_name || item.card.edition.upcase %></td>
             <td><%= item.card.condition %></td>
+            <td><%= item.card.price ? number_to_currency(item.card.price) : "—" %></td>
             <td>
               <%= form_with model: item, url: cart_item_path(item), method: :patch, local: true, class: "d-flex align-items-center gap-2" do |f| %>
                 <%= f.number_field :quantity, value: item.quantity, min: 1, max: item.card.quantity, class: "form-control form-control-sm", style: "width: 70px" %>
                 <%= f.submit "Update", class: "btn btn-sm btn-outline-primary" %>
               <% end %>
             </td>
+            <td><%= item.card.price ? number_to_currency(item.card.price * item.quantity) : "—" %></td>
             <td>
               <%= button_to "Remove", cart_item_path(item), method: :delete, class: "btn btn-sm btn-danger" %>
             </td>
@@ -33,7 +48,22 @@
     </table>
   </div>
 
-  <p class="text-muted">Total items: <%= @cart_items.sum(:quantity) %></p>
+  <% total_price = @cart_items.sum { |item| (item.card.price || 0) * item.quantity } %>
+  <div class="d-flex justify-content-between align-items-center">
+    <p class="text-muted mb-0">Total items: <%= @cart_items.sum(:quantity) %></p>
+    <p class="mb-0"><strong>Estimated Total: <%= number_to_currency(total_price) %></strong></p>
+  </div>
+
+  <hr>
+
+  <%= form_tag reservations_path, method: :post, class: "mt-3" do %>
+    <div class="mb-3">
+      <%= label_tag :message, "Message (optional)", class: "form-label" %>
+      <%= text_area_tag :message, params[:message], class: "form-control", rows: 3, maxlength: 1000, placeholder: "Any notes or special requests..." %>
+    </div>
+    <p class="text-muted small">This is an estimated price based on current Card Kingdom retail values and may vary at the time of fulfillment.</p>
+    <%= submit_tag "Submit Reservation Request", class: "btn btn-primary btn-lg" %>
+  <% end %>
 <% else %>
   <div class="alert alert-info">
     Your cart is empty. <%= link_to "Browse cards", cards_path %> to add some!

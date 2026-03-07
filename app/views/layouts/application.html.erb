@@ -36,6 +36,14 @@
                 <% end %>
               </li>
               <li class="nav-item">
+                <%= link_to "My Reservations", reservations_path, class: "nav-link" %>
+              </li>
+              <% if current_user.admin? %>
+                <li class="nav-item">
+                  <%= link_to "Admin", admin_reservations_path, class: "nav-link" %>
+                </li>
+              <% end %>
+              <li class="nav-item">
                 <%= link_to "Profile", edit_profile_path, class: "nav-link" %>
               </li>
               <li class="nav-item">

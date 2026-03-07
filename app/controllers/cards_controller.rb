@@ -16,5 +16,12 @@ class CardsController < ApplicationController
     sort_key = SORT_OPTIONS.key?(params[:sort]) ? params[:sort] : "name_asc"
     @cards = @cards.order(Arel.sql(SORT_OPTIONS[sort_key][:order])).page(params[:page]).per(50)
     @current_sort = sort_key
+
+    card_ids = @cards.map(&:id)
+    @reserved_quantities = ReservationItem
+      .joins(:reservation)
+      .where(reservations: { status: "pending" }, card_id: card_ids)
+      .group(:card_id)
+      .sum(:quantity)
   end
 end

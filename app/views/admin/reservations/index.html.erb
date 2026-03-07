@@ -1,0 +1,52 @@
+<h1 class="mb-4">Admin - Reservations</h1>
+
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <%= link_to "All", admin_reservations_path, class: "nav-link #{params[:status].blank? ? 'active' : ''}" %>
+  </li>
+  <% Reservation.statuses.keys.each do |status| %>
+    <li class="nav-item">
+      <%= link_to status.capitalize, admin_reservations_path(status: status), class: "nav-link #{params[:status] == status ? 'active' : ''}" %>
+    </li>
+  <% end %>
+</ul>
+
+<% if @reservations.any? %>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Date</th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th># Items</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr>
+            <td><%= reservation.created_at.strftime("%b %d, %Y %H:%M") %></td>
+            <td><%= reservation.user.name %></td>
+            <td><%= reservation.user.email %></td>
+            <td><%= reservation.user.phone_number %></td>
+            <td><%= reservation.reservation_items.sum(:quantity) %></td>
+            <td>
+              <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+              <span class="badge bg-<%= status_colors[reservation.status] %>"><%= reservation.status.capitalize %></span>
+            </td>
+            <td>
+              <%= link_to "View", admin_reservation_path(reservation), class: "btn btn-sm btn-outline-primary" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= paginate @reservations %>
+<% else %>
+  <div class="alert alert-info">No reservations found.</div>
+<% end %>

@@ -5,7 +5,7 @@
     <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "Search by name..." %>
   </div>
   <div class="col-md-3">
-    <%= select_tag :edition, options_for_select(Card.distinct.order(:edition).pluck(:edition), params[:edition]), include_blank: "All Editions", class: "form-select" %>
+    <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: "All Editions", class: "form-select" %>
   </div>
   <div class="col-md-3">
     <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [v[:name], k] }, @current_sort), class: "form-select" %>
@@ -48,7 +48,7 @@
           <div class="card-body p-2">
             <h6 class="card-title mb-1"><%= card.name %></h6>
             <small class="text-muted">
-              <%= card.edition.upcase %> #<%= card.collector_number %><br>
+              <%= card.edition_name || card.edition.upcase %> (<%= card.edition.upcase %>) #<%= card.collector_number %><br>
               <%= card.condition %> · <%= card.language %>
               <% if card.foil.present? %>
                 · <span class="badge" style="background-color: #0d9488;">Foil</span>
@@ -60,11 +60,17 @@
               <% else %>
                 <small class="text-muted">No price</small>
               <% end %>
-              <small class="text-muted ms-1">· Qty: <%= card.quantity %></small>
+              <% available = card.quantity - (@reserved_quantities[card.id] || 0) %>
+              <small class="text-muted ms-1">· Qty: <%= available %></small>
+              <% if available <= 0 %>
+                <span class="badge bg-danger ms-1">Out of Stock</span>
+              <% end %>
             </div>
           </div>
           <div class="card-footer p-2">
-            <% if user_signed_in? %>
+            <% if available <= 0 %>
+              <button class="btn btn-sm btn-secondary w-100" disabled>Out of Stock</button>
+            <% elsif user_signed_in? %>
               <%= button_to "Add to Cart", cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-success w-100" %>
             <% else %>
               <%= link_to "Sign in to buy", new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
@@ -93,14 +99,22 @@
         <% @cards.each do |card| %>
           <tr>
             <td><%= card.name %><% if card.foil.present? %> <span class="badge" style="background-color: #0d9488;">Foil</span><% end %></td>
-            <td><%= card.edition.upcase %></td>
+            <td><%= card.edition_name || card.edition.upcase %></td>
             <td><%= card.condition %></td>
             <td><%= card.language %></td>
             <td><%= card.collector_number %></td>
             <td><%= card.price ? number_to_currency(card.price) : "—" %></td>
-            <td><%= card.quantity %></td>
+            <% available = card.quantity - (@reserved_quantities[card.id] || 0) %>
             <td>
-              <% if user_signed_in? %>
+              <%= available %>
+              <% if available <= 0 %>
+                <span class="badge bg-danger">Out of Stock</span>
+              <% end %>
+            </td>
+            <td>
+              <% if available <= 0 %>
+                <button class="btn btn-sm btn-secondary" disabled>Out of Stock</button>
+              <% elsif user_signed_in? %>
                 <%= button_to "Add to Cart", cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-success" %>
               <% else %>
                 <%= link_to "Sign in to buy", new_user_session_path, class: "btn btn-sm btn-outline-primary" %>
