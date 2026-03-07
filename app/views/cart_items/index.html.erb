@@ -1,0 +1,41 @@
+<h1 class="mb-4">Your Cart</h1>
+
+<% if @cart_items.any? %>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Card Name</th>
+          <th>Edition</th>
+          <th>Condition</th>
+          <th>Quantity</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @cart_items.each do |item| %>
+          <tr>
+            <td><%= item.card.name %></td>
+            <td><%= item.card.edition.upcase %></td>
+            <td><%= item.card.condition %></td>
+            <td>
+              <%= form_with model: item, url: cart_item_path(item), method: :patch, local: true, class: "d-flex align-items-center gap-2" do |f| %>
+                <%= f.number_field :quantity, value: item.quantity, min: 1, max: item.card.quantity, class: "form-control form-control-sm", style: "width: 70px" %>
+                <%= f.submit "Update", class: "btn btn-sm btn-outline-primary" %>
+              <% end %>
+            </td>
+            <td>
+              <%= button_to "Remove", cart_item_path(item), method: :delete, class: "btn btn-sm btn-danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="text-muted">Total items: <%= @cart_items.sum(:quantity) %></p>
+<% else %>
+  <div class="alert alert-info">
+    Your cart is empty. <%= link_to "Browse cards", cards_path %> to add some!
+  </div>
+<% end %>
