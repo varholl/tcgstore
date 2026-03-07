@@ -5,10 +5,15 @@
 
 <div class="card mb-4">
   <div class="card-body">
-    <h5><%= t('admin.reservations.user_info') %></h5>
-    <p><strong><%= t('admin.reservations.name') %></strong> <%= @reservation.user.name %></p>
-    <p><strong><%= t('admin.reservations.email_label') %></strong> <%= @reservation.user.email %></p>
-    <p><strong><%= t('admin.reservations.phone_label') %></strong> <%= @reservation.user.phone_number || t('admin.reservations.na') %></p>
+    <h5>
+      <%= t('admin.reservations.user_info') %>
+      <% if @reservation.guest? %>
+        <span class="badge bg-info"><%= t('admin.reservations.guest_badge') %></span>
+      <% end %>
+    </h5>
+    <p><strong><%= t('admin.reservations.name') %></strong> <%= @reservation.display_name %></p>
+    <p><strong><%= t('admin.reservations.email_label') %></strong> <%= @reservation.display_email %></p>
+    <p><strong><%= t('admin.reservations.phone_label') %></strong> <%= @reservation.display_phone || t('admin.reservations.na') %></p>
 
     <hr>
 
@@ -30,6 +35,8 @@
         <th><%= t('admin.reservations.edition') %></th>
         <th><%= t('admin.reservations.condition') %></th>
         <th><%= t('admin.reservations.quantity') %></th>
+        <th><%= t('admin.reservations.price') %></th>
+        <th><%= t('admin.reservations.subtotal') %></th>
       </tr>
     </thead>
     <tbody>
@@ -39,9 +46,17 @@
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
           <td><%= item.quantity %></td>
+          <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
+          <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
         </tr>
       <% end %>
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5" class="text-end"><strong><%= t('admin.reservations.total') %></strong></td>
+        <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
+      </tr>
+    </tfoot>
   </table>
 </div>
 

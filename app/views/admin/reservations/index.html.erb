@@ -1,4 +1,7 @@
-<h1 class="mb-4"><%= t('admin.reservations.title') %></h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('admin.reservations.title') %></h1>
+  <%= link_to t('admin.reservations.create_new'), new_admin_reservation_path, class: "btn btn-primary" %>
+</div>
 
 <ul class="nav nav-tabs mb-4">
   <li class="nav-item">
@@ -29,9 +32,14 @@
         <% @reservations.each do |reservation| %>
           <tr>
             <td><%= reservation.created_at.strftime("%b %d, %Y %H:%M") %></td>
-            <td><%= reservation.user.name %></td>
-            <td><%= reservation.user.email %></td>
-            <td><%= reservation.user.phone_number %></td>
+            <td>
+              <%= reservation.display_name %>
+              <% if reservation.guest? %>
+                <span class="badge bg-info"><%= t('admin.reservations.guest_badge') %></span>
+              <% end %>
+            </td>
+            <td><%= reservation.display_email %></td>
+            <td><%= reservation.display_phone %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td>
               <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>

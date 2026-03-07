@@ -23,6 +23,8 @@
         <th><%= t('reservations.edition') %></th>
         <th><%= t('reservations.condition') %></th>
         <th><%= t('reservations.quantity') %></th>
+        <th><%= t('reservations.price') %></th>
+        <th><%= t('reservations.subtotal') %></th>
       </tr>
     </thead>
     <tbody>
@@ -32,9 +34,17 @@
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
           <td><%= item.quantity %></td>
+          <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
+          <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
         </tr>
       <% end %>
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5" class="text-end"><strong><%= t('reservations.total') %></strong></td>
+        <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
+      </tr>
+    </tfoot>
   </table>
 </div>
 

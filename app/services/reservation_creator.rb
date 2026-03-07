@@ -41,7 +41,8 @@ class ReservationCreator
       cart_items.each do |cart_item|
         @reservation.reservation_items.create!(
           card: cart_item.card,
-          quantity: cart_item.quantity
+          quantity: cart_item.quantity,
+          unit_price: cart_item.card.price
         )
       end
 

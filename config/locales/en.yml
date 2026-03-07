@@ -1,6 +1,6 @@
 en:
   nav:
-    brand: "TCG Store"
+    brand: "Varholl Garage Sale"
     cards: "Cards"
     cart: "Cart"
     my_reservations: "My Reservations"
@@ -9,6 +9,45 @@ en:
     sign_out: "Sign Out"
     sign_in: "Sign In"
     sign_up: "Sign Up"
+    how_it_works: "How It Works"
+
+  pages:
+    how_it_works:
+      title: "How It Works"
+      intro: "Reserving cards is simple. Follow these steps to get the cards you want."
+      faq_title: "Frequently Asked Questions"
+      steps:
+        step_1:
+          title: "Browse"
+          description: "Explore our catalog and find the cards you're looking for."
+        step_2:
+          title: "Add to Cart"
+          description: "Select the quantity you want and add cards to your cart."
+        step_3:
+          title: "Submit Reservation"
+          description: "Review your cart and submit a reservation request."
+        step_4:
+          title: "Wait for Preparation"
+          description: "We'll prepare the cards you requested and make sure they are all in top condition."
+        step_5:
+          title: "Payment & Delivery"
+          description: "Once we confirm everything is OK, we'll contact you to agree on a payment method and how to get your cards to you — either by shipping or in person."
+      faq:
+        what_is_reservation:
+          question: "What is a reservation?"
+          answer: "A reservation is a request to set aside cards for you. It is not a purchase — you pay once we both confirm the reservation and the cards are in order."
+        can_i_cancel:
+          question: "Can I cancel a reservation?"
+          answer: "Yes. You can cancel any pending reservation from your reservations page. Once a reservation has been fulfilled or expired, it cannot be cancelled."
+        do_reservations_expire:
+          question: "Do reservations expire?"
+          answer: "Yes. If we cannot get a full confirmation and agreement on payment and delivery method from you within 3 days, we may mark it as expired and the cards will be made available again."
+        are_prices_final:
+          question: "Are prices final?"
+          answer: "Prices shown are estimates based on current market values, we will update it from time to time based on the latest market values. The final price may vary if the card was not in the published condition and only after confirmation from you."
+        need_account:
+          question: "Do I need an account?"
+          answer: "Yes. You need to create an account and sign in to add cards to your cart and submit reservations."
 
   cards:
     title: "Cards for Sale"
@@ -82,6 +121,9 @@ en:
     edition: "Edition"
     condition: "Condition"
     quantity: "Quantity"
+    price: "Price"
+    subtotal: "Subtotal"
+    total: "Total:"
     cancel: "Cancel Reservation"
     cancel_confirm: "Are you sure you want to cancel this reservation?"
 
@@ -112,8 +154,28 @@ en:
       edition: "Edition"
       condition: "Condition"
       quantity: "Quantity"
+      price: "Price"
+      subtotal: "Subtotal"
+      total: "Total:"
       fulfill: "Mark as Fulfilled"
       expire: "Mark as Expired"
+      new_title: "New Reservation"
+      customer_type: "Customer Type"
+      existing_user: "Existing User"
+      guest: "Walk-in / Guest"
+      select_user: "Select User"
+      guest_name_label: "Guest Name"
+      guest_contact_label: "Guest Contact (email or phone)"
+      select_cards: "Select Cards"
+      search_cards_placeholder: "Search cards by name..."
+      search: "Search"
+      selected_cards: "Selected Cards"
+      available: "Available"
+      add: "Add"
+      no_cards_found: "No cards found."
+      create_reservation: "Create Reservation"
+      guest_badge: "Guest"
+      create_new: "New Reservation"
 
   profiles:
     title: "Edit Profile"
@@ -161,6 +223,9 @@ en:
         expired: "Reservation marked as expired."
         expire_error: "Only pending reservations can be expired."
         access_denied: "Access denied."
+        created: "Reservation created successfully."
+        unavailable: "Some items are not available in the requested quantity."
+        no_items: "Please add at least one card to the reservation."
     profiles:
       updated: "Profile updated successfully."
 

@@ -1,6 +1,6 @@
 es:
   nav:
-    brand: "TCG Store"
+    brand: "Varholl Garage Sale"
     cards: "Cartas"
     cart: "Carrito"
     my_reservations: "Mis Reservas"
@@ -9,6 +9,45 @@ es:
     sign_out: "Cerrar Sesión"
     sign_in: "Iniciar Sesión"
     sign_up: "Registrarse"
+    how_it_works: "Cómo Funciona"
+
+  pages:
+    how_it_works:
+      title: "Cómo Funciona"
+      intro: "Reservar cartas es simple. Seguí estos pasos para conseguir las cartas que querés."
+      faq_title: "Preguntas Frecuentes"
+      steps:
+        step_1:
+          title: "Explorar"
+          description: "Explorá nuestro catálogo y encontrá las cartas que buscás."
+        step_2:
+          title: "Agregar al Carrito"
+          description: "Seleccioná la cantidad que querés y agregá las cartas a tu carrito."
+        step_3:
+          title: "Enviar Reserva"
+          description: "Revisá tu carrito y enviá una solicitud de reserva."
+        step_4:
+          title: "Esperar Preparación"
+          description: "Prepararemos las cartas que solicitaste y nos aseguraremos de que estén todas en óptimas condiciones."
+        step_5:
+          title: "Pago y Entrega"
+          description: "Una vez que confirmemos que todo está bien, te contactaremos para acordar un método de pago y cómo hacerte llegar tus cartas, ya sea por envío o en persona."
+      faq:
+        what_is_reservation:
+          question: "¿Qué es una reserva?"
+          answer: "Una reserva es una solicitud para apartar cartas para vos. No es una compra — pagás cuando ambos confirmamos que esta la reserva y las cartas en orden."
+        can_i_cancel:
+          question: "¿Puedo cancelar una reserva?"
+          answer: "Sí. Podés cancelar cualquier reserva pendiente desde tu página de reservas. Una vez que una reserva ha sido entregada o expirada, no se puede cancelar."
+        do_reservations_expire:
+          question: "¿Las reservas expiran?"
+          answer: "Sí. Si no podemos obtener una confirmación completa y un acuerdo sobre el método de pago y entrega dentro de los 3 días, podemos marcarla como expirada y las cartas volverán a estar disponibles."
+        are_prices_final:
+          question: "¿Los precios son finales?"
+          answer: "Los precios mostrados son estimaciones basadas en valores actuales del mercado, los actualizaremos periódicamente según los últimos valores del mercado. El precio final puede variar si la carta no estaba en la condición publicada y solo después de tu confirmación."
+        need_account:
+          question: "¿Necesito una cuenta?"
+          answer: "Sí. Necesitás crear una cuenta e iniciar sesión para agregar cartas al carrito y enviar reservas."
 
   cards:
     title: "Cartas en Venta"
@@ -82,6 +121,9 @@ es:
     edition: "Edición"
     condition: "Condición"
     quantity: "Cantidad"
+    price: "Precio"
+    subtotal: "Subtotal"
+    total: "Total:"
     cancel: "Cancelar Reserva"
     cancel_confirm: "¿Estás seguro de que querés cancelar esta reserva?"
 
@@ -112,8 +154,28 @@ es:
       edition: "Edición"
       condition: "Condición"
       quantity: "Cantidad"
+      price: "Precio"
+      subtotal: "Subtotal"
+      total: "Total:"
       fulfill: "Marcar como Entregada"
       expire: "Marcar como Expirada"
+      new_title: "Nueva Reserva"
+      customer_type: "Tipo de Cliente"
+      existing_user: "Usuario Existente"
+      guest: "Visitante / Invitado"
+      select_user: "Seleccionar Usuario"
+      guest_name_label: "Nombre del Invitado"
+      guest_contact_label: "Contacto del Invitado (email o teléfono)"
+      select_cards: "Seleccionar Cartas"
+      search_cards_placeholder: "Buscar cartas por nombre..."
+      search: "Buscar"
+      selected_cards: "Cartas Seleccionadas"
+      available: "Disponible"
+      add: "Agregar"
+      no_cards_found: "No se encontraron cartas."
+      create_reservation: "Crear Reserva"
+      guest_badge: "Invitado"
+      create_new: "Nueva Reserva"
 
   profiles:
     title: "Editar Perfil"
@@ -161,6 +223,9 @@ es:
         expired: "Reserva marcada como expirada."
         expire_error: "Solo se pueden expirar reservas pendientes."
         access_denied: "Acceso denegado."
+        created: "Reserva creada exitosamente."
+        unavailable: "Algunos artículos no están disponibles en la cantidad solicitada."
+        no_items: "Por favor agregá al menos una carta a la reserva."
     profiles:
       updated: "Perfil actualizado exitosamente."
 

@@ -1,0 +1,39 @@
+<% if cards.any? %>
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th><%= t('admin.reservations.card_name') %></th>
+        <th><%= t('admin.reservations.edition') %></th>
+        <th><%= t('admin.reservations.condition') %></th>
+        <th><%= t('admin.reservations.available') %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% cards.each do |card| %>
+        <% available = card.available_quantity %>
+        <tr>
+          <td><%= card.name %></td>
+          <td><%= card.edition_name || card.edition.upcase %></td>
+          <td><%= card.condition %></td>
+          <td><%= available %></td>
+          <td>
+            <% if available > 0 %>
+              <button type="button" class="btn btn-sm btn-outline-success"
+                      data-action="click->admin-card-selector#add"
+                      data-card-id="<%= card.id %>"
+                      data-card-name="<%= card.name %>"
+                      data-card-edition="<%= card.edition_name || card.edition.upcase %>"
+                      data-card-condition="<%= card.condition %>"
+                      data-card-available="<%= available %>">
+                <%= t('admin.reservations.add') %>
+              </button>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="text-muted"><%= t('admin.reservations.no_cards_found') %></p>
+<% end %>

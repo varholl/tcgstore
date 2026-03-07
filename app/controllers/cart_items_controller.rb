@@ -15,11 +15,19 @@ class CartItemsController < ApplicationController
     @card = Card.find(params[:card_id])
     @cart_item = current_user.cart_items.find_or_initialize_by(card: @card)
 
-    if @cart_item.new_record?
-      @cart_item.quantity = params[:quantity] || 1
-    else
-      @cart_item.quantity += (params[:quantity] || 1).to_i
+    available = @card.available_quantity
+    current_in_cart = @cart_item.persisted? ? @cart_item.quantity : 0
+    requested_add = (params[:quantity] || 1).to_i
+
+    new_quantity = current_in_cart + requested_add
+    new_quantity = [new_quantity, available].min
+
+    if new_quantity <= 0
+      redirect_back fallback_location: cards_path, alert: t('controllers.cart_items.add_error')
+      return
     end
+
+    @cart_item.quantity = new_quantity
 
     if @cart_item.save
       redirect_back fallback_location: cards_path, notice: t('controllers.cart_items.added', name: @card.name)
@@ -30,7 +38,11 @@ class CartItemsController < ApplicationController
 
   def update
     @cart_item = current_user.cart_items.find(params[:id])
-    if @cart_item.update(quantity: params[:cart_item][:quantity])
+    available = @cart_item.card.available_quantity
+    new_quantity = [params[:cart_item][:quantity].to_i, available].min
+    new_quantity = [new_quantity, 1].max
+
+    if @cart_item.update(quantity: new_quantity)
       redirect_to cart_items_path, notice: t('controllers.cart_items.updated')
     else
       redirect_to cart_items_path, alert: t('controllers.cart_items.update_error')
