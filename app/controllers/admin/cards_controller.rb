@@ -1,7 +1,7 @@
 class Admin::CardsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_card, only: [:edit, :update]
+  before_action :set_card, only: [:edit, :update, :destroy]
 
   def index
     @cards = Card.order(updated_at: :desc)
@@ -39,6 +39,15 @@ class Admin::CardsController < ApplicationController
       redirect_to admin_cards_path, notice: t("controllers.admin.cards.updated")
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if @card.reservation_items.exists?
+      redirect_to admin_cards_path, alert: t("controllers.admin.cards.cannot_delete_with_reservations")
+    else
+      @card.destroy!
+      redirect_to admin_cards_path, notice: t("controllers.admin.cards.deleted")
     end
   end
 

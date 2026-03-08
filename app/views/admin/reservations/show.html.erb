@@ -72,7 +72,30 @@
 <% if @reservation.pending? %>
   <div class="mt-3 d-flex gap-2">
     <%= button_to t('admin.reservations.pay'), pay_admin_reservation_path(@reservation), method: :patch, class: "btn btn-info" %>
-    <%= button_to t('admin.reservations.expire'), expire_admin_reservation_path(@reservation), method: :patch, class: "btn btn-warning" %>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#expireModal">
+      <%= t('admin.reservations.expire') %>
+    </button>
+  </div>
+
+  <div class="modal fade" id="expireModal" tabindex="-1" aria-labelledby="expireModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_tag expire_admin_reservation_path(@reservation), method: :patch do %>
+          <div class="modal-header">
+            <h5 class="modal-title" id="expireModalLabel"><%= t('admin.reservations.expire') %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <label for="expire_message" class="form-label"><%= t('admin.reservations.expire_message_label') %></label>
+            <textarea name="message" id="expire_message" class="form-control" rows="5" placeholder="<%= t('admin.reservations.expire_message_placeholder') %>"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('admin.reservations.cancel_modal') %></button>
+            <%= submit_tag t('admin.reservations.confirm_expire'), class: "btn btn-warning" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 <% elsif @reservation.paid? %>
   <div class="mt-3 d-flex gap-2">

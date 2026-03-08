@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       end
     end
     resources :users, only: [:index, :show, :edit, :update, :destroy]
-    resources :cards, except: [:show, :destroy] do
+    resources :cards, except: [:show] do
       collection do
         get :search_scryfall
       end

@@ -45,6 +45,7 @@
             <td><%= card.price ? number_to_currency(card.price) : "—" %></td>
             <td>
               <%= link_to edit_admin_card_path(card), class: "btn btn-sm btn-outline-secondary", title: t('admin.cards.edit') do %><i class="fas fa-pencil"></i><% end %>
+              <%= button_to admin_card_path(card), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.cards.delete'), form: { data: { turbo_confirm: t('admin.cards.delete_confirm') } } do %><i class="fas fa-trash"></i><% end %>
             </td>
           </tr>
         <% end %>

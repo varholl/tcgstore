@@ -2,6 +2,10 @@
 
 <p><%= t('reservation_mailer.expired.body', id: @reservation.id) %></p>
 
+<% if @reservation.message.present? %>
+  <p><strong><%= t('reservation_mailer.expired.message_label') %></strong> <%= @reservation.message %></p>
+<% end %>
+
 <table class="items-table">
   <thead>
     <tr>

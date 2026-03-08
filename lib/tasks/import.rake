@@ -21,10 +21,20 @@ namespace :cards do
       purchase_price = row['Purchase Price'].to_s.strip
       purchase_price = purchase_price.empty? ? nil : purchase_price.to_f
 
+      condition_mapping = {
+        "Near Mint" => "NM",
+        "Good (Lightly Played)" => "LP",
+        "Played" => "MP",
+        "Heavily Played" => "HP",
+        "Damaged" => "DMG"
+      }
+      raw_condition = row['Condition'].to_s.strip
+      normalized_condition = condition_mapping[raw_condition] || raw_condition
+
       Card.create!(
         name: row['Name'],
         edition: row['Edition'],
-        condition: row['Condition'],
+        condition: normalized_condition,
         language: row['Language'],
         foil: foil_value,
         quantity: row['Count'].to_i,

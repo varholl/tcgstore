@@ -79,7 +79,7 @@ class Admin::ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
 
     if @reservation.pending?
-      @reservation.update!(status: :expired)
+      @reservation.update!(status: :expired, message: params[:message].presence)
       ReservationMailer.expired(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.expired')
     else

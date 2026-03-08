@@ -12,7 +12,8 @@
 <% end %>
 
 <% if @cart_items.any? %>
-  <div class="table-responsive">
+  <%# Desktop table — hidden on small screens %>
+  <div class="d-none d-md-block table-responsive">
     <table class="table table-striped">
       <thead class="table-dark">
         <tr>
@@ -55,6 +56,47 @@
         <% end %>
       </tbody>
     </table>
+  </div>
+
+  <%# Mobile card layout — visible only on small screens %>
+  <div class="d-md-none">
+    <% @cart_items.each do |item| %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex align-items-start gap-3">
+            <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=small"
+                 alt="<%= item.card.name %>"
+                 style="width: 60px; height: auto; border-radius: 4px;"
+                 loading="lazy"
+                 onerror="this.style.display='none'">
+            <div class="flex-grow-1">
+              <h6 class="mb-1"><%= item.card.name %></h6>
+              <p class="text-muted small mb-1">
+                <%= item.card.edition_name || item.card.edition.upcase %> · <%= item.card.condition %>
+              </p>
+              <p class="mb-2">
+                <strong><%= item.card.price ? number_to_currency(item.card.price) : "—" %></strong>
+              </p>
+              <div class="d-flex align-items-center gap-2">
+                <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
+                <% max_qty = [available, item.quantity].max %>
+                <%= form_with model: item, url: cart_item_path(item), method: :patch, class: "d-flex align-items-center gap-2" do |f| %>
+                  <%= f.number_field :quantity, value: item.quantity, min: 1, max: max_qty, disabled: available <= 1, class: "form-control form-control-sm", style: "width: 65px" %>
+                  <%= f.submit t('cart_items.update'), class: "btn btn-sm btn-outline-primary", disabled: available <= 1 %>
+                <% end %>
+                <%= button_to cart_item_path(item), method: :delete, class: "btn btn-sm btn-danger", title: t('cart_items.remove') do %><i class="fa-solid fa-trash"></i><% end %>
+              </div>
+            </div>
+          </div>
+          <% if item.card.price %>
+            <div class="text-end mt-2">
+              <span class="text-muted small"><%= t('cart_items.subtotal') %>:</span>
+              <strong><%= number_to_currency(item.card.price * item.quantity) %></strong>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <% total_price = @cart_items.sum { |item| (item.card.price || 0) * item.quantity } %>

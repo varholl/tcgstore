@@ -7,9 +7,6 @@
   <div class="col-md-3">
     <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select" %>
   </div>
-  <div class="col-md-3">
-    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), class: "form-select" %>
-  </div>
   <div class="col-auto">
     <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
     <%= link_to t('cards.clear'), cards_path(view: params[:view]), class: "btn btn-outline-secondary ms-1" %>
@@ -19,7 +16,12 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <p class="text-muted mb-0"><%= t('cards.cards_found', count: @cards.total_count) %></p>
-  <div class="btn-group" role="group">
+  <div class="d-flex align-items-center gap-2">
+    <label class="text-muted mb-0 d-flex align-items-center gap-1" for="sort_select">
+      <i class="fas fa-arrow-down-short-wide"></i>
+    </label>
+    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm", style: "width: auto;", onchange: "window.location.href='#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString()" %>
+    <div class="btn-group" role="group">
     <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{params[:view] != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
@@ -32,6 +34,7 @@
       </svg>
       <%= t('cards.grid') %>
     <% end %>
+    </div>
   </div>
 </div>
 
@@ -82,12 +85,12 @@
     <table class="table table-hover">
       <thead class="table-dark">
         <tr>
-          <th><%= link_to "#{t('cards.name')} #{@current_sort == 'name_asc' ? '▲' : (@current_sort == 'name_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'name_asc' ? 'name_desc' : 'name_asc')), class: "text-white text-decoration-none" %></th>
-          <th><%= link_to "#{t('cards.edition')} #{@current_sort == 'edition_asc' ? '▲' : (@current_sort == 'edition_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'edition_asc' ? 'edition_desc' : 'edition_asc')), class: "text-white text-decoration-none" %></th>
+          <th><%= t('cards.name') %></th>
+          <th><%= t('cards.edition') %></th>
           <th><%= t('cards.condition') %></th>
           <th><%= t('cards.language') %></th>
           <th><%= t('cards.collector_number') %></th>
-          <th><%= link_to "#{t('cards.price')} #{@current_sort == 'price_asc' ? '▲' : (@current_sort == 'price_desc' ? '▼' : '')}".strip, cards_path(request.query_parameters.merge(sort: @current_sort == 'price_asc' ? 'price_desc' : 'price_asc')), class: "text-white text-decoration-none" %></th>
+          <th><%= t('cards.price') %></th>
           <th><%= t('cards.qty') %></th>
           <th></th>
         </tr>
