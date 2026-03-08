@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     resources :cards, except: [:show] do
       collection do
         get :search_scryfall
+        post :refresh_prices
       end
     end
   end

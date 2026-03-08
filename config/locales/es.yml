@@ -269,6 +269,8 @@ es:
       card_info: "Info de Carta"
       pending_reserved_warning: "Esta carta tiene %{count} unidades en reservas pendientes (disponible: %{available}). Reducir la cantidad por debajo de esto puede generar reservas que no se puedan cumplir."
       pending_reserved_hint: "%{count} reservadas en pedidos pendientes"
+      refresh_prices: "Actualizar Precios"
+      refresh_prices_confirm: "Esto actualizará todos los precios de cartas desde Card Kingdom. ¿Continuar?"
 
   profiles:
     title: "Editar Perfil"
@@ -338,6 +340,7 @@ es:
         deleted: "Carta eliminada exitosamente."
         cannot_delete_with_reservations: "No se puede eliminar una carta que tiene artículos de reserva."
         error: "No se pudo guardar la carta."
+        prices_refreshed: "Precios actualizados: %{scryfall_ids_fetched} IDs de Scryfall completados, %{prices_updated} precios actualizados, %{prices_not_found} no encontrados en Card Kingdom."
       reservation_notes:
         created: "Nota agregada."
         access_denied: "Acceso denegado."

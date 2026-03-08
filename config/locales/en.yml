@@ -269,6 +269,8 @@ en:
       card_info: "Card Info"
       pending_reserved_warning: "This card has %{count} units in pending reservations (available: %{available}). Setting quantity below this may result in unfulfillable reservations."
       pending_reserved_hint: "%{count} reserved in pending orders"
+      refresh_prices: "Refresh Prices"
+      refresh_prices_confirm: "This will update all card prices from Card Kingdom. Continue?"
 
   profiles:
     title: "Edit Profile"
@@ -338,6 +340,7 @@ en:
         deleted: "Card deleted successfully."
         cannot_delete_with_reservations: "Cannot delete a card that has reservation items."
         error: "Could not save the card."
+        prices_refreshed: "Prices refreshed: %{scryfall_ids_fetched} Scryfall IDs backfilled, %{prices_updated} prices updated, %{prices_not_found} not found on Card Kingdom."
       reservation_notes:
         created: "Note added."
         access_denied: "Access denied."
