@@ -298,6 +298,7 @@ en:
       users:
         updated: "User updated successfully."
         deleted: "User deleted successfully."
+        cannot_delete_fulfilled: "Cannot delete a user with fulfilled reservations."
         access_denied: "Access denied."
       reservations:
         paid: "Reservation marked as paid."

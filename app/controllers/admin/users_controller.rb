@@ -28,8 +28,12 @@ class Admin::UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy
-    redirect_to admin_users_path, notice: t('controllers.admin.users.deleted')
+    if @user.reservations.where(status: "fulfilled").exists?
+      redirect_to admin_user_path(@user), alert: t('controllers.admin.users.cannot_delete_fulfilled')
+    else
+      @user.destroy
+      redirect_to admin_users_path, notice: t('controllers.admin.users.deleted')
+    end
   end
 
   private
