@@ -17,7 +17,10 @@ Rails.application.routes.draw do
         patch :pay
         patch :fulfill
         patch :expire
+        patch :update_final_price
+        patch :update_item_price
       end
+      resources :notes, only: [:create], controller: 'reservation_notes'
     end
     resources :users, only: [:index, :show, :edit, :update, :destroy]
     resources :cards, except: [:show] do

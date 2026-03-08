@@ -1,6 +1,7 @@
 class Reservation < ApplicationRecord
   belongs_to :user, optional: true
   has_many :reservation_items, dependent: :destroy
+  has_many :reservation_notes, dependent: :destroy
 
   enum :status, { pending: "pending", paid: "paid", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
 

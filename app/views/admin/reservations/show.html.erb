@@ -20,7 +20,7 @@
 
     <% status_colors = { "pending" => "warning", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
     <p><strong><%= t('admin.reservations.status_label') %></strong> <span class="badge bg-<%= status_colors[@reservation.status] %>"><%= t("statuses.#{@reservation.status}") %></span></p>
-    <p><strong><%= t('admin.reservations.date_label') %></strong> <%= @reservation.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+    <p><strong><%= t('admin.reservations.date_label') %></strong> <%= @reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></p>
     <% if @reservation.message.present? %>
       <p><strong><%= t('admin.reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>
@@ -55,18 +55,82 @@
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
           <td><%= item.quantity %></td>
-          <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
+          <td>
+            <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %>
+            <% if @reservation.pending? || @reservation.paid? %>
+              <button type="button" class="btn btn-sm btn-link p-0 ms-1" data-bs-toggle="modal" data-bs-target="#editPriceModal<%= item.id %>" title="<%= t('admin.reservations.edit_price') %>">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
+            <% end %>
+          </td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="5" class="text-end"><strong><%= t('admin.reservations.total') %></strong></td>
+        <td colspan="5" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
+      </tr>
+      <tr>
+        <td colspan="5" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
+        <td>
+          <%= form_tag update_final_price_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-1" do %>
+            <input type="number" name="final_price" step="0.01" min="0" value="<%= @reservation.final_price %>" class="form-control form-control-sm" style="width: 120px;" placeholder="—">
+            <%= submit_tag t('admin.reservations.set_final_price'), class: "btn btn-sm btn-outline-primary" %>
+          <% end %>
+        </td>
       </tr>
     </tfoot>
   </table>
+</div>
+
+<% @reservation.reservation_items.each do |item| %>
+  <div class="modal fade" id="editPriceModal<%= item.id %>" tabindex="-1" aria-labelledby="editPriceModalLabel<%= item.id %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_tag update_item_price_admin_reservation_path(@reservation), method: :patch do %>
+          <input type="hidden" name="item_id" value="<%= item.id %>">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editPriceModalLabel<%= item.id %>"><%= t('admin.reservations.edit_price_title') %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong><%= item.card.name %></strong></p>
+            <p><%= t('admin.reservations.price') %>: <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></p>
+            <label for="new_price_<%= item.id %>" class="form-label"><%= t('admin.reservations.new_price') %></label>
+            <input type="number" name="unit_price" id="new_price_<%= item.id %>" step="0.01" min="0" value="<%= item.unit_price %>" class="form-control" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('admin.reservations.cancel_modal') %></button>
+            <%= submit_tag t('admin.reservations.save_price'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<h4 class="mt-4"><%= t('admin.reservations.internal_notes') %></h4>
+<div class="card mb-3">
+  <div class="card-body">
+    <% if @reservation.reservation_notes.any? %>
+      <% @reservation.reservation_notes.order(created_at: :desc).each do |note| %>
+        <div class="mb-2">
+          <small class="text-muted"><%= note.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></small>
+          <p class="mb-0"><%= simple_format(note.body) %></p>
+        </div>
+        <hr class="my-1">
+      <% end %>
+    <% end %>
+
+    <%= form_tag admin_reservation_notes_path(@reservation), method: :post, class: "mt-2" do %>
+      <div class="mb-2">
+        <textarea name="body" class="form-control" rows="2" placeholder="<%= t('admin.reservations.note_placeholder') %>" required></textarea>
+      </div>
+      <%= submit_tag t('admin.reservations.add_note'), class: "btn btn-sm btn-outline-secondary" %>
+    <% end %>
+  </div>
 </div>
 
 <% if @reservation.pending? %>

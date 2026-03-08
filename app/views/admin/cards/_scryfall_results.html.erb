@@ -22,11 +22,16 @@
                   <small class="text-muted"><%= card[:set_name] %> #<%= card[:collector_number] %></small>
                 </p>
                 <p class="card-text mb-2">
-                  <% if card[:prices_usd] %>
-                    <small>$<%= card[:prices_usd] %></small>
+                  <% if card[:ck_price] %>
+                    <small>CK: $<%= sprintf('%.2f', card[:ck_price]) %></small>
                   <% end %>
-                  <% if card[:prices_usd_foil] %>
-                    <small class="ms-2">Foil: $<%= card[:prices_usd_foil] %></small>
+                  <% if card[:ck_price_foil] %>
+                    <small class="ms-2">CK Foil: $<%= sprintf('%.2f', card[:ck_price_foil]) %></small>
+                  <% end %>
+                  <% unless card[:ck_price] || card[:ck_price_foil] %>
+                    <% if card[:prices_usd] %>
+                      <small class="text-muted">TCG: $<%= card[:prices_usd] %></small>
+                    <% end %>
                   <% end %>
                 </p>
                 <button type="button" class="btn btn-sm btn-primary"
@@ -36,7 +41,7 @@
                         data-set-code="<%= card[:set_code] %>"
                         data-set-name="<%= card[:set_name] %>"
                         data-collector-number="<%= card[:collector_number] %>"
-                        data-price="<%= card[:prices_usd] %>">
+                        data-price="<%= card[:ck_price] || card[:prices_usd] %>">
                   <%= t('admin.cards.select') %>
                 </button>
               </div>

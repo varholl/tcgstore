@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_08_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_08_110001) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -52,6 +52,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_08_100000) do
     t.index ["reservation_id"], name: "index_reservation_items_on_reservation_id"
   end
 
+  create_table "reservation_notes", force: :cascade do |t|
+    t.integer "reservation_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_id"], name: "index_reservation_notes_on_reservation_id"
+  end
+
   create_table "reservations", force: :cascade do |t|
     t.integer "user_id"
     t.string "status", default: "pending", null: false
@@ -60,6 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_08_100000) do
     t.datetime "updated_at", null: false
     t.string "guest_name"
     t.string "guest_contact"
+    t.decimal "final_price", precision: 10, scale: 2
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end
@@ -92,5 +101,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_08_100000) do
   add_foreign_key "cart_items", "users"
   add_foreign_key "reservation_items", "cards"
   add_foreign_key "reservation_items", "reservations"
+  add_foreign_key "reservation_notes", "reservations"
   add_foreign_key "reservations", "users"
 end

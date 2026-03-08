@@ -9,7 +9,7 @@ class Admin::ReservationsController < ApplicationController
   end
 
   def show
-    @reservation = Reservation.includes(:user, reservation_items: :card).find(params[:id])
+    @reservation = Reservation.includes(:user, :reservation_notes, reservation_items: :card).find(params[:id])
   end
 
   def new
@@ -85,6 +85,19 @@ class Admin::ReservationsController < ApplicationController
     else
       redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.expire_error')
     end
+  end
+
+  def update_final_price
+    @reservation = Reservation.find(params[:id])
+    @reservation.update!(final_price: params[:final_price].presence)
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.final_price_updated')
+  end
+
+  def update_item_price
+    @reservation = Reservation.find(params[:id])
+    item = @reservation.reservation_items.find(params[:item_id])
+    item.update!(unit_price: params[:unit_price])
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.item_price_updated')
   end
 
   private

@@ -7,7 +7,7 @@
   <div class="card-body">
     <% status_colors = { "pending" => "warning", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
     <p><strong><%= t('reservations.status_label') %></strong> <span class="badge bg-<%= status_colors[@reservation.status] %>"><%= t("statuses.#{@reservation.status}") %></span></p>
-    <p><strong><%= t('reservations.date_label') %></strong> <%= @reservation.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+    <p><strong><%= t('reservations.date_label') %></strong> <%= @reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></p>
     <% if @reservation.message.present? %>
       <p><strong><%= t('reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>

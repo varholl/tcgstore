@@ -33,7 +33,7 @@
             <td><%= user.email %></td>
             <td><%= user.phone_number %></td>
             <td><%= user.reservations.count %></td>
-            <td><%= user.created_at.strftime("%d/%m/%Y") %></td>
+            <td><%= user.created_at.in_time_zone.strftime("%d/%m/%Y") %></td>
             <td>
               <div class="d-flex gap-1">
                 <%= link_to admin_user_path(user), class: "btn btn-sm btn-outline-primary", title: t('admin.users.view') do %><i class="fas fa-eye"></i><% end %>

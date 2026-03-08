@@ -53,6 +53,14 @@ class Admin::CardsController < ApplicationController
 
   def search_scryfall
     results = ScryfallSearchService.new(params[:query]).call
+    ck_prices = CardKingdomPriceService.pricelist
+
+    results.each do |card|
+      sid = card[:scryfall_id]
+      card[:ck_price] = ck_prices[[sid, false]]
+      card[:ck_price_foil] = ck_prices[[sid, true]]
+    end
+
     render partial: "scryfall_results", locals: { results: results }
   end
 

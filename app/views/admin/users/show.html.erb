@@ -10,7 +10,7 @@
     <p><strong><%= t('admin.users.name_label') %></strong> <%= @user.name %></p>
     <p><strong><%= t('admin.users.email_label') %></strong> <%= @user.email %></p>
     <p><strong><%= t('admin.users.phone_label') %></strong> <%= @user.phone_number || t('admin.users.na') %></p>
-    <p><strong><%= t('admin.users.joined_label') %></strong> <%= @user.created_at.strftime("%d/%m/%Y") %></p>
+    <p><strong><%= t('admin.users.joined_label') %></strong> <%= @user.created_at.in_time_zone.strftime("%d/%m/%Y") %></p>
   </div>
 </div>
 
@@ -35,7 +35,7 @@
       <tbody>
         <% @reservations.each do |reservation| %>
           <tr>
-            <td><%= reservation.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+            <td><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td>
               <% status_colors = { "pending" => "warning", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
