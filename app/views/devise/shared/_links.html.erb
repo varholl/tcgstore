@@ -18,10 +18,4 @@
   <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
     <%= link_to t('devise_views.no_unlock'), new_unlock_path(resource_name), class: "d-block mb-1" %>
   <% end %>
-
-  <%- if devise_mapping.omniauthable? %>
-    <%- resource_class.omniauth_providers.each do |provider| %>
-      <%= button_to t('devise_views.sign_in_with', provider: OmniAuth::Utils.camelize(provider)), omniauth_authorize_path(resource_name, provider), method: :post, class: "btn btn-outline-dark d-block mb-1", data: { turbo: false } %>
-    <% end %>
-  <% end %>
 </div>

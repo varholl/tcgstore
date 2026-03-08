@@ -278,6 +278,10 @@ es:
     forgot_password: "¿Olvidaste tu contraseña?"
     no_confirmation: "¿No recibiste instrucciones de confirmación?"
     no_unlock: "¿No recibiste instrucciones de desbloqueo?"
+    or: "o"
+    login_info: "Iniciá sesión con tu email y contraseña"
+    register_info: "Creá una cuenta con tus datos"
+    oauth_info: "O iniciá sesión con tu cuenta de Google"
     sign_in_with: "Iniciar sesión con %{provider}"
     omniauth_failure: "La autenticación falló, por favor intentá de nuevo."
 

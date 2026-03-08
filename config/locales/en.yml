@@ -278,6 +278,10 @@ en:
     forgot_password: "Forgot your password?"
     no_confirmation: "Didn't receive confirmation instructions?"
     no_unlock: "Didn't receive unlock instructions?"
+    or: "or"
+    login_info: "Sign in with your email and password"
+    register_info: "Create an account with your info"
+    oauth_info: "Or sign in with your Google account"
     sign_in_with: "Sign in with %{provider}"
     omniauth_failure: "Authentication failed, please try again."
 

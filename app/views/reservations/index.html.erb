@@ -14,7 +14,7 @@
       <tbody>
         <% @reservations.each do |reservation| %>
           <tr>
-            <td><%= reservation.created_at.strftime("%b %d, %Y %H:%M") %></td>
+            <td><%= reservation.created_at.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td>
               <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
