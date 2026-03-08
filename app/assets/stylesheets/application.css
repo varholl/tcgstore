@@ -1,1 +1,67 @@
 /* Application styles */
+
+body {
+  background-color: #ffffff;
+}
+
+.navbar {
+  background-color: #4a6d8c !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+footer.bg-dark {
+  background-color: #4a6d8c !important;
+}
+
+.table-dark {
+  --bs-table-bg: #5a7fa0;
+  --bs-table-border-color: #4a6d8c;
+}
+
+.btn-primary {
+  background-color: #5a7fa0 !important;
+  border-color: #4a6d8c !important;
+}
+
+.btn-primary:hover {
+  background-color: #4a6d8c !important;
+  border-color: #3d5c75 !important;
+}
+
+.btn-outline-primary {
+  color: #5a7fa0 !important;
+  border-color: #5a7fa0 !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: #5a7fa0 !important;
+  border-color: #5a7fa0 !important;
+  color: #fff !important;
+}
+
+.footer-link:hover {
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+}
+
+.alert {
+  border-radius: 0.5rem;
+}
+
+/* Price text in chalky blue */
+.text-price {
+  color: #4a6d8c;
+  font-weight: bold;
+}
+
+/* Compact list view table */
+.table td, .table th {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* Foil highlight - grid view cards */
+.foil-card {
+  border: 2px solid #d4a017;
+  box-shadow: 0 0 8px rgba(212, 160, 23, 0.35);
+}

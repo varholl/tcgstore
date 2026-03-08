@@ -10,8 +10,15 @@ es:
     sign_in: "Iniciar Sesión"
     sign_up: "Registrarse"
     how_it_works: "Cómo Funciona"
+    about_this_site: "Acerca de Este Sitio"
 
   pages:
+    about:
+      title: "Acerca de Este Sitio"
+      greeting: "¡Hola! Soy Matias, jugador de Magic: The Gathering."
+      not_a_store: "Esto no es una tienda — soy simplemente un jugador más vendiendo cartas de mi colección personal."
+      why_this_site: "Armé este sitio para mantenerme organizado al vender cartas. Hace más fácil para ambos ver lo que hay disponible y llevar un registro de las reservas."
+      closing: "¡Gracias por pasar, y buenas partidas!"
     how_it_works:
       title: "Cómo Funciona"
       intro: "Reservar cartas es simple. Seguí estos pasos para conseguir las cartas que querés."
@@ -19,7 +26,7 @@ es:
       steps:
         step_1:
           title: "Explorar"
-          description: "Explorá nuestro catálogo y encontrá las cartas que buscás."
+          description: "Explorá mi catálogo y encontrá las cartas que buscás."
         step_2:
           title: "Agregar al Carrito"
           description: "Seleccioná la cantidad que querés y agregá las cartas a tu carrito."
@@ -28,23 +35,23 @@ es:
           description: "Revisá tu carrito y enviá una solicitud de reserva."
         step_4:
           title: "Esperar Preparación"
-          description: "Prepararemos las cartas que solicitaste y nos aseguraremos de que estén todas en óptimas condiciones."
+          description: "Prepararé las cartas que solicitaste y me aseguraré de que estén todas en óptimas condiciones."
         step_5:
           title: "Pago y Entrega"
-          description: "Una vez que confirmemos que todo está bien, te contactaremos para acordar un método de pago y cómo hacerte llegar tus cartas, ya sea por envío o en persona."
+          description: "Una vez que confirme que todo está bien, te contactaré para acordar un método de pago y cómo hacerte llegar tus cartas, ya sea por envío o en persona."
       faq:
         what_is_reservation:
           question: "¿Qué es una reserva?"
-          answer: "Una reserva es una solicitud para apartar cartas para vos. No es una compra — pagás cuando ambos confirmamos que esta la reserva y las cartas en orden."
+          answer: "Una reserva es una solicitud para apartar cartas para vos. No es una compra — pagás cuando confirme la reserva y las cartas estén en orden."
         can_i_cancel:
           question: "¿Puedo cancelar una reserva?"
           answer: "Sí. Podés cancelar cualquier reserva pendiente desde tu página de reservas. Una vez que una reserva ha sido entregada o expirada, no se puede cancelar."
         do_reservations_expire:
           question: "¿Las reservas expiran?"
-          answer: "Sí. Si no podemos obtener una confirmación completa y un acuerdo sobre el método de pago y entrega dentro de los 3 días, podemos marcarla como expirada y las cartas volverán a estar disponibles."
+          answer: "Sí. Si no puedo obtener una confirmación completa y un acuerdo sobre el método de pago y entrega dentro de los 3 días, puedo marcarla como expirada y las cartas volverán a estar disponibles."
         are_prices_final:
           question: "¿Los precios son finales?"
-          answer: "Los precios mostrados son estimaciones basadas en valores actuales del mercado, los actualizaremos periódicamente según los últimos valores del mercado. El precio final puede variar si la carta no estaba en la condición publicada y solo después de tu confirmación."
+          answer: "Los precios mostrados son estimaciones basadas en valores actuales del mercado, los actualizaré periódicamente según los últimos valores del mercado. El precio final puede variar si la carta no estaba en la condición publicada y solo después de tu confirmación."
         need_account:
           question: "¿Necesito una cuenta?"
           answer: "Sí. Necesitás crear una cuenta e iniciar sesión para agregar cartas al carrito y enviar reservas."
@@ -239,7 +246,7 @@ es:
       greeting: "Hola %{name},"
       body: "Se ha creado una nueva reserva (#%{id}) con los siguientes artículos:"
       message_label: "Mensaje:"
-      closing: "Revisaremos tu reserva y te responderemos a la brevedad. ¡Gracias!"
+      closing: "Revisaré tu reserva y te responderé a la brevedad. ¡Gracias!"
     cancelled:
       subject: "Reserva #%{id} — Cancelada"
       greeting: "Hola %{name},"
@@ -263,6 +270,9 @@ es:
       price: "Precio"
       subtotal: "Subtotal"
       total: "Total: %{amount}"
+
+  footer:
+    tagline: "Singles de MTG y más"
 
   statuses:
     pending: "Pendiente"

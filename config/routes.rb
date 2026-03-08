@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   resource :profile, only: [:edit, :update]
 
   get 'how_it_works', to: 'pages#how_it_works'
+  get 'about', to: 'pages#about'
   post '/set_language/:locale', to: 'application#set_language', as: :set_language
 
   root "cards#index"
