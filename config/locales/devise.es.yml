@@ -58,6 +58,7 @@ es:
       expired: "expiró, por favor solicitá uno nuevo"
       not_found: "no encontrado"
       not_locked: "no estaba bloqueado"
+      taken: "ya está en uso"
       not_saved:
         one: "1 error impidió que este %{resource} fuera guardado:"
         other: "%{count} errores impidieron que este %{resource} fuera guardado:"

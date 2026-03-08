@@ -222,6 +222,8 @@ en:
       no_cards_found: "No cards found."
       create_reservation: "Create Reservation"
       guest_badge: "Guest"
+      low_stock: "Low Stock"
+      stock_warning_detail: "Only %{in_stock} in stock, but %{reserved} reserved"
       create_new: "New Reservation"
     cards:
       title: "Admin - Cards"
@@ -249,6 +251,8 @@ en:
       update_card: "Update Card"
       edit_title: "Edit Card"
       card_info: "Card Info"
+      pending_reserved_warning: "This card has %{count} units in pending reservations (available: %{available}). Setting quantity below this may result in unfulfillable reservations."
+      pending_reserved_hint: "%{count} reserved in pending orders"
 
   profiles:
     title: "Edit Profile"

@@ -40,11 +40,23 @@
     </div>
   <% end %>
 
+  <% if @pending_reserved > 0 %>
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-1"></i>
+      <%= t('admin.cards.pending_reserved_warning', count: @pending_reserved, available: @card.available_quantity) %>
+    </div>
+  <% end %>
+
   <div class="row g-3">
     <div class="col-md-4">
       <div class="mb-3">
         <%= f.label :quantity, t('admin.cards.quantity'), class: "form-label" %>
         <%= f.number_field :quantity, min: 0, class: "form-control" %>
+        <% if @pending_reserved > 0 %>
+          <div class="form-text text-warning">
+            <%= t('admin.cards.pending_reserved_hint', count: @pending_reserved) %>
+          </div>
+        <% end %>
       </div>
     </div>
 

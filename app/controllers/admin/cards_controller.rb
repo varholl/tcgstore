@@ -28,6 +28,10 @@ class Admin::CardsController < ApplicationController
   end
 
   def edit
+    @pending_reserved = @card.reservation_items
+      .joins(:reservation)
+      .where(reservations: { status: "pending" })
+      .sum(:quantity)
   end
 
   def update

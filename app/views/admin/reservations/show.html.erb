@@ -42,8 +42,16 @@
     </thead>
     <tbody>
       <% @reservation.reservation_items.each do |item| %>
-        <tr>
-          <td><%= item.card.name %></td>
+        <% stock_short = (@reservation.pending? || @reservation.paid?) && item.card.quantity < item.quantity %>
+        <tr class="<%= 'table-danger' if stock_short %>">
+          <td>
+            <%= item.card.name %>
+            <% if stock_short %>
+              <span class="badge bg-danger" title="<%= t('admin.reservations.stock_warning_detail', in_stock: item.card.quantity, reserved: item.quantity) %>">
+                <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.low_stock') %>
+              </span>
+            <% end %>
+          </td>
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
           <td><%= item.quantity %></td>

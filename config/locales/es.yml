@@ -222,6 +222,8 @@ es:
       no_cards_found: "No se encontraron cartas."
       create_reservation: "Crear Reserva"
       guest_badge: "Invitado"
+      low_stock: "Stock Bajo"
+      stock_warning_detail: "Solo %{in_stock} en stock, pero %{reserved} reservadas"
       create_new: "Nueva Reserva"
     cards:
       title: "Admin - Cartas"
@@ -249,6 +251,8 @@ es:
       update_card: "Actualizar Carta"
       edit_title: "Editar Carta"
       card_info: "Info de Carta"
+      pending_reserved_warning: "Esta carta tiene %{count} unidades en reservas pendientes (disponible: %{available}). Reducir la cantidad por debajo de esto puede generar reservas que no se puedan cumplir."
+      pending_reserved_hint: "%{count} reservadas en pedidos pendientes"
 
   profiles:
     title: "Editar Perfil"
