@@ -22,7 +22,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <%= link_to t('nav.cards'), cards_path, class: "nav-link" %>
+              <%= link_to cards_path, class: "nav-link", title: t('nav.cards'), data: { bs_toggle: "tooltip" } do %>
+                <i class="fas fa-layer-group"></i>
+              <% end %>
             </li>
             <li class="nav-item">
               <%= link_to how_it_works_path, class: "btn btn-outline-light btn-sm" do %>
@@ -30,7 +32,9 @@
               <% end %>
             </li>
             <li class="nav-item">
-              <%= link_to t('nav.about_this_site'), about_path, class: "nav-link" %>
+              <%= link_to about_path, class: "nav-link", title: t('nav.about_this_site'), data: { bs_toggle: "tooltip" } do %>
+                <i class="fas fa-user"></i>
+              <% end %>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -42,8 +46,8 @@
             </li>
             <% if user_signed_in? %>
               <li class="nav-item">
-                <%= link_to cart_items_path, class: "nav-link" do %>
-                  <%= t('nav.cart') %>
+                <%= link_to cart_items_path, class: "nav-link", title: t('nav.cart'), data: { bs_toggle: "tooltip" } do %>
+                  <i class="fas fa-shopping-cart"></i>
                   <% count = current_user.cart_items.sum(:quantity) %>
                   <% if count > 0 %>
                     <span class="badge bg-primary rounded-pill"><%= count %></span>
@@ -51,25 +55,37 @@
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to t('nav.my_reservations'), reservations_path, class: "nav-link" %>
+                <%= link_to reservations_path, class: "nav-link", title: t('nav.my_reservations'), data: { bs_toggle: "tooltip" } do %>
+                  <i class="fas fa-clipboard-list"></i>
+                <% end %>
               </li>
               <% if current_user.admin? %>
                 <li class="nav-item">
-                  <%= link_to t('nav.admin'), admin_reservations_path, class: "nav-link" %>
+                  <%= link_to admin_reservations_path, class: "nav-link", title: t('nav.admin'), data: { bs_toggle: "tooltip" } do %>
+                    <i class="fas fa-shield-halved"></i>
+                  <% end %>
                 </li>
               <% end %>
               <li class="nav-item">
-                <%= link_to t('nav.profile'), edit_profile_path, class: "nav-link" %>
+                <%= link_to edit_profile_path, class: "nav-link", title: t('nav.profile'), data: { bs_toggle: "tooltip" } do %>
+                  <i class="fas fa-user-circle"></i>
+                <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to t('nav.sign_out'), destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+                <%= link_to destroy_user_session_path, data: { turbo_method: :delete, bs_toggle: "tooltip" }, class: "nav-link", title: t('nav.sign_out') do %>
+                  <i class="fas fa-sign-out-alt"></i>
+                <% end %>
               </li>
             <% else %>
               <li class="nav-item">
-                <%= link_to t('nav.sign_in'), new_user_session_path, class: "nav-link" %>
+                <%= link_to new_user_session_path, class: "nav-link", title: t('nav.sign_in'), data: { bs_toggle: "tooltip" } do %>
+                  <i class="fas fa-sign-in-alt"></i>
+                <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to t('nav.sign_up'), new_user_registration_path, class: "nav-link" %>
+                <%= link_to new_user_registration_path, class: "nav-link", title: t('nav.sign_up'), data: { bs_toggle: "tooltip" } do %>
+                  <i class="fas fa-user-plus"></i>
+                <% end %>
               </li>
             <% end %>
           </ul>
@@ -114,5 +130,12 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+          new bootstrap.Tooltip(el);
+        });
+      });
+    </script>
   </body>
 </html>
