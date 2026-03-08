@@ -60,6 +60,19 @@ footer.bg-dark {
   white-space: nowrap;
 }
 
+/* Admin navigation */
+.admin-nav .nav-link.active {
+  background-color: #4a6d8c !important;
+}
+
+.admin-nav .nav-link:not(.active) {
+  color: #4a6d8c;
+}
+
+.admin-nav .nav-link:not(.active):hover {
+  background-color: #e9ecef;
+}
+
 /* Foil highlight - grid view cards */
 .foil-card {
   border: 2px solid #d4a017;

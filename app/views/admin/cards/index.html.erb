@@ -1,0 +1,59 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('admin.cards.title') %></h1>
+  <%= link_to new_admin_card_path, class: "btn btn-primary" do %>
+    <i class="fas fa-plus me-1"></i> <%= t('admin.cards.add_card') %>
+  <% end %>
+</div>
+
+<%= form_tag admin_cards_path, method: :get, class: "mb-4" do %>
+  <div class="input-group">
+    <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('admin.cards.search_placeholder') %>
+    <button class="btn btn-outline-primary" type="submit"><%= t('admin.cards.search') %></button>
+    <% if params[:search].present? %>
+      <%= link_to t('admin.cards.clear'), admin_cards_path, class: "btn btn-outline-secondary" %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @cards.any? %>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th><%= t('admin.cards.name') %></th>
+          <th><%= t('admin.cards.edition') %></th>
+          <th><%= t('admin.cards.collector_number') %></th>
+          <th><%= t('admin.cards.condition') %></th>
+          <th><%= t('admin.cards.language') %></th>
+          <th><%= t('admin.cards.foil') %></th>
+          <th><%= t('admin.cards.quantity') %></th>
+          <th><%= t('admin.cards.price') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @cards.each do |card| %>
+          <tr>
+            <td><%= card.name %></td>
+            <td><%= card.edition_name %></td>
+            <td><%= card.collector_number %></td>
+            <td><%= card.condition %></td>
+            <td><%= card.language %></td>
+            <td><% if card.foil.present? %><span class="badge bg-info"><%= t('admin.cards.foil') %></span><% end %></td>
+            <td><%= card.quantity %></td>
+            <td><%= card.price ? number_to_currency(card.price) : "—" %></td>
+            <td>
+              <%= link_to edit_admin_card_path(card), class: "btn btn-sm btn-outline-secondary", title: t('admin.cards.edit') do %><i class="fas fa-pencil"></i><% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= paginate @cards %>
+<% else %>
+  <div class="alert alert-info"><%= t('admin.cards.no_cards') %></div>
+<% end %>
+<% end %>

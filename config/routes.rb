@@ -19,6 +19,12 @@ Rails.application.routes.draw do
         patch :expire
       end
     end
+    resources :users, only: [:index, :show, :edit, :update, :destroy]
+    resources :cards, except: [:show, :destroy] do
+      collection do
+        get :search_scryfall
+      end
+    end
   end
 
   resource :profile, only: [:edit, :update]

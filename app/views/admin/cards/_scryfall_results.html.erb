@@ -1,0 +1,49 @@
+<% if results.blank? %>
+  <div class="alert alert-warning"><%= t('admin.cards.no_results') %></div>
+<% else %>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    <% results.each do |card| %>
+      <div class="col">
+        <div class="card h-100">
+          <div class="row g-0">
+            <div class="col-4">
+              <% if card[:image_small] %>
+                <img src="<%= card[:image_small] %>" class="img-fluid rounded-start" alt="<%= card[:name] %>" loading="lazy">
+              <% else %>
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100 rounded-start" style="min-height: 100px;">
+                  <i class="fas fa-image fa-2x"></i>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-8">
+              <div class="card-body p-2">
+                <h6 class="card-title mb-1"><%= card[:name] %></h6>
+                <p class="card-text mb-1">
+                  <small class="text-muted"><%= card[:set_name] %> #<%= card[:collector_number] %></small>
+                </p>
+                <p class="card-text mb-2">
+                  <% if card[:prices_usd] %>
+                    <small>$<%= card[:prices_usd] %></small>
+                  <% end %>
+                  <% if card[:prices_usd_foil] %>
+                    <small class="ms-2">Foil: $<%= card[:prices_usd_foil] %></small>
+                  <% end %>
+                </p>
+                <button type="button" class="btn btn-sm btn-primary"
+                        data-action="click->admin-scryfall-search#select"
+                        data-name="<%= card[:name] %>"
+                        data-scryfall-id="<%= card[:scryfall_id] %>"
+                        data-set-code="<%= card[:set_code] %>"
+                        data-set-name="<%= card[:set_name] %>"
+                        data-collector-number="<%= card[:collector_number] %>"
+                        data-price="<%= card[:prices_usd] %>">
+                  <%= t('admin.cards.select') %>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

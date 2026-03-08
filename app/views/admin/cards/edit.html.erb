@@ -1,0 +1,68 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('admin.cards.edit_title') %></h1>
+  <%= link_to t('admin.cards.back'), admin_cards_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title"><%= t('admin.cards.card_info') %></h5>
+    <dl class="row mb-0">
+      <dt class="col-sm-3"><%= t('admin.cards.name') %></dt>
+      <dd class="col-sm-9"><%= @card.name %></dd>
+
+      <dt class="col-sm-3"><%= t('admin.cards.edition') %></dt>
+      <dd class="col-sm-9"><%= @card.edition_name %></dd>
+
+      <dt class="col-sm-3"><%= t('admin.cards.collector_number') %></dt>
+      <dd class="col-sm-9"><%= @card.collector_number %></dd>
+
+      <dt class="col-sm-3"><%= t('admin.cards.condition') %></dt>
+      <dd class="col-sm-9"><%= @card.condition %></dd>
+
+      <dt class="col-sm-3"><%= t('admin.cards.language') %></dt>
+      <dd class="col-sm-9"><%= @card.language %></dd>
+
+      <dt class="col-sm-3">Scryfall ID</dt>
+      <dd class="col-sm-9"><%= @card.scryfall_id %></dd>
+    </dl>
+  </div>
+</div>
+
+<%= form_with(model: @card, url: admin_card_path(@card), method: :patch) do |f| %>
+  <% if @card.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% @card.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= f.label :quantity, t('admin.cards.quantity'), class: "form-label" %>
+        <%= f.number_field :quantity, min: 0, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= f.label :price, t('admin.cards.price'), class: "form-label" %>
+        <%= f.number_field :price, min: 0, step: 0.01, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-check mt-4 pt-2">
+        <%= f.check_box :foil, { class: "form-check-input", checked: @card.foil.present? }, "Yes", "" %>
+        <%= f.label :foil, t('admin.cards.foil'), class: "form-check-label" %>
+      </div>
+    </div>
+  </div>
+
+  <%= f.submit t('admin.cards.update_card'), class: "btn btn-primary" %>
+<% end %>
+<% end %>

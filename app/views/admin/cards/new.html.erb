@@ -1,0 +1,90 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('admin.cards.new_title') %></h1>
+  <%= link_to t('admin.cards.back'), admin_cards_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div data-controller="admin-scryfall-search" data-search-url="<%= search_scryfall_admin_cards_path %>">
+
+  <%# Phase 1: Scryfall Search %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><%= t('admin.cards.search_scryfall') %></h5>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="<%= t('admin.cards.scryfall_placeholder') %>"
+               data-admin-scryfall-search-target="searchInput"
+               data-action="keydown.enter->admin-scryfall-search#search">
+        <button class="btn btn-outline-primary" type="button"
+                data-action="click->admin-scryfall-search#search">
+          <i class="fas fa-search me-1"></i> <%= t('admin.cards.search') %>
+        </button>
+      </div>
+
+      <div class="text-center mt-3 d-none" data-admin-scryfall-search-target="searchSpinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div class="mt-3" data-admin-scryfall-search-target="searchResults"></div>
+    </div>
+  </div>
+
+  <%# Phase 2: Stock Detail Form %>
+  <div class="card d-none" data-admin-scryfall-search-target="stockForm">
+    <div class="card-body">
+      <h5 class="card-title"><%= t('admin.cards.stock_details') %></h5>
+      <div class="alert alert-info" data-admin-scryfall-search-target="selectedCardInfo"></div>
+
+      <%= form_tag admin_cards_path, method: :post do %>
+        <input type="hidden" name="name" data-admin-scryfall-search-target="nameField">
+        <input type="hidden" name="scryfall_id" data-admin-scryfall-search-target="scryfallIdField">
+        <input type="hidden" name="set_code" data-admin-scryfall-search-target="setCodeField">
+        <input type="hidden" name="set_name" data-admin-scryfall-search-target="setNameField">
+        <input type="hidden" name="collector_number" data-admin-scryfall-search-target="collectorNumberField">
+        <input type="hidden" name="price" data-admin-scryfall-search-target="priceField">
+
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label"><%= t('admin.cards.quantity') %></label>
+            <input type="number" name="quantity" value="1" min="1" class="form-control" required>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label"><%= t('admin.cards.condition') %></label>
+            <select name="condition" class="form-select" required>
+              <% %w[NM LP MP HP DMG].each do |cond| %>
+                <option value="<%= cond %>"><%= cond %></option>
+              <% end %>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label"><%= t('admin.cards.language') %></label>
+            <select name="language" class="form-select" required>
+              <% %w[English Spanish Japanese Portuguese Chinese Korean French German Italian Russian].each do |lang| %>
+                <option value="<%= lang %>"><%= lang %></option>
+              <% end %>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-check mt-4 pt-2">
+              <input type="hidden" name="foil" value="">
+              <input type="checkbox" name="foil" value="Yes" class="form-check-input" id="foilCheck">
+              <label class="form-check-label" for="foilCheck"><%= t('admin.cards.foil') %></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> <%= t('admin.cards.add_card') %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+</div>
+<% end %>
