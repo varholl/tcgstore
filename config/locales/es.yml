@@ -157,6 +157,7 @@ es:
       price: "Precio"
       subtotal: "Subtotal"
       total: "Total:"
+      pay: "Marcar como Pagada"
       fulfill: "Marcar como Entregada"
       expire: "Marcar como Expirada"
       new_title: "Nueva Reserva"
@@ -202,6 +203,7 @@ es:
     no_confirmation: "¿No recibiste instrucciones de confirmación?"
     no_unlock: "¿No recibiste instrucciones de desbloqueo?"
     sign_in_with: "Iniciar sesión con %{provider}"
+    omniauth_failure: "La autenticación falló, por favor intentá de nuevo."
 
   controllers:
     cart_items:
@@ -218,6 +220,8 @@ es:
       cancel_error: "Solo se pueden cancelar reservas pendientes."
     admin:
       reservations:
+        paid: "Reserva marcada como pagada."
+        pay_error: "Solo se pueden marcar como pagadas reservas pendientes."
         fulfilled: "Reserva marcada como entregada."
         fulfill_error: "Solo se pueden entregar reservas pendientes."
         expired: "Reserva marcada como expirada."
@@ -229,8 +233,40 @@ es:
     profiles:
       updated: "Perfil actualizado exitosamente."
 
+  reservation_mailer:
+    created:
+      subject: "Reserva #%{id} — Confirmación"
+      greeting: "Hola %{name},"
+      body: "Se ha creado una nueva reserva (#%{id}) con los siguientes artículos:"
+      message_label: "Mensaje:"
+      closing: "Revisaremos tu reserva y te responderemos a la brevedad. ¡Gracias!"
+    cancelled:
+      subject: "Reserva #%{id} — Cancelada"
+      greeting: "Hola %{name},"
+      body: "La reserva #%{id} ha sido cancelada."
+      closing: "Las cartas reservadas están disponibles nuevamente. Si fue un error, podés crear una nueva reserva."
+    fulfilled:
+      subject: "Reserva #%{id} — Entregada"
+      greeting: "Hola %{name},"
+      body: "¡Buenas noticias! La reserva #%{id} ha sido entregada. Acá están los detalles:"
+      closing: "Tu pedido fue pagado y está listo. ¡Gracias por tu compra!"
+    expired:
+      subject: "Reserva #%{id} — Expirada"
+      greeting: "Hola %{name},"
+      body: "La reserva #%{id} ha expirado."
+      closing: "Las cartas reservadas están disponibles nuevamente. Si seguís interesado, no dudes en crear una nueva reserva."
+    common:
+      card_name: "Nombre de Carta"
+      edition: "Edición"
+      condition: "Condición"
+      quantity: "Cantidad"
+      price: "Precio"
+      subtotal: "Subtotal"
+      total: "Total: %{amount}"
+
   statuses:
     pending: "Pendiente"
+    paid: "Pagada"
     fulfilled: "Entregada"
     expired: "Expirada"
     cancelled: "Cancelada"

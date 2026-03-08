@@ -1,0 +1,60 @@
+class ReservationMailer < ApplicationMailer
+  def created(reservation)
+    @reservation = reservation
+    @items = reservation.reservation_items.includes(:card)
+
+    recipients = build_recipients(reservation, notify_admins: true)
+    return if recipients.empty?
+
+    I18n.with_locale(user_locale(reservation)) do
+      mail(to: recipients, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
+  def cancelled(reservation)
+    @reservation = reservation
+    @items = reservation.reservation_items.includes(:card)
+
+    recipients = build_recipients(reservation, notify_admins: true)
+    return if recipients.empty?
+
+    I18n.with_locale(user_locale(reservation)) do
+      mail(to: recipients, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
+  def fulfilled(reservation)
+    @reservation = reservation
+    @items = reservation.reservation_items.includes(:card)
+
+    return if reservation.guest?
+
+    I18n.with_locale(user_locale(reservation)) do
+      mail(to: reservation.user.email, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
+  def expired(reservation)
+    @reservation = reservation
+    @items = reservation.reservation_items.includes(:card)
+
+    return if reservation.guest?
+
+    I18n.with_locale(user_locale(reservation)) do
+      mail(to: reservation.user.email, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
+  private
+
+  def build_recipients(reservation, notify_admins: false)
+    recipients = []
+    recipients << reservation.user.email if reservation.user.present?
+    recipients.concat(User.where(admin: true).pluck(:email)) if notify_admins
+    recipients.uniq
+  end
+
+  def user_locale(reservation)
+    reservation.user&.locale || I18n.default_locale
+  end
+end

@@ -42,7 +42,7 @@
             <td><%= reservation.display_phone %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+              <% status_colors = { "pending" => "warning", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td>

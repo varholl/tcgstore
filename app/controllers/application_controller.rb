@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
     locale = params[:locale].to_s
     locale = I18n.default_locale.to_s unless I18n.available_locales.map(&:to_s).include?(locale)
     cookies[:locale] = { value: locale, expires: 1.year.from_now }
+    current_user.update(locale: locale) if user_signed_in?
     redirect_back fallback_location: root_path
   end
 
@@ -21,7 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :phone_number])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :phone_number])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :phone_number, :locale])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :phone_number, :locale])
   end
 end

@@ -1,0 +1,36 @@
+<p><%= t('reservation_mailer.created.greeting', name: @reservation.display_name) %></p>
+
+<p><%= t('reservation_mailer.created.body', id: @reservation.id) %></p>
+
+<% if @reservation.message.present? %>
+  <p><strong><%= t('reservation_mailer.created.message_label') %></strong> <%= @reservation.message %></p>
+<% end %>
+
+<table class="items-table">
+  <thead>
+    <tr>
+      <th><%= t('reservation_mailer.common.card_name') %></th>
+      <th><%= t('reservation_mailer.common.edition') %></th>
+      <th><%= t('reservation_mailer.common.condition') %></th>
+      <th><%= t('reservation_mailer.common.quantity') %></th>
+      <th><%= t('reservation_mailer.common.price') %></th>
+      <th><%= t('reservation_mailer.common.subtotal') %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @items.each do |item| %>
+      <tr>
+        <td><%= item.card.name %></td>
+        <td><%= item.card.edition_name %></td>
+        <td><%= item.card.condition %></td>
+        <td><%= item.quantity %></td>
+        <td><%= number_to_currency(item.unit_price) %></td>
+        <td><%= number_to_currency(item.unit_price * item.quantity) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p class="total-row"><%= t('reservation_mailer.common.total', amount: number_to_currency(@items.sum { |i| i.unit_price * i.quantity })) %></p>
+
+<p><%= t('reservation_mailer.created.closing') %></p>

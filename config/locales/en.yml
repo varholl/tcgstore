@@ -157,6 +157,7 @@ en:
       price: "Price"
       subtotal: "Subtotal"
       total: "Total:"
+      pay: "Mark as Paid"
       fulfill: "Mark as Fulfilled"
       expire: "Mark as Expired"
       new_title: "New Reservation"
@@ -202,6 +203,7 @@ en:
     no_confirmation: "Didn't receive confirmation instructions?"
     no_unlock: "Didn't receive unlock instructions?"
     sign_in_with: "Sign in with %{provider}"
+    omniauth_failure: "Authentication failed, please try again."
 
   controllers:
     cart_items:
@@ -218,6 +220,8 @@ en:
       cancel_error: "Only pending reservations can be cancelled."
     admin:
       reservations:
+        paid: "Reservation marked as paid."
+        pay_error: "Only pending reservations can be marked as paid."
         fulfilled: "Reservation marked as fulfilled."
         fulfill_error: "Only pending reservations can be fulfilled."
         expired: "Reservation marked as expired."
@@ -229,8 +233,40 @@ en:
     profiles:
       updated: "Profile updated successfully."
 
+  reservation_mailer:
+    created:
+      subject: "Reservation #%{id} — Confirmation"
+      greeting: "Hi %{name},"
+      body: "A new reservation (#%{id}) has been created with the following items:"
+      message_label: "Message:"
+      closing: "We will review your reservation and get back to you shortly. Thank you!"
+    cancelled:
+      subject: "Reservation #%{id} — Cancelled"
+      greeting: "Hi %{name},"
+      body: "Reservation #%{id} has been cancelled."
+      closing: "The reserved cards are now available again. If this was a mistake, you can create a new reservation."
+    fulfilled:
+      subject: "Reservation #%{id} — Fulfilled"
+      greeting: "Hi %{name},"
+      body: "Great news! Reservation #%{id} has been fulfilled. Here are the details:"
+      closing: "Your order has been paid and is ready. Thank you for your purchase!"
+    expired:
+      subject: "Reservation #%{id} — Expired"
+      greeting: "Hi %{name},"
+      body: "Reservation #%{id} has expired."
+      closing: "The reserved cards are now available again. If you're still interested, feel free to create a new reservation."
+    common:
+      card_name: "Card Name"
+      edition: "Edition"
+      condition: "Condition"
+      quantity: "Quantity"
+      price: "Price"
+      subtotal: "Subtotal"
+      total: "Total: %{amount}"
+
   statuses:
     pending: "Pending"
+    paid: "Paid"
     fulfilled: "Fulfilled"
     expired: "Expired"
     cancelled: "Cancelled"

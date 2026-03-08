@@ -49,6 +49,10 @@ class ReservationCreator
       user.cart_items.destroy_all
     end
 
+    if @unavailable_items.empty? && @reservation.present?
+      ReservationMailer.created(@reservation).deliver_later
+    end
+
     @unavailable_items.empty?
   end
 

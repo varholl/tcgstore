@@ -3,11 +3,72 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
-      /* Email styles need to be inline */
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #333333;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .email-header {
+        background-color: #1a1a2e;
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+      }
+      .email-header h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: bold;
+      }
+      .email-body {
+        padding: 24px;
+      }
+      .email-footer {
+        background-color: #f4f4f4;
+        padding: 16px;
+        text-align: center;
+        font-size: 12px;
+        color: #888888;
+      }
+      table.items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+      }
+      table.items-table th, table.items-table td {
+        border: 1px solid #dddddd;
+        padding: 8px;
+        text-align: left;
+        font-size: 13px;
+      }
+      table.items-table th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+      }
+      .total-row {
+        font-weight: bold;
+        font-size: 15px;
+      }
     </style>
   </head>
-
   <body>
-    <%= yield %>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h1>Varholl Garage Sale</h1>
+      </div>
+      <div class="email-body">
+        <%= yield %>
+      </div>
+      <div class="email-footer">
+        Varholl Garage Sale
+      </div>
+    </div>
   </body>
 </html>

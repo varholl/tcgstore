@@ -2,7 +2,7 @@ class Reservation < ApplicationRecord
   belongs_to :user, optional: true
   has_many :reservation_items, dependent: :destroy
 
-  enum :status, { pending: "pending", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
+  enum :status, { pending: "pending", paid: "paid", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
 
   validates :message, length: { maximum: 1000 }
   validates :guest_name, :guest_contact, presence: true, unless: :user_id?

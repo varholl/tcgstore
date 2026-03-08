@@ -28,6 +28,7 @@ class ReservationsController < ApplicationController
 
     if @reservation.pending?
       @reservation.update!(status: :cancelled)
+      ReservationMailer.cancelled(@reservation).deliver_later
       redirect_to reservations_path, notice: t('controllers.reservations.cancelled')
     else
       redirect_to reservations_path, alert: t('controllers.reservations.cancel_error')

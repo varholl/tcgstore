@@ -52,11 +52,23 @@ class Admin::ReservationsController < ApplicationController
     render partial: "card_search_results", locals: { cards: @cards }
   end
 
-  def fulfill
+  def pay
     @reservation = Reservation.find(params[:id])
 
     if @reservation.pending?
+      @reservation.update!(status: :paid)
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.paid')
+    else
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.pay_error')
+    end
+  end
+
+  def fulfill
+    @reservation = Reservation.find(params[:id])
+
+    if @reservation.paid?
       @reservation.update!(status: :fulfilled)
+      ReservationMailer.fulfilled(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.fulfilled')
     else
       redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.fulfill_error')
@@ -68,6 +80,7 @@ class Admin::ReservationsController < ApplicationController
 
     if @reservation.pending?
       @reservation.update!(status: :expired)
+      ReservationMailer.expired(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.expired')
     else
       redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.expire_error')
