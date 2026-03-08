@@ -10,8 +10,15 @@ en:
     sign_in: "Sign In"
     sign_up: "Sign Up"
     how_it_works: "How It Works"
+    about_this_site: "About This Site"
 
   pages:
+    about:
+      title: "About This Site"
+      greeting: "Hi! I'm Matias, a Magic: The Gathering player."
+      not_a_store: "This is not a store — I'm just a fellow player selling cards from my personal collection."
+      why_this_site: "I built this site to stay organized when selling cards. It makes it easier for both of us to browse what's available and keep track of reservations."
+      closing: "Thanks for stopping by, and happy gaming!"
     how_it_works:
       title: "How It Works"
       intro: "Reserving cards is simple. Follow these steps to get the cards you want."
@@ -19,7 +26,7 @@ en:
       steps:
         step_1:
           title: "Browse"
-          description: "Explore our catalog and find the cards you're looking for."
+          description: "Explore my catalog and find the cards you're looking for."
         step_2:
           title: "Add to Cart"
           description: "Select the quantity you want and add cards to your cart."
@@ -28,23 +35,23 @@ en:
           description: "Review your cart and submit a reservation request."
         step_4:
           title: "Wait for Preparation"
-          description: "We'll prepare the cards you requested and make sure they are all in top condition."
+          description: "I'll prepare the cards you requested and make sure they are all in top condition."
         step_5:
           title: "Payment & Delivery"
-          description: "Once we confirm everything is OK, we'll contact you to agree on a payment method and how to get your cards to you — either by shipping or in person."
+          description: "Once I confirm everything is OK, I'll contact you to agree on a payment method and how to get your cards to you — either by shipping or in person."
       faq:
         what_is_reservation:
           question: "What is a reservation?"
-          answer: "A reservation is a request to set aside cards for you. It is not a purchase — you pay once we both confirm the reservation and the cards are in order."
+          answer: "A reservation is a request to set aside cards for you. It is not a purchase — you pay once I confirm the reservation and the cards are in order."
         can_i_cancel:
           question: "Can I cancel a reservation?"
           answer: "Yes. You can cancel any pending reservation from your reservations page. Once a reservation has been fulfilled or expired, it cannot be cancelled."
         do_reservations_expire:
           question: "Do reservations expire?"
-          answer: "Yes. If we cannot get a full confirmation and agreement on payment and delivery method from you within 3 days, we may mark it as expired and the cards will be made available again."
+          answer: "Yes. If I cannot get a full confirmation and agreement on payment and delivery method from you within 3 days, I may mark it as expired and the cards will be made available again."
         are_prices_final:
           question: "Are prices final?"
-          answer: "Prices shown are estimates based on current market values, we will update it from time to time based on the latest market values. The final price may vary if the card was not in the published condition and only after confirmation from you."
+          answer: "Prices shown are estimates based on current market values, I'll update them from time to time based on the latest market values. The final price may vary if the card was not in the published condition and only after confirmation from you."
         need_account:
           question: "Do I need an account?"
           answer: "Yes. You need to create an account and sign in to add cards to your cart and submit reservations."
@@ -239,7 +246,7 @@ en:
       greeting: "Hi %{name},"
       body: "A new reservation (#%{id}) has been created with the following items:"
       message_label: "Message:"
-      closing: "We will review your reservation and get back to you shortly. Thank you!"
+      closing: "I'll review your reservation and get back to you shortly. Thank you!"
     cancelled:
       subject: "Reservation #%{id} — Cancelled"
       greeting: "Hi %{name},"
@@ -263,6 +270,9 @@ en:
       price: "Price"
       subtotal: "Subtotal"
       total: "Total: %{amount}"
+
+  footer:
+    tagline: "MTG singles & more"
 
   statuses:
     pending: "Pending"

@@ -23,5 +23,14 @@ class CardsController < ApplicationController
       .where(reservations: { status: "pending" }, card_id: card_ids)
       .group(:card_id)
       .sum(:quantity)
+
+    # Hide out-of-stock cards unless they have unfulfilled (pending/paid) reservations
+    unfulfilled_card_ids = ReservationItem
+      .joins(:reservation)
+      .where(reservations: { status: ["pending", "paid"] }, card_id: card_ids)
+      .distinct
+      .pluck(:card_id)
+
+    @cards = @cards.where("quantity > 0 OR id IN (?)", unfulfilled_card_ids.presence || [0])
   end
 end
