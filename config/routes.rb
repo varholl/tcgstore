@@ -26,6 +26,8 @@ Rails.application.routes.draw do
         patch :update_final_price
         patch :update_item_price
         delete :remove_item
+        post :add_item
+        get :search_cards_for_add
       end
       resources :notes, only: [:create], controller: 'reservation_notes'
     end

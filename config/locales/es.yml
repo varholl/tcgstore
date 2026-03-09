@@ -248,6 +248,7 @@ es:
       save_price: "Guardar Precio"
       remove_item: "Quitar"
       remove_item_confirm: "¿Quitar %{name} de esta reserva?"
+      add_cards: "Agregar Cartas"
     cards:
       title: "Admin - Cartas"
       add_card: "Agregar Carta al Stock"
@@ -367,6 +368,8 @@ es:
         item_price_updated: "Precio del artículo actualizado."
         item_removed: "Artículo eliminado de la reserva."
         remove_item_error: "Solo se pueden quitar artículos de reservas pendientes."
+        item_added: "%{name} agregado a la reserva."
+        add_item_error: "Solo se pueden agregar artículos a reservas pendientes."
       cards:
         added: "Carta agregada al stock."
         incremented: "La carta ya estaba en stock — cantidad actualizada."

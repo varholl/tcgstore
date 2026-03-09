@@ -113,6 +113,12 @@ class Admin::ReservationsController < ApplicationController
     render partial: "card_search_results", locals: { cards: @cards }
   end
 
+  def search_cards_for_add
+    @reservation = Reservation.find(params[:id])
+    @cards = Card.search_by_name(params[:query]).limit(20)
+    render partial: "add_item_search_results", locals: { cards: @cards, reservation: @reservation }
+  end
+
   def pay
     @reservation = Reservation.find(params[:id])
 
@@ -152,6 +158,33 @@ class Admin::ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
     @reservation.update!(final_price: params[:final_price].presence)
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.final_price_updated')
+  end
+
+  def add_item
+    @reservation = Reservation.find(params[:id])
+
+    unless @reservation.pending?
+      redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.add_item_error")
+      return
+    end
+
+    card = Card.find(params[:card_id])
+    quantity = params[:quantity].to_i
+    quantity = 1 if quantity < 1
+
+    if card.available_quantity < quantity
+      redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.unavailable")
+      return
+    end
+
+    existing_item = @reservation.reservation_items.find_by(card: card)
+    if existing_item
+      existing_item.update!(quantity: existing_item.quantity + quantity, unit_price: card.price)
+    else
+      @reservation.reservation_items.create!(card: card, quantity: quantity, unit_price: card.price)
+    end
+
+    redirect_to admin_reservation_path(@reservation), notice: t("controllers.admin.reservations.item_added", name: card.name)
   end
 
   def remove_item

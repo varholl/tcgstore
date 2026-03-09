@@ -187,6 +187,25 @@
   </div>
 <% end %>
 
+<% if @reservation.pending? %>
+  <div class="card mb-4 mt-4" data-controller="add-item-search" data-search-url="<%= search_cards_for_add_admin_reservation_path(@reservation) %>">
+    <div class="card-body">
+      <h5><%= t('admin.reservations.add_cards') %></h5>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control"
+               placeholder="<%= t('admin.reservations.search_cards_placeholder') %>"
+               data-add-item-search-target="searchInput"
+               data-action="keydown.enter->add-item-search#search">
+        <button type="button" class="btn btn-outline-primary"
+                data-action="click->add-item-search#search">
+          <%= t('admin.reservations.search') %>
+        </button>
+      </div>
+      <div data-add-item-search-target="searchResults"></div>
+    </div>
+  </div>
+<% end %>
+
 <h4 class="mt-4"><%= t('admin.reservations.internal_notes') %></h4>
 <div class="card mb-3">
   <div class="card-body">

@@ -248,6 +248,7 @@ en:
       save_price: "Save Price"
       remove_item: "Remove"
       remove_item_confirm: "Remove %{name} from this reservation?"
+      add_cards: "Add Cards"
     cards:
       title: "Admin - Cards"
       add_card: "Add Card to Stock"
@@ -367,6 +368,8 @@ en:
         item_price_updated: "Item price updated."
         item_removed: "Item removed from reservation."
         remove_item_error: "Items can only be removed from pending reservations."
+        item_added: "%{name} added to reservation."
+        add_item_error: "Items can only be added to pending reservations."
       cards:
         added: "Card added to stock."
         incremented: "Card was already in stock — quantity updated."
