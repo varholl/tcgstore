@@ -246,6 +246,8 @@ es:
       edit_price_title: "Editar Precio del Artículo"
       new_price: "Nuevo Precio"
       save_price: "Guardar Precio"
+      remove_item: "Quitar"
+      remove_item_confirm: "¿Quitar %{name} de esta reserva?"
     cards:
       title: "Admin - Cartas"
       add_card: "Agregar Carta al Stock"
@@ -363,6 +365,8 @@ es:
         import_no_matches: "No se pudo encontrar ninguna carta de la lista. Por favor revisá el formato e intentá de nuevo."
         final_price_updated: "Precio final actualizado."
         item_price_updated: "Precio del artículo actualizado."
+        item_removed: "Artículo eliminado de la reserva."
+        remove_item_error: "Solo se pueden quitar artículos de reservas pendientes."
       cards:
         added: "Carta agregada al stock."
         incremented: "La carta ya estaba en stock — cantidad actualizada."

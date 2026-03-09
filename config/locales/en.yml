@@ -246,6 +246,8 @@ en:
       edit_price_title: "Edit Item Price"
       new_price: "New Price"
       save_price: "Save Price"
+      remove_item: "Remove"
+      remove_item_confirm: "Remove %{name} from this reservation?"
     cards:
       title: "Admin - Cards"
       add_card: "Add Card to Stock"
@@ -363,6 +365,8 @@ en:
         import_no_matches: "No cards could be matched from the list. Please check the format and try again."
         final_price_updated: "Final price updated."
         item_price_updated: "Item price updated."
+        item_removed: "Item removed from reservation."
+        remove_item_error: "Items can only be removed from pending reservations."
       cards:
         added: "Card added to stock."
         incremented: "Card was already in stock — quantity updated."

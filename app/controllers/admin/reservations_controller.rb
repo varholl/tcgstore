@@ -154,6 +154,19 @@ class Admin::ReservationsController < ApplicationController
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.final_price_updated')
   end
 
+  def remove_item
+    @reservation = Reservation.find(params[:id])
+
+    unless @reservation.pending?
+      redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.remove_item_error")
+      return
+    end
+
+    item = @reservation.reservation_items.find(params[:item_id])
+    item.destroy!
+    redirect_to admin_reservation_path(@reservation), notice: t("controllers.admin.reservations.item_removed")
+  end
+
   def update_item_price
     @reservation = Reservation.find(params[:id])
     item = @reservation.reservation_items.find(params[:item_id])

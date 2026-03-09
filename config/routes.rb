@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         patch :expire
         patch :update_final_price
         patch :update_item_price
+        delete :remove_item
       end
       resources :notes, only: [:create], controller: 'reservation_notes'
     end

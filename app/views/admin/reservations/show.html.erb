@@ -79,6 +79,11 @@
                 <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.low_stock') %>
               </span>
             <% end %>
+            <% if @reservation.pending? %>
+              <div class="mt-2">
+                <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash me-1"></i><%= t('admin.reservations.remove_item') %><% end %>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -96,6 +101,7 @@
         <th><%= t('admin.reservations.current_price') %></th>
         <th><%= t('admin.reservations.price') %></th>
         <th><%= t('admin.reservations.subtotal') %></th>
+        <% if @reservation.pending? %><th></th><% end %>
       </tr>
     </thead>
     <tbody>
@@ -128,16 +134,21 @@
             <% end %>
           </td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
+          <% if @reservation.pending? %>
+            <td>
+              <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="6" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
+        <td colspan="<%= @reservation.pending? ? 7 : 6 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
       <tr>
-        <td colspan="6" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
+        <td colspan="<%= @reservation.pending? ? 7 : 6 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
         <td>
           <%= form_tag update_final_price_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-1" do %>
             <input type="number" name="final_price" step="0.01" min="0" value="<%= @reservation.final_price %>" class="form-control form-control-sm" style="width: 120px;" placeholder="—">
