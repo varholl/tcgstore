@@ -1,7 +1,7 @@
 class Admin::CardsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_card, only: [:edit, :update, :destroy]
+  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed]
 
   SORT_OPTIONS = {
     "name_asc"      => "name ASC",
@@ -23,7 +23,11 @@ class Admin::CardsController < ApplicationController
     end
     @cards = @cards.where(edition: params[:edition]) if params[:edition].present?
     @cards = @cards.where(price: nil) if params[:no_price] == "1"
-    @cards = @cards.where(price_source: params[:price_source]) if params[:price_source].present?
+    if params[:price_source] == "needs_review"
+      @cards = @cards.where(price_source: "scryfall", price_reviewed: false)
+    elsif params[:price_source].present?
+      @cards = @cards.where(price_source: params[:price_source])
+    end
 
     sort_key = SORT_OPTIONS.key?(params[:sort]) ? params[:sort] : "updated_desc"
     @cards = @cards.order(Arel.sql(SORT_OPTIONS[sort_key]))
@@ -74,6 +78,11 @@ class Admin::CardsController < ApplicationController
   def refresh_prices
     CardPriceRefreshJob.perform_later
     redirect_to admin_cards_path, notice: t("controllers.admin.cards.prices_refresh_started")
+  end
+
+  def mark_price_reviewed
+    @card.update_column(:price_reviewed, true)
+    redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_reviewed")
   end
 
   def search_scryfall

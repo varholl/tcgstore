@@ -297,6 +297,8 @@ es:
       price_source_scryfall: "Scryfall (requiere revisión)"
       price_source_card_kingdom: "Card Kingdom"
       price_from_scryfall: "Precio de Scryfall — no disponible en Card Kingdom"
+      needs_price_review: "Requiere Revisión de Precio"
+      mark_reviewed: "Marcar como revisado"
 
   profiles:
     title: "Editar Perfil"
@@ -370,6 +372,7 @@ es:
         error: "No se pudo guardar la carta."
         prices_refreshed: "Precios actualizados: %{scryfall_ids_fetched} IDs de Scryfall completados, %{prices_updated} precios actualizados, %{prices_not_found} no encontrados en Card Kingdom."
         prices_refresh_started: "La actualización de precios se inició en segundo plano. Puede tardar unos minutos en completarse."
+        price_reviewed: "Precio de carta marcado como revisado."
       reservation_notes:
         created: "Nota agregada."
         access_denied: "Acceso denegado."

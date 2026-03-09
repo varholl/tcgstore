@@ -20,7 +20,7 @@
       <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('admin.cards.all_editions'), class: "form-select" %>
     </div>
     <div class="col-md-2">
-      <%= select_tag :price_source, options_for_select([[t('admin.cards.price_source_scryfall'), "scryfall"], [t('admin.cards.price_source_card_kingdom'), "card_kingdom"]], params[:price_source]), include_blank: t('admin.cards.all_price_sources'), class: "form-select" %>
+      <%= select_tag :price_source, options_for_select([[t('admin.cards.needs_price_review'), "needs_review"], [t('admin.cards.price_source_scryfall'), "scryfall"], [t('admin.cards.price_source_card_kingdom'), "card_kingdom"]], params[:price_source]), include_blank: t('admin.cards.all_price_sources'), class: "form-select" %>
     </div>
     <div class="col-md-2">
       <div class="form-check">
@@ -75,8 +75,9 @@
             <td><%= card.quantity %></td>
             <td>
               <%= card.price ? number_to_currency(card.price) : "—" %>
-              <% if card.price_source == "scryfall" %>
+              <% if card.price_source == "scryfall" && !card.price_reviewed? %>
                 <span class="badge bg-warning text-dark" title="<%= t('admin.cards.price_from_scryfall') %>"><i class="fas fa-exclamation-triangle"></i></span>
+                <%= button_to mark_price_reviewed_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success p-0 px-1", title: t('admin.cards.mark_reviewed') do %><i class="fas fa-check"></i><% end %>
               <% end %>
             </td>
             <td>

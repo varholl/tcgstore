@@ -67,7 +67,7 @@
             </small>
             <div class="mt-1">
               <small class="text-muted"><%= t('admin.reservations.current_price') %>: <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
-                <% if item.card.price_source == "scryfall" %>
+                <% if item.card.price_source == "scryfall" && !item.card.price_reviewed? %>
                   <span class="badge bg-warning text-dark" title="<%= t('admin.cards.price_from_scryfall') %>"><i class="fas fa-exclamation-triangle"></i></span>
                 <% end %>
               </small><br>
@@ -115,7 +115,7 @@
           <td><%= item.quantity %></td>
           <td>
             <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
-            <% if item.card.price_source == "scryfall" %>
+            <% if item.card.price_source == "scryfall" && !item.card.price_reviewed? %>
               <span class="badge bg-warning text-dark" title="<%= t('admin.cards.price_from_scryfall') %>"><i class="fas fa-exclamation-triangle"></i></span>
             <% end %>
           </td>

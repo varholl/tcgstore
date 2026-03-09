@@ -110,7 +110,7 @@ class CardPriceRefreshService
 
         price = card.foil.present? ? sp[:usd_foil] : sp[:usd]
         if price && price > 0
-          card.update_columns(price: price, price_source: "scryfall")
+          card.update_columns(price: price, price_source: "scryfall", price_reviewed: false)
           count += 1
         end
       end

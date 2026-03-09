@@ -34,6 +34,9 @@ Rails.application.routes.draw do
         get :search_scryfall
         post :refresh_prices
       end
+      member do
+        patch :mark_price_reviewed
+      end
     end
   end
 
