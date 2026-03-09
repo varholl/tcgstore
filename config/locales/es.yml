@@ -293,6 +293,10 @@ es:
         updated_desc: "Actualizado Recientemente"
       refresh_prices: "Actualizar Precios"
       refresh_prices_confirm: "Esto actualizará todos los precios de cartas desde Card Kingdom. ¿Continuar?"
+      all_price_sources: "Todas las Fuentes de Precio"
+      price_source_scryfall: "Scryfall (requiere revisión)"
+      price_source_card_kingdom: "Card Kingdom"
+      price_from_scryfall: "Precio de Scryfall — no disponible en Card Kingdom"
 
   profiles:
     title: "Editar Perfil"

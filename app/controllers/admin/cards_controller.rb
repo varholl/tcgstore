@@ -23,6 +23,7 @@ class Admin::CardsController < ApplicationController
     end
     @cards = @cards.where(edition: params[:edition]) if params[:edition].present?
     @cards = @cards.where(price: nil) if params[:no_price] == "1"
+    @cards = @cards.where(price_source: params[:price_source]) if params[:price_source].present?
 
     sort_key = SORT_OPTIONS.key?(params[:sort]) ? params[:sort] : "updated_desc"
     @cards = @cards.order(Arel.sql(SORT_OPTIONS[sort_key]))

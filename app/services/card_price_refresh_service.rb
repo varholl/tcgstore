@@ -71,7 +71,7 @@ class CardPriceRefreshService
       ck_price = ck_prices[[card.scryfall_id, is_foil]]
 
       if ck_price
-        card.update_column(:price, ck_price)
+        card.update_columns(price: ck_price, price_source: "card_kingdom")
         updated += 1
       else
         not_found += 1
@@ -109,7 +109,7 @@ class CardPriceRefreshService
 
         price = card.foil.present? ? sp[:usd_foil] : sp[:usd]
         if price && price > 0
-          card.update_column(:price, price)
+          card.update_columns(price: price, price_source: "scryfall")
           count += 1
         end
       end
