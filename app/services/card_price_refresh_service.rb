@@ -74,6 +74,7 @@ class CardPriceRefreshService
         card.update_columns(price: ck_price, price_source: "card_kingdom")
         updated += 1
       else
+        card.update_column(:price_source, nil)
         not_found += 1
       end
     end
@@ -81,9 +82,9 @@ class CardPriceRefreshService
     [updated, not_found]
   end
 
-  # Fallback: fetch prices from Scryfall for cards that still have no price
+  # Fallback: fetch prices from Scryfall for cards not found on Card Kingdom
   def backfill_prices_from_scryfall
-    cards = Card.where(price: nil).where.not(scryfall_id: [nil, ""]).to_a
+    cards = Card.where(price_source: nil).where.not(scryfall_id: [nil, ""]).to_a
     return 0 if cards.empty?
 
     count = 0
