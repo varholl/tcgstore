@@ -27,7 +27,60 @@
   </div>
 </div>
 
-<h4><%= t('admin.reservations.items_title') %></h4>
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h4 class="mb-0"><%= t('admin.reservations.items_title') %></h4>
+  <div class="btn-group btn-group-sm">
+    <%= link_to admin_reservation_path(@reservation, view: "list"), class: "btn #{params[:view] != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+      <%= t('cards.list') %>
+    <% end %>
+    <%= link_to admin_reservation_path(@reservation, view: "grid"), class: "btn #{params[:view] == 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
+      </svg>
+      <%= t('cards.grid') %>
+    <% end %>
+  </div>
+</div>
+
+<% if params[:view] == "grid" %>
+  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 mb-3">
+    <% @reservation.reservation_items.each do |item| %>
+      <% stock_short = (@reservation.pending? || @reservation.paid?) && item.card.quantity < item.quantity %>
+      <div class="col">
+        <div class="card h-100<%= ' foil-card' if item.card.foil.present? %><%= ' border-danger' if stock_short %>">
+          <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
+               class="card-img-top"
+               alt="<%= item.card.name %>"
+               loading="lazy"
+               onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
+          <div class="card-body p-2">
+            <h6 class="card-title mb-1"><%= item.card.name %></h6>
+            <small class="text-muted">
+              <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
+              <%= item.card.condition %>
+              <% if item.card.foil.present? %>
+                · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil') %></span>
+              <% end %>
+            </small>
+            <div class="mt-1">
+              <small class="text-muted"><%= t('admin.reservations.current_price') %>: <%= item.card.price ? number_to_currency(item.card.price) : "—" %></small><br>
+              <strong class="text-price"><%= t('admin.reservations.price') %>: <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></strong><br>
+              <small><%= t('admin.reservations.quantity') %>: <%= item.quantity %></small>
+            </div>
+            <% if stock_short %>
+              <span class="badge bg-danger mt-1" title="<%= t('admin.reservations.stock_warning_detail', in_stock: item.card.quantity, reserved: item.quantity) %>">
+                <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.low_stock') %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
 <div class="table-responsive">
   <table class="table table-striped">
     <thead class="table-dark">
@@ -36,6 +89,7 @@
         <th><%= t('admin.reservations.edition') %></th>
         <th><%= t('admin.reservations.condition') %></th>
         <th><%= t('admin.reservations.quantity') %></th>
+        <th><%= t('admin.reservations.current_price') %></th>
         <th><%= t('admin.reservations.price') %></th>
         <th><%= t('admin.reservations.subtotal') %></th>
       </tr>
@@ -55,6 +109,7 @@
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
           <td><%= item.quantity %></td>
+          <td><%= item.card.price ? number_to_currency(item.card.price) : "—" %></td>
           <td>
             <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %>
             <% if @reservation.pending? || @reservation.paid? %>
@@ -69,11 +124,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="5" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
+        <td colspan="6" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
       <tr>
-        <td colspan="5" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
+        <td colspan="6" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
         <td>
           <%= form_tag update_final_price_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-1" do %>
             <input type="number" name="final_price" step="0.01" min="0" value="<%= @reservation.final_price %>" class="form-control form-control-sm" style="width: 120px;" placeholder="—">
@@ -84,6 +139,7 @@
     </tfoot>
   </table>
 </div>
+<% end %>
 
 <% @reservation.reservation_items.each do |item| %>
   <div class="modal fade" id="editPriceModal<%= item.id %>" tabindex="-1" aria-labelledby="editPriceModalLabel<%= item.id %>" aria-hidden="true">

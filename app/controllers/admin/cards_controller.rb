@@ -3,12 +3,31 @@ class Admin::CardsController < ApplicationController
   before_action :require_admin
   before_action :set_card, only: [:edit, :update, :destroy]
 
+  SORT_OPTIONS = {
+    "name_asc"      => "name ASC",
+    "name_desc"     => "name DESC",
+    "price_asc"     => "price ASC NULLS LAST",
+    "price_desc"    => "price DESC NULLS LAST",
+    "edition_asc"   => "edition_name ASC, name ASC",
+    "edition_desc"  => "edition_name DESC, name ASC",
+    "quantity_asc"  => "quantity ASC",
+    "quantity_desc" => "quantity DESC",
+    "updated_desc"  => "updated_at DESC",
+  }.freeze
+
   def index
-    @cards = Card.order(updated_at: :desc)
+    @cards = Card.all
     if params[:search].present?
       search = "%#{params[:search]}%"
       @cards = @cards.where("name LIKE :q OR edition_name LIKE :q", q: search)
     end
+    @cards = @cards.where(edition: params[:edition]) if params[:edition].present?
+    @cards = @cards.where(price: nil) if params[:no_price] == "1"
+
+    sort_key = SORT_OPTIONS.key?(params[:sort]) ? params[:sort] : "updated_desc"
+    @cards = @cards.order(Arel.sql(SORT_OPTIONS[sort_key]))
+    @current_sort = sort_key
+
     @cards = @cards.page(params[:page]).per(20)
   end
 
@@ -63,7 +82,9 @@ class Admin::CardsController < ApplicationController
 
   def search_scryfall
     results = ScryfallSearchService.new(params[:query]).call
-    ck_prices = CardKingdomPriceService.pricelist
+
+    scryfall_ids = results.map { |c| c[:scryfall_id] }
+    ck_prices = CardKingdomPriceService.lookup_batch(scryfall_ids)
 
     results.each do |card|
       sid = card[:scryfall_id]

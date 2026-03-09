@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     resources :reservations, only: [:index, :show, :new, :create] do
       collection do
         get :search_cards
+        get :import
+        post :create_import
       end
       member do
         patch :pay

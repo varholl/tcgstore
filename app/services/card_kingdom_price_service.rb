@@ -12,6 +12,16 @@ class CardKingdomPriceService
     pricelist[[scryfall_id, foil]]
   end
 
+  # Look up prices for a small set of scryfall_ids without caching the full pricelist.
+  def self.lookup_batch(scryfall_ids)
+    target_ids = scryfall_ids.to_set
+    results = {}
+    pricelist.each do |key, price|
+      results[key] = price if target_ids.include?(key[0])
+    end
+    results
+  end
+
   def self.fetch_pricelist
     uri = URI(API_URL)
     http = Net::HTTP.new(uri.host, uri.port)

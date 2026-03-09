@@ -47,6 +47,67 @@ class Admin::ReservationsController < ApplicationController
     end
   end
 
+  def import
+    @users = User.where(admin: false).order(:name)
+  end
+
+  def create_import
+    result = CardListParser.parse_and_match(params[:card_list] || "")
+
+    if result[:matched].empty?
+      redirect_to import_admin_reservations_path, alert: t("controllers.admin.reservations.import_no_matches")
+      return
+    end
+
+    items = result[:matched].map do |m|
+      { card_id: m[:card].id, quantity: m[:qty] }
+    end
+
+    creator = AdminReservationCreator.new(
+      user_id: params.dig(:reservation, :user_id),
+      guest_name: params.dig(:reservation, :guest_name),
+      guest_contact: params.dig(:reservation, :guest_contact),
+      message: params.dig(:reservation, :message),
+      items: items
+    )
+
+    begin
+      if creator.call
+        # Import summary note with both list price and DB price
+        summary_lines = result[:matched].map do |m|
+          card = m[:card]
+          foil_tag = card.foil.present? ? " (Foil)" : ""
+          "- #{card.name}#{foil_tag} x#{m[:qty]} — List: $#{m[:price].to_f} | DB: $#{card.price&.to_f}"
+        end
+        summary_body = "Import summary:\n#{summary_lines.join("\n")}"
+
+        if result[:unmatched].any?
+          unmatched_lines = result[:unmatched].map do |u|
+            reason = u[:reason] == :parse_error ? "PARSE ERROR" : "NOT FOUND"
+            "- Line #{u[:line_number]}: #{u[:raw_line]} (#{reason})"
+          end
+          summary_body += "\n\nUnmatched cards:\n#{unmatched_lines.join("\n")}"
+        end
+
+        creator.reservation.reservation_notes.create!(body: summary_body)
+
+        matched_count = result[:matched].size
+        unmatched_count = result[:unmatched].size
+        flash_msg = t("controllers.admin.reservations.import_created",
+                       matched: matched_count, unmatched: unmatched_count)
+        redirect_to admin_reservation_path(creator.reservation), notice: flash_msg
+      else
+        if creator.unavailable_items.any?
+          redirect_to import_admin_reservations_path, alert: t("controllers.admin.reservations.unavailable")
+        else
+          redirect_to import_admin_reservations_path, alert: t("controllers.admin.reservations.no_items")
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to import_admin_reservations_path, alert: e.record.errors.full_messages.join(", ")
+    end
+  end
+
   def search_cards
     @cards = Card.search_by_name(params[:query]).limit(20)
     render partial: "card_search_results", locals: { cards: @cards }

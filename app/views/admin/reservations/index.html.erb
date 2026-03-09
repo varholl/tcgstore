@@ -1,7 +1,10 @@
 <%= render layout: 'layouts/admin_sidebar' do %>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1><%= t('admin.reservations.title') %></h1>
-  <%= link_to t('admin.reservations.create_new'), new_admin_reservation_path, class: "btn btn-primary" %>
+  <div class="d-flex gap-2">
+    <%= link_to t('admin.reservations.create_new'), new_admin_reservation_path, class: "btn btn-primary" %>
+    <%= link_to t('admin.reservations.import_from_list'), import_admin_reservations_path, class: "btn btn-outline-primary" %>
+  </div>
 </div>
 
 <ul class="nav nav-tabs mb-4">

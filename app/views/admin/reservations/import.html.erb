@@ -1,0 +1,75 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<h1 class="mb-4"><%= t('admin.reservations.import_title') %></h1>
+
+<%= form_with url: create_import_admin_reservations_path, method: :post, local: true,
+     data: { controller: "admin-card-selector" } do |f| %>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5><%= t('admin.reservations.customer_type') %></h5>
+
+      <div class="form-check form-check-inline mb-3">
+        <input type="radio" name="customer_type" value="existing" id="customer_existing"
+               class="form-check-input" checked
+               data-action="change->admin-card-selector#toggleCustomerType">
+        <label class="form-check-label" for="customer_existing"><%= t('admin.reservations.existing_user') %></label>
+      </div>
+      <div class="form-check form-check-inline mb-3">
+        <input type="radio" name="customer_type" value="guest" id="customer_guest"
+               class="form-check-input"
+               data-action="change->admin-card-selector#toggleCustomerType">
+        <label class="form-check-label" for="customer_guest"><%= t('admin.reservations.guest') %></label>
+      </div>
+
+      <div data-admin-card-selector-target="userFields">
+        <div class="mb-3">
+          <label for="reservation_user_id" class="form-label"><%= t('admin.reservations.select_user') %></label>
+          <select name="reservation[user_id]" id="reservation_user_id" class="form-select">
+            <option value=""></option>
+            <% @users.each do |user| %>
+              <option value="<%= user.id %>"><%= user.name %> (<%= user.email %>)</option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <div data-admin-card-selector-target="guestFields" class="d-none">
+        <div class="mb-3">
+          <label for="reservation_guest_name" class="form-label"><%= t('admin.reservations.guest_name_label') %></label>
+          <input type="text" name="reservation[guest_name]" id="reservation_guest_name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="reservation_guest_contact" class="form-label"><%= t('admin.reservations.guest_contact_label') %></label>
+          <input type="text" name="reservation[guest_contact]" id="reservation_guest_contact" class="form-control">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5><%= t('admin.reservations.card_list_label') %></h5>
+      <p class="text-muted small"><%= t('admin.reservations.card_list_hint') %></p>
+
+      <div class="mb-3">
+        <textarea name="card_list" id="card_list" class="form-control font-monospace"
+                  rows="15" placeholder="<%= t('admin.reservations.card_list_placeholder') %>"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="reservation_message" class="form-label"><%= t('admin.reservations.message_label') %></label>
+        <textarea name="reservation[message]" id="reservation_message" class="form-control" rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit t('admin.reservations.import_submit'), class: "btn btn-primary" %>
+    <%= link_to t('admin.reservations.back'), admin_reservations_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
+<% end %>
