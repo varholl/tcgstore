@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
 
+  constraints ->(request) { request.env["warden"].user&.admin? } do
+    mount MissionControl::Jobs::Engine, at: "/jobs"
+  end
+
   resources :cards, only: [:index]
   resources :cart_items, only: [:index, :create, :update, :destroy]
 

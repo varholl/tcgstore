@@ -22,5 +22,8 @@ module Tcgstore
 
     config.i18n.default_locale = :es
     config.i18n.available_locales = [:es, :en]
+
+    config.active_job.queue_adapter = :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :queue } }
   end
 end

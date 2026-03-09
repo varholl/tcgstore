@@ -365,6 +365,7 @@ es:
         cannot_delete_with_reservations: "No se puede eliminar una carta que tiene artículos de reserva."
         error: "No se pudo guardar la carta."
         prices_refreshed: "Precios actualizados: %{scryfall_ids_fetched} IDs de Scryfall completados, %{prices_updated} precios actualizados, %{prices_not_found} no encontrados en Card Kingdom."
+        prices_refresh_started: "La actualización de precios se inició en segundo plano. Puede tardar unos minutos en completarse."
       reservation_notes:
         created: "Nota agregada."
         access_denied: "Acceso denegado."

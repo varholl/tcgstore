@@ -71,13 +71,8 @@ class Admin::CardsController < ApplicationController
   end
 
   def refresh_prices
-    result = CardPriceRefreshService.new.call
-    redirect_to admin_cards_path, notice: t(
-      "controllers.admin.cards.prices_refreshed",
-      scryfall_ids_fetched: result[:scryfall_ids_fetched],
-      prices_updated: result[:prices_updated],
-      prices_not_found: result[:prices_not_found]
-    )
+    CardPriceRefreshJob.perform_later
+    redirect_to admin_cards_path, notice: t("controllers.admin.cards.prices_refresh_started")
   end
 
   def search_scryfall

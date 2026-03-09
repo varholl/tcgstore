@@ -365,6 +365,7 @@ en:
         cannot_delete_with_reservations: "Cannot delete a card that has reservation items."
         error: "Could not save the card."
         prices_refreshed: "Prices refreshed: %{scryfall_ids_fetched} Scryfall IDs backfilled, %{prices_updated} prices updated, %{prices_not_found} not found on Card Kingdom."
+        prices_refresh_started: "Price refresh started in the background. It may take a few minutes to complete."
       reservation_notes:
         created: "Note added."
         access_denied: "Access denied."

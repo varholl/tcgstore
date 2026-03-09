@@ -37,3 +37,6 @@ gem 'omniauth-rails_csrf_protection'
 gem 'kaminari'
 
 gem "dockerfile-rails", ">= 1.7", :group => :development
+
+gem "solid_queue"
+gem "mission_control-jobs"
