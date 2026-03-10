@@ -80,6 +80,8 @@ es:
     add_to_cart: "Agregar al Carrito"
     sign_in_to_buy: "Iniciá sesión para comprar"
     foil: "Foil"
+    how_it_works_panel:
+      title: "¿Cómo funcionan las reservas?"
     sort:
       name_asc: "Nombre (A-Z)"
       name_desc: "Nombre (Z-A)"

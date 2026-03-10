@@ -57,7 +57,23 @@ footer.bg-dark {
 /* Compact list view table */
 .table td, .table th {
   font-size: 0.85rem;
-  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .table td, .table th {
+    white-space: nowrap;
+  }
+}
+
+/* Navbar icon separator on mobile */
+.navbar-icons-separator {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (min-width: 992px) {
+  .navbar-icons-separator {
+    border-top: none;
+  }
 }
 
 /* Admin navigation */

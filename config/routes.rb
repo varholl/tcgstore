@@ -5,7 +5,11 @@ Rails.application.routes.draw do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 
-  resources :cards, only: [:index]
+  resources :cards, only: [:index] do
+    collection do
+      post :dismiss_how_it_works
+    end
+  end
   resources :cart_items, only: [:index, :create, :update, :destroy]
 
   resources :reservations, only: [:index, :show, :create] do

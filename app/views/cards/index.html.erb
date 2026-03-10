@@ -1,43 +1,63 @@
 <h1 class="mb-4"><%= t('cards.title') %></h1>
 
+<% if @show_how_it_works %>
+  <div class="alert alert-info alert-dismissible fade show mb-4" role="alert"
+       data-controller="dismiss-panel"
+       data-dismiss-panel-url-value="<%= dismiss_how_it_works_cards_path %>">
+    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> <%= t('cards.how_it_works_panel.title') %></h5>
+    <ol class="mb-2">
+      <li><strong><%= t('pages.how_it_works.steps.step_1.title') %></strong> — <%= t('pages.how_it_works.steps.step_1.description') %></li>
+      <li><strong><%= t('pages.how_it_works.steps.step_2.title') %></strong> — <%= t('pages.how_it_works.steps.step_2.description') %></li>
+      <li><strong><%= t('pages.how_it_works.steps.step_3.title') %></strong> — <%= t('pages.how_it_works.steps.step_3.description') %></li>
+      <li><strong><%= t('pages.how_it_works.steps.step_4.title') %></strong> — <%= t('pages.how_it_works.steps.step_4.description') %></li>
+      <li><strong><%= t('pages.how_it_works.steps.step_5.title') %></strong> — <%= t('pages.how_it_works.steps.step_5.description') %></li>
+    </ol>
+    <button type="button" class="btn-close" aria-label="Close"
+            data-action="dismiss-panel#dismiss"></button>
+  </div>
+<% end %>
+
 <%= form_tag cards_path, method: :get, class: "row g-3 mb-4" do %>
-  <div class="col-md-4">
+  <div class="col-12 col-md-4">
     <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
   </div>
-  <div class="col-md-3">
+  <div class="col-12 col-md-3">
     <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select" %>
   </div>
-  <div class="col-auto">
+  <div class="col-12 col-md-auto">
     <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
     <%= link_to t('cards.clear'), cards_path(view: params[:view]), class: "btn btn-outline-secondary ms-1" %>
   </div>
   <%= hidden_field_tag :view, params[:view] %>
 <% end %>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
   <p class="text-muted mb-0"><%= t('cards.cards_found', count: @cards.total_count) %></p>
-  <div class="d-flex align-items-center gap-2">
-    <label class="text-muted mb-0 d-flex align-items-center gap-1" for="sort_select">
-      <i class="fas fa-arrow-down-short-wide"></i>
-    </label>
-    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm", style: "width: auto;", onchange: "window.location.href='#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString()" %>
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <div class="d-flex align-items-center gap-1">
+      <label class="text-muted mb-0 d-flex align-items-center" for="sort_select">
+        <i class="fas fa-arrow-down-short-wide"></i>
+      </label>
+      <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm", style: "width: auto;", onchange: "Turbo.visit('#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString(), { frame: 'cards-list' })" %>
+    </div>
     <div class="btn-group" role="group">
-    <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{params[:view] != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-      </svg>
-      <%= t('cards.list') %>
-    <% end %>
-    <%= link_to cards_path(request.query_parameters.merge(view: "grid")), class: "btn btn-sm #{params[:view] == 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
-      </svg>
-      <%= t('cards.grid') %>
-    <% end %>
+      <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{params[:view] != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+        <%= t('cards.list') %>
+      <% end %>
+      <%= link_to cards_path(request.query_parameters.merge(view: "grid")), class: "btn btn-sm #{params[:view] == 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
+        </svg>
+        <%= t('cards.grid') %>
+      <% end %>
     </div>
   </div>
 </div>
 
+<turbo-frame id="cards-list">
 <% if params[:view] == "grid" %>
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
     <% @cards.each do |card| %>
@@ -69,7 +89,7 @@
           </div>
           <div class="card-footer p-2">
             <% if available <= 0 %>
-              <button class="btn btn-sm btn-secondary w-100" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i></button>
+              <button class="btn btn-sm btn-secondary w-100" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
             <% elsif user_signed_in? %>
               <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
             <% else %>
@@ -81,15 +101,56 @@
     <% end %>
   </div>
 <% else %>
-  <div class="table-responsive">
+  <%# Mobile: stacked cards %>
+  <div class="d-md-none d-flex flex-column gap-2">
+    <% @cards.each do |card| %>
+      <% available = card.quantity - (@reserved_quantities[card.id] || 0) %>
+      <div class="card<%= ' foil-card' if card.foil.present? %>">
+        <div class="card-body p-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong><%= card.name %></strong>
+              <% if card.foil.present? %>
+                <i class="fa-solid fa-star" style="color: #d4a017;"></i>
+              <% end %>
+              <br>
+              <small class="text-muted">
+                <%= card.edition_name || card.edition.upcase %> · <%= card.condition %> · <%= card.language %> · #<%= card.collector_number %>
+              </small>
+            </div>
+            <div class="text-end ms-2 text-nowrap">
+              <% if card.price %>
+                <strong class="text-price"><%= number_to_currency(card.price) %></strong>
+              <% else %>
+                <small class="text-muted"><%= t('cards.no_price') %></small>
+              <% end %>
+              <br>
+              <small class="text-muted"><%= t('cards.qty') %>: <%= available %></small>
+            </div>
+          </div>
+          <div class="mt-2">
+            <% if available <= 0 %>
+              <button class="btn btn-sm btn-secondary w-100" disabled><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+            <% elsif user_signed_in? %>
+              <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
+            <% else %>
+              <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <%# Desktop: table %>
+  <div class="d-none d-md-block table-responsive">
     <table class="table table-hover">
       <thead class="table-dark">
         <tr>
           <th><%= t('cards.name') %></th>
           <th><%= t('cards.edition') %></th>
-          <th><%= t('cards.condition') %></th>
-          <th><%= t('cards.language') %></th>
-          <th><%= t('cards.collector_number') %></th>
+          <th class="d-none d-lg-table-cell"><%= t('cards.condition') %></th>
+          <th class="d-none d-lg-table-cell"><%= t('cards.language') %></th>
+          <th class="d-none d-lg-table-cell"><%= t('cards.collector_number') %></th>
           <th><%= t('cards.price') %></th>
           <th><%= t('cards.qty') %></th>
           <th></th>
@@ -100,15 +161,15 @@
           <tr>
             <td><%= card.name %><% if card.foil.present? %> <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil') %></span><% end %></td>
             <td><%= card.edition_name || card.edition.upcase %></td>
-            <td><%= card.condition %></td>
-            <td><%= card.language %></td>
-            <td><%= card.collector_number %></td>
+            <td class="d-none d-lg-table-cell"><%= card.condition %></td>
+            <td class="d-none d-lg-table-cell"><%= card.language %></td>
+            <td class="d-none d-lg-table-cell"><%= card.collector_number %></td>
             <td><%= card.price ? number_to_currency(card.price) : "—" %></td>
             <% available = card.quantity - (@reserved_quantities[card.id] || 0) %>
             <td><%= available %></td>
             <td>
               <% if available <= 0 %>
-                <button class="btn btn-sm btn-secondary" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i></button>
+                <button class="btn btn-sm btn-secondary" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
               <% elsif user_signed_in? %>
                 <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i><% end %>
               <% else %>
@@ -123,3 +184,4 @@
 <% end %>
 
 <%= paginate @cards %>
+</turbo-frame>

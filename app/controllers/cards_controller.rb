@@ -32,5 +32,20 @@ class CardsController < ApplicationController
       .pluck(:card_id)
 
     @cards = @cards.where("quantity > 0 OR id IN (?)", unfulfilled_card_ids.presence || [0])
+
+    @show_how_it_works = if user_signed_in?
+                           !current_user.dismissed_how_it_works
+                         else
+                           cookies[:dismissed_how_it_works].blank?
+                         end
+  end
+
+  def dismiss_how_it_works
+    if user_signed_in?
+      current_user.update(dismissed_how_it_works: true)
+    else
+      cookies[:dismissed_how_it_works] = { value: "1", expires: 1.year.from_now }
+    end
+    head :ok
   end
 end

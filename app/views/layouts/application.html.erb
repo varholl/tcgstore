@@ -20,21 +20,21 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
+          <ul class="navbar-nav me-auto align-items-lg-center">
             <li class="nav-item">
               <%= link_to t('nav.cards'), cards_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
               <%= link_to t('nav.about_this_site'), about_path, class: "nav-link" %>
             </li>
-<li class="nav-item">
+            <li class="nav-item d-flex align-items-center">
               <%= link_to how_it_works_path, class: "btn btn-outline-light btn-sm" do %>
                 <i class="fas fa-info-circle me-1"></i><%= t('nav.how_it_works') %>
               <% end %>
             </li>
           </ul>
-          <ul class="navbar-nav">
-            <li class="nav-item">
+          <ul class="navbar-nav align-items-lg-center flex-row flex-wrap gap-1 mt-2 mt-lg-0 pt-2 pt-lg-0 navbar-icons-separator">
+            <li class="nav-item d-flex align-items-center">
               <select class="form-select form-select-sm" style="width: auto;" onchange="fetch(this.value, { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } }).then(() => window.location.reload())">
                 <option value="<%= set_language_path(:es) %>" <%= 'selected' if I18n.locale == :es %>>ES</option>
                 <option value="<%= set_language_path(:en) %>" <%= 'selected' if I18n.locale == :en %>>EN</option>
@@ -90,18 +90,24 @@
     </nav>
 
     <div class="container flex-grow-1">
-      <% if notice.present? %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <%= notice %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <% end %>
-      <% if alert.present? %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <%= alert %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <% end %>
+      <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+        <% if notice.present? %>
+          <div class="toast align-items-center text-bg-success border-0" role="alert" data-controller="toast">
+            <div class="d-flex">
+              <div class="toast-body"><%= notice %></div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="toast align-items-center text-bg-danger border-0" role="alert" data-controller="toast">
+            <div class="d-flex">
+              <div class="toast-body"><%= alert %></div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        <% end %>
+      </div>
 
       <%= yield %>
     </div>
@@ -111,7 +117,7 @@
         <div class="row align-items-center">
           <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
             <span>&copy; <%= Date.today.year %> Varholl Garage Sale</span>
-            <span class="text-secondary ms-2"><%= t('footer.tagline') %></span>
+            <span class="text-light opacity-75 ms-2"><%= t('footer.tagline') %></span>
           </div>
           <div class="col-md-6 text-center text-md-end">
             <a href="mailto:matias.laino@gmail.com" class="text-light text-decoration-none me-3">
