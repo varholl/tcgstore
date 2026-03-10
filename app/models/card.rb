@@ -8,6 +8,9 @@ class Card < ApplicationRecord
   scope :filter_by_edition, ->(edition) { where(edition: edition) if edition.present? }
 
   def available_quantity
-    quantity - reservation_items.joins(:reservation).where(reservations: { status: "pending" }).sum(:quantity)
+    reserved = reservation_items.joins(:reservation)
+      .where(reservations: { status: %w[pending paid fulfilled] })
+      .sum(:quantity)
+    quantity - reserved
   end
 end
