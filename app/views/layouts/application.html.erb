@@ -14,8 +14,10 @@
 
   <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
-      <div class="container">
-        <%= link_to t('nav.brand'), root_path, class: "navbar-brand" %>
+      <div class="container align-items-center">
+        <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
+          <%= image_tag "logo.png", alt: t('nav.brand'), height: 80 %>
+        <% end %>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
