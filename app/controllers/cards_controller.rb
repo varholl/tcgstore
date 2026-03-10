@@ -9,7 +9,7 @@ class CardsController < ApplicationController
   }.freeze
 
   def index
-    @cards = Card.all
+    @cards = Card.where("quantity > 0")
     @cards = @cards.search_by_name(params[:search]) if params[:search].present?
     @cards = @cards.filter_by_edition(params[:edition]) if params[:edition].present?
 
@@ -20,18 +20,16 @@ class CardsController < ApplicationController
     card_ids = @cards.map(&:id)
     @reserved_quantities = ReservationItem
       .joins(:reservation)
-      .where(reservations: { status: %w[pending paid fulfilled] }, card_id: card_ids)
+      .where(reservations: { status: %w[pending paid] }, card_id: card_ids)
       .group(:card_id)
       .sum(:quantity)
 
-    # Hide out-of-stock cards unless they have unfulfilled (pending/paid) reservations
-    unfulfilled_card_ids = ReservationItem
-      .joins(:reservation)
-      .where(reservations: { status: ["pending", "paid"] }, card_id: card_ids)
-      .distinct
-      .pluck(:card_id)
-
-    @cards = @cards.where("quantity > 0 OR id IN (?)", unfulfilled_card_ids.presence || [0])
+    # Hide cards with no available quantity (fully reserved)
+    fully_reserved_ids = @reserved_quantities.select { |card_id, reserved|
+      card = @cards.find { |c| c.id == card_id }
+      card && card.quantity <= reserved
+    }.keys
+    @cards = @cards.where.not(id: fully_reserved_ids) if fully_reserved_ids.any?
 
     @show_how_it_works = if user_signed_in?
                            !current_user.dismissed_how_it_works

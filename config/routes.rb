@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       member do
         patch :pay
         patch :fulfill
+        patch :revert_to_paid
         patch :expire
         patch :update_final_price
         patch :update_item_price

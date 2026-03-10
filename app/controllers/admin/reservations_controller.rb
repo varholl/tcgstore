@@ -134,11 +134,32 @@ class Admin::ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
 
     if @reservation.paid?
-      @reservation.update!(status: :fulfilled)
+      ActiveRecord::Base.transaction do
+        @reservation.update!(status: :fulfilled)
+        @reservation.reservation_items.includes(:card).each do |item|
+          item.card.decrement!(:quantity, item.quantity)
+        end
+      end
       ReservationMailer.fulfilled(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.fulfilled')
     else
       redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.fulfill_error')
+    end
+  end
+
+  def revert_to_paid
+    @reservation = Reservation.find(params[:id])
+
+    if @reservation.fulfilled?
+      ActiveRecord::Base.transaction do
+        @reservation.reservation_items.includes(:card).each do |item|
+          item.card.increment!(:quantity, item.quantity)
+        end
+        @reservation.update!(status: :paid)
+      end
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.reverted_to_paid')
+    else
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.revert_error')
     end
   end
 
