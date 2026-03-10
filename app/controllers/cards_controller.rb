@@ -13,7 +13,12 @@ class CardsController < ApplicationController
     @cards = @cards.search_by_name(params[:search]) if params[:search].present?
     @cards = @cards.filter_by_edition(params[:edition]) if params[:edition].present?
 
-    sort_key = SORT_OPTIONS.key?(params[:sort]) ? params[:sort] : "name_asc"
+    if params[:sort].present? && SORT_OPTIONS.key?(params[:sort])
+      sort_key = params[:sort]
+      cookies[:cards_sort] = { value: sort_key, expires: 1.year.from_now }
+    else
+      sort_key = SORT_OPTIONS.key?(cookies[:cards_sort]) ? cookies[:cards_sort] : "price_desc"
+    end
     @cards = @cards.order(Arel.sql(SORT_OPTIONS[sort_key][:order])).page(params[:page]).per(50)
     @current_sort = sort_key
 
@@ -30,6 +35,13 @@ class CardsController < ApplicationController
       card && card.quantity <= reserved
     }.keys
     @cards = @cards.where.not(id: fully_reserved_ids) if fully_reserved_ids.any?
+
+    if params[:view].present? && %w[list grid].include?(params[:view])
+      cookies[:cards_view] = { value: params[:view], expires: 1.year.from_now }
+      @current_view = params[:view]
+    else
+      @current_view = %w[list grid].include?(cookies[:cards_view]) ? cookies[:cards_view] : "grid"
+    end
 
     @show_how_it_works = if user_signed_in?
                            !current_user.dismissed_how_it_works
