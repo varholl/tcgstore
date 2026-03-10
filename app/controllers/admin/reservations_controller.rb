@@ -151,12 +151,7 @@ class Admin::ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
 
     if @reservation.fulfilled?
-      ActiveRecord::Base.transaction do
-        @reservation.reservation_items.includes(:card).each do |item|
-          item.card.increment!(:quantity, item.quantity)
-        end
-        @reservation.update!(status: :paid)
-      end
+      @reservation.update!(status: :paid)
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.reverted_to_paid')
     else
       redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.revert_error')
