@@ -115,7 +115,7 @@ class Admin::CardsController < ApplicationController
   end
 
   def card_update_params
-    params.require(:card).permit(:quantity, :foil, :price)
+    params.require(:card).permit(:quantity, :foil, :price, :condition, :language)
   end
 
   def require_admin

@@ -429,6 +429,13 @@ en:
       subtotal: "Subtotal"
       total: "Total: %{amount}"
 
+  languages:
+    english: "English"
+    spanish: "Spanish"
+    japanese: "Japanese"
+    italian: "Italian"
+    portuguese: "Portuguese"
+
   footer:
     tagline: "MTG singles & more"
 

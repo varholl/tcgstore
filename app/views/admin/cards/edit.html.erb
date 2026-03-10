@@ -23,6 +23,9 @@
       <dt class="col-sm-3"><%= t('admin.cards.language') %></dt>
       <dd class="col-sm-9"><%= @card.language %></dd>
 
+      <dt class="col-sm-3"><%= t('admin.cards.foil') %></dt>
+      <dd class="col-sm-9"><%= @card.foil.present? ? "Yes" : "No" %></dd>
+
       <dt class="col-sm-3">Scryfall ID</dt>
       <dd class="col-sm-9"><%= @card.scryfall_id %></dd>
     </dl>
@@ -71,6 +74,20 @@
       <div class="form-check mt-4 pt-2">
         <%= f.check_box :foil, { class: "form-check-input", checked: @card.foil.present? }, "Yes", "" %>
         <%= f.label :foil, t('admin.cards.foil'), class: "form-check-label" %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= f.label :condition, t('admin.cards.condition'), class: "form-label" %>
+        <%= f.select :condition, %w[NM LP MP HP DMG], {}, class: "form-select" %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= f.label :language, t('admin.cards.language'), class: "form-label" %>
+        <%= f.select :language, %w[English Spanish Japanese Italian Portuguese].map { |l| [t("languages.#{l.downcase}"), l] }, {}, class: "form-select" %>
       </div>
     </div>
   </div>
