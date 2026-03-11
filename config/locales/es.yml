@@ -79,9 +79,9 @@ es:
     out_of_stock: "Sin Stock"
     add_to_cart: "Agregar al Carrito"
     sign_in_to_buy: "Iniciá sesión para comprar"
-    foil: "Foil"
-    all_cards: "Todas las Cartas"
-    foil_only: "Solo Foil"
+    foil: "Foil / No-Foil"
+    all_cards: "★ Ambas"
+    foil_only: "★ Solo Foil"
     non_foil_only: "Solo No-Foil"
     how_it_works_panel:
       title: "¿Cómo funcionan las reservas?"

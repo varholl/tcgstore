@@ -1,0 +1,23 @@
+<%= form_tag cards_path, method: :get do %>
+  <div class="mb-3">
+    <%= label_tag :search, t('cards.search_placeholder'), class: "form-label fw-semibold" %>
+    <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag :edition, t('cards.edition'), class: "form-label fw-semibold" %>
+    <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag :foil, t('cards.foil'), class: "form-label fw-semibold" %>
+    <%= select_tag :foil, options_for_select([[t('cards.foil_only'), "foil"], [t('cards.non_foil_only'), "non_foil"]], params[:foil]), include_blank: t('cards.all_cards'), class: "form-select" %>
+  </div>
+
+  <%= hidden_field_tag :view, @current_view %>
+
+  <div class="d-grid gap-2">
+    <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
+    <%= link_to t('cards.clear'), cards_path(view: @current_view), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

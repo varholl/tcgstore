@@ -79,9 +79,9 @@ en:
     out_of_stock: "Out of Stock"
     add_to_cart: "Add to Cart"
     sign_in_to_buy: "Sign in to buy"
-    foil: "Foil"
-    all_cards: "All Cards"
-    foil_only: "Foil Only"
+    foil: "Foil / Non-Foil"
+    all_cards: "★ Both"
+    foil_only: "★ Foil Only"
     non_foil_only: "Non-Foil Only"
     how_it_works_panel:
       title: "How do reservations work?"
