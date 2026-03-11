@@ -2,7 +2,7 @@ class ReservationsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @reservations = current_user.reservations.order(created_at: :desc).page(params[:page]).per(20)
+    @reservations = current_user.reservations.includes(:reservation_items).order(created_at: :desc).page(params[:page]).per(20)
   end
 
   def show
@@ -26,7 +26,7 @@ class ReservationsController < ApplicationController
   def cancel
     @reservation = current_user.reservations.find(params[:id])
 
-    if @reservation.pending?
+    if @reservation.pending? || @reservation.prepared?
       @reservation.update!(status: :cancelled)
       ReservationMailer.cancelled(@reservation).deliver_later
       redirect_to reservations_path, notice: t('controllers.reservations.cancelled')

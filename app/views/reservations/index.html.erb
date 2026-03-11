@@ -7,6 +7,7 @@
         <tr>
           <th><%= t('reservations.date') %></th>
           <th><%= t('reservations.items_count') %></th>
+          <th><%= t('reservations.total') %></th>
           <th><%= t('reservations.status') %></th>
           <th></th>
         </tr>
@@ -16,8 +17,9 @@
           <tr>
             <td><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
+            <td><%= number_to_currency(reservation.total_price) %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+              <% status_colors = { "pending" => "warning", "prepared" => "primary", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td>

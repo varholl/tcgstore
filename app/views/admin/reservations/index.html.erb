@@ -7,15 +7,16 @@
   </div>
 </div>
 
+<% active_status = params[:status].presence || "pending" %>
 <ul class="nav nav-tabs mb-4">
-  <li class="nav-item">
-    <%= link_to t('admin.reservations.all'), admin_reservations_path, class: "nav-link #{params[:status].blank? ? 'active' : ''}" %>
-  </li>
   <% Reservation.statuses.keys.each do |status| %>
     <li class="nav-item">
-      <%= link_to t("statuses.#{status}"), admin_reservations_path(status: status), class: "nav-link #{params[:status] == status ? 'active' : ''}" %>
+      <%= link_to t("statuses.#{status}"), admin_reservations_path(status: status), class: "nav-link #{active_status == status ? 'active' : ''}" %>
     </li>
   <% end %>
+  <li class="nav-item">
+    <%= link_to t('admin.reservations.all'), admin_reservations_path(status: "all"), class: "nav-link #{active_status == 'all' ? 'active' : ''}" %>
+  </li>
 </ul>
 
 <% if @reservations.any? %>
@@ -28,6 +29,7 @@
           <th><%= t('admin.reservations.email') %></th>
           <th><%= t('admin.reservations.phone') %></th>
           <th><%= t('admin.reservations.items_count') %></th>
+          <th><%= t('admin.reservations.total') %></th>
           <th><%= t('admin.reservations.status') %></th>
           <th></th>
         </tr>
@@ -45,8 +47,9 @@
             <td><%= reservation.display_email %></td>
             <td><%= reservation.display_phone %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
+            <td><%= number_to_currency(reservation.total_price) %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+              <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td>

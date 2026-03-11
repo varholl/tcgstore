@@ -24,6 +24,7 @@ Rails.application.routes.draw do
         post :create_import
       end
       member do
+        patch :prepare
         patch :pay
         patch :fulfill
         patch :revert_to_paid

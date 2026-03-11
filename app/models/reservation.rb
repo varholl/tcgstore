@@ -3,7 +3,11 @@ class Reservation < ApplicationRecord
   has_many :reservation_items, dependent: :destroy
   has_many :reservation_notes, dependent: :destroy
 
-  enum :status, { pending: "pending", paid: "paid", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
+  enum :status, { pending: "pending", prepared: "prepared", paid: "paid", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
+
+  def total_price
+    final_price.presence || reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }
+  end
 
   validates :message, length: { maximum: 1000 }
   validates :guest_name, :guest_contact, presence: true, unless: :user_id?

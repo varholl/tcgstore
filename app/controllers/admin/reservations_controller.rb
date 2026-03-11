@@ -3,8 +3,14 @@ class Admin::ReservationsController < ApplicationController
   before_action :require_admin
 
   def index
-    @reservations = Reservation.includes(:user).order(created_at: :desc)
-    @reservations = @reservations.where(status: params[:status]) if params[:status].present? && Reservation.statuses.key?(params[:status])
+    @reservations = Reservation.includes(:user, :reservation_items).order(created_at: :desc)
+    if params[:status] == "all"
+      # show all
+    elsif params[:status].present? && Reservation.statuses.key?(params[:status])
+      @reservations = @reservations.where(status: params[:status])
+    else
+      @reservations = @reservations.where(status: :pending)
+    end
     @reservations = @reservations.page(params[:page]).per(20)
   end
 
@@ -119,10 +125,21 @@ class Admin::ReservationsController < ApplicationController
     render partial: "add_item_search_results", locals: { cards: @cards, reservation: @reservation }
   end
 
-  def pay
+  def prepare
     @reservation = Reservation.find(params[:id])
 
     if @reservation.pending?
+      @reservation.update!(status: :prepared)
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.prepared')
+    else
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.prepare_error')
+    end
+  end
+
+  def pay
+    @reservation = Reservation.find(params[:id])
+
+    if @reservation.prepared?
       @reservation.update!(status: :paid)
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.paid')
     else
@@ -168,7 +185,7 @@ class Admin::ReservationsController < ApplicationController
   def expire
     @reservation = Reservation.find(params[:id])
 
-    if @reservation.pending?
+    if @reservation.pending? || @reservation.prepared?
       @reservation.update!(status: :expired, message: params[:message].presence)
       ReservationMailer.expired(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.expired')
@@ -186,7 +203,7 @@ class Admin::ReservationsController < ApplicationController
   def add_item
     @reservation = Reservation.find(params[:id])
 
-    unless @reservation.pending?
+    unless @reservation.pending? || @reservation.prepared?
       redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.add_item_error")
       return
     end
@@ -213,7 +230,7 @@ class Admin::ReservationsController < ApplicationController
   def remove_item
     @reservation = Reservation.find(params[:id])
 
-    unless @reservation.pending?
+    unless @reservation.pending? || @reservation.prepared?
       redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.remove_item_error")
       return
     end

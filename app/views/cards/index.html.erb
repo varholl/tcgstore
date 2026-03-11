@@ -24,6 +24,9 @@
   <div class="col-12 col-md-3">
     <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select" %>
   </div>
+  <div class="col-12 col-md-2">
+    <%= select_tag :foil, options_for_select([[t('cards.foil_only'), "foil"], [t('cards.non_foil_only'), "non_foil"]], params[:foil]), include_blank: t('cards.all_cards'), class: "form-select" %>
+  </div>
   <div class="col-12 col-md-auto">
     <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
     <%= link_to t('cards.clear'), cards_path(view: @current_view), class: "btn btn-outline-secondary ms-1" %>

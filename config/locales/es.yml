@@ -80,6 +80,9 @@ es:
     add_to_cart: "Agregar al Carrito"
     sign_in_to_buy: "Iniciá sesión para comprar"
     foil: "Foil"
+    all_cards: "Todas las Cartas"
+    foil_only: "Solo Foil"
+    non_foil_only: "Solo No-Foil"
     how_it_works_panel:
       title: "¿Cómo funcionan las reservas?"
     sort:
@@ -206,6 +209,7 @@ es:
       current_price: "Precio Actual"
       subtotal: "Subtotal"
       total: "Total:"
+      prepare: "Marcar como Preparada"
       pay: "Marcar como Pagada"
       fulfill: "Marcar como Entregada"
       revert_to_paid: "Revertir a Pagada"
@@ -361,8 +365,10 @@ es:
         cannot_delete_fulfilled: "No se puede eliminar un usuario con reservas entregadas."
         access_denied: "Acceso denegado."
       reservations:
+        prepared: "Reserva marcada como preparada."
+        prepare_error: "Solo se pueden marcar como preparadas reservas pendientes."
         paid: "Reserva marcada como pagada."
-        pay_error: "Solo se pueden marcar como pagadas reservas pendientes."
+        pay_error: "Solo se pueden marcar como pagadas reservas preparadas."
         fulfilled: "Reserva marcada como entregada."
         fulfill_error: "Solo se pueden entregar reservas pendientes."
         reverted_to_paid: "Reserva revertida a pagada. Ahora podés volver a entregarla."
@@ -441,6 +447,7 @@ es:
 
   statuses:
     pending: "Pendiente"
+    prepared: "Preparada"
     paid: "Pagada"
     fulfilled: "Entregada"
     expired: "Expirada"

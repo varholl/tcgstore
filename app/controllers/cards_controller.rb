@@ -12,6 +12,11 @@ class CardsController < ApplicationController
     @cards = Card.where("quantity > 0")
     @cards = @cards.search_by_name(params[:search]) if params[:search].present?
     @cards = @cards.filter_by_edition(params[:edition]) if params[:edition].present?
+    if params[:foil] == "foil"
+      @cards = @cards.where.not(foil: [nil, ""])
+    elsif params[:foil] == "non_foil"
+      @cards = @cards.where(foil: [nil, ""])
+    end
 
     if params[:sort].present? && SORT_OPTIONS.key?(params[:sort])
       sort_key = params[:sort]

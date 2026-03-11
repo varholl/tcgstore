@@ -80,6 +80,9 @@ en:
     add_to_cart: "Add to Cart"
     sign_in_to_buy: "Sign in to buy"
     foil: "Foil"
+    all_cards: "All Cards"
+    foil_only: "Foil Only"
+    non_foil_only: "Non-Foil Only"
     how_it_works_panel:
       title: "How do reservations work?"
     sort:
@@ -206,6 +209,7 @@ en:
       current_price: "Current Price"
       subtotal: "Subtotal"
       total: "Total:"
+      prepare: "Mark as Prepared"
       pay: "Mark as Paid"
       fulfill: "Mark as Fulfilled"
       revert_to_paid: "Revert to Paid"
@@ -361,8 +365,10 @@ en:
         cannot_delete_fulfilled: "Cannot delete a user with fulfilled reservations."
         access_denied: "Access denied."
       reservations:
+        prepared: "Reservation marked as prepared."
+        prepare_error: "Only pending reservations can be marked as prepared."
         paid: "Reservation marked as paid."
-        pay_error: "Only pending reservations can be marked as paid."
+        pay_error: "Only prepared reservations can be marked as paid."
         fulfilled: "Reservation marked as fulfilled."
         fulfill_error: "Only pending reservations can be fulfilled."
         reverted_to_paid: "Reservation reverted to paid. You can now re-fulfill it."
@@ -441,6 +447,7 @@ en:
 
   statuses:
     pending: "Pending"
+    prepared: "Prepared"
     paid: "Paid"
     fulfilled: "Fulfilled"
     expired: "Expired"
