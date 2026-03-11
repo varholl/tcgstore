@@ -2,11 +2,11 @@
   <table class="table table-sm table-striped">
     <thead>
       <tr>
-        <th><%= t('admin.reservations.card_name') %></th>
-        <th><%= t('admin.reservations.edition') %></th>
-        <th><%= t('admin.reservations.condition') %></th>
-        <th><%= t('admin.reservations.price') %></th>
-        <th><%= t('admin.reservations.available') %></th>
+        <th><%= t('reservations.card_name') %></th>
+        <th><%= t('reservations.edition') %></th>
+        <th><%= t('reservations.condition') %></th>
+        <th><%= t('reservations.price') %></th>
+        <th><%= t('reservations.available') %></th>
         <th></th>
       </tr>
     </thead>
@@ -26,10 +26,10 @@
           <td><%= available %></td>
           <td>
             <% if available > 0 %>
-              <%= form_tag add_item_admin_reservation_path(reservation), method: :post, class: "d-flex align-items-center gap-1" do %>
+              <%= form_tag add_item_reservation_path(reservation), method: :post, class: "d-flex align-items-center gap-1" do %>
                 <input type="hidden" name="card_id" value="<%= card.id %>">
                 <input type="number" name="quantity" value="1" min="1" max="<%= available %>" class="form-control form-control-sm" style="width: 60px;">
-                <button type="submit" class="btn btn-sm btn-outline-success"><%= t('admin.reservations.add') %></button>
+                <button type="submit" class="btn btn-sm btn-outline-success"><%= t('reservations.add') %></button>
               <% end %>
             <% end %>
           </td>
@@ -38,5 +38,5 @@
     </tbody>
   </table>
 <% else %>
-  <p class="text-muted"><%= t('admin.reservations.no_cards_found') %></p>
+  <p class="text-muted"><%= t('reservations.no_cards_found') %></p>
 <% end %>

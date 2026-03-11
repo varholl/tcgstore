@@ -48,13 +48,18 @@
               <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
               <%= item.card.condition %>
               <% if item.card.foil.present? %>
-                · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil') %></span>
+                · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
               <% end %>
             </small>
             <div class="mt-1">
               <strong class="text-price"><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></strong>
               <small class="text-muted ms-1">x<%= item.quantity %></small>
             </div>
+            <% if @reservation.pending? %>
+              <div class="mt-1">
+                <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -71,6 +76,9 @@
         <th><%= t('reservations.quantity') %></th>
         <th><%= t('reservations.price') %></th>
         <th><%= t('reservations.subtotal') %></th>
+        <% if @reservation.pending? %>
+          <th></th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
@@ -82,17 +90,43 @@
           <td><%= item.quantity %></td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
+          <% if @reservation.pending? %>
+            <td>
+              <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="5" class="text-end"><strong><%= t('reservations.total') %></strong></td>
+        <td colspan="<%= @reservation.pending? ? 6 : 5 %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
     </tfoot>
   </table>
 </div>
+<% end %>
+
+<% if @reservation.pending? %>
+  <div class="card mb-3" data-controller="add-item-search" data-search-url="<%= search_cards_reservation_path(@reservation) %>">
+    <div class="card-header">
+      <h5 class="mb-0"><%= t('reservations.add_cards') %></h5>
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control"
+               placeholder="<%= t('reservations.search_cards_placeholder') %>"
+               data-add-item-search-target="searchInput"
+               data-action="keydown.enter->add-item-search#search">
+        <button type="button" class="btn btn-outline-primary"
+                data-action="click->add-item-search#search">
+          <%= t('cards.search') %>
+        </button>
+      </div>
+      <div data-add-item-search-target="searchResults"></div>
+    </div>
+  </div>
 <% end %>
 
 <% if @reservation.pending? || @reservation.prepared? %>

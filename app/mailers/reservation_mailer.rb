@@ -11,6 +11,18 @@ class ReservationMailer < ApplicationMailer
     end
   end
 
+  def updated(reservation)
+    @reservation = reservation
+    @items = reservation.reservation_items.includes(:card)
+
+    recipients = build_recipients(reservation, notify_admins: true)
+    return if recipients.empty?
+
+    I18n.with_locale(user_locale(reservation)) do
+      mail(to: recipients, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
   def cancelled(reservation)
     @reservation = reservation
     @items = reservation.reservation_items.includes(:card)

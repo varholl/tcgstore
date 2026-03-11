@@ -7,13 +7,30 @@ class Admin::UsersController < ApplicationController
     @users = User.where(admin: false).order(created_at: :desc)
     if params[:search].present?
       search = "%#{params[:search]}%"
-      @users = @users.where("name ILIKE :q OR email ILIKE :q", q: search)
+      @users = @users.where("name LIKE :q OR email LIKE :q", q: search)
     end
     @users = @users.page(params[:page]).per(20)
   end
 
   def show
     @reservations = @user.reservations.order(created_at: :desc)
+  end
+
+  def new
+    @user = User.new
+  end
+
+  def create
+    @user = User.new(user_params)
+    password = Devise.friendly_token[0, 20]
+    @user.password = password
+    @user.skip_confirmation!
+
+    if @user.save
+      redirect_to admin_user_path(@user), notice: t('controllers.admin.users.created')
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def edit

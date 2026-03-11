@@ -13,7 +13,12 @@ Rails.application.routes.draw do
   resources :cart_items, only: [:index, :create, :update, :destroy]
 
   resources :reservations, only: [:index, :show, :create] do
-    member { patch :cancel }
+    member do
+      patch :cancel
+      delete :remove_item
+      post :add_item
+      get :search_cards
+    end
   end
 
   namespace :admin do
@@ -37,7 +42,7 @@ Rails.application.routes.draw do
       end
       resources :notes, only: [:create], controller: 'reservation_notes'
     end
-    resources :users, only: [:index, :show, :edit, :update, :destroy]
+    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
     resources :cards, except: [:show] do
       collection do
         get :search_scryfall

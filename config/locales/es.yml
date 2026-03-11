@@ -80,6 +80,7 @@ es:
     add_to_cart: "Agregar al Carrito"
     sign_in_to_buy: "Iniciá sesión para comprar"
     foil: "Foil / No-Foil"
+    foil_badge: "Foil"
     all_cards: "★ Ambas"
     foil_only: "★ Solo Foil"
     non_foil_only: "Solo No-Foil"
@@ -139,6 +140,13 @@ es:
     total: "Total:"
     cancel: "Cancelar Reserva"
     cancel_confirm: "¿Estás seguro de que querés cancelar esta reserva?"
+    remove_item: "Quitar"
+    remove_item_confirm: "¿Quitar %{name} de esta reserva?"
+    add_cards: "Agregar Cartas"
+    search_cards_placeholder: "Buscar cartas por nombre..."
+    add: "Agregar"
+    available: "Disponible"
+    no_cards_found: "No se encontraron cartas."
 
   admin:
     sidebar:
@@ -173,6 +181,10 @@ es:
       status: "Estado"
       view_reservation: "Ver"
       no_reservations: "Este usuario no tiene reservas."
+      new_user: "Nuevo Usuario"
+      new_title: "Nuevo Usuario"
+      create_hint: "El usuario será creado con una contraseña aleatoria y confirmado automáticamente. Puede usar \"¿Olvidaste tu contraseña?\" para establecer su propia contraseña."
+      create_submit: "Crear Usuario"
       edit_title: "Editar Usuario"
       back_to_user: "Volver al Usuario"
       form_name: "Nombre"
@@ -358,9 +370,13 @@ es:
       empty_cart: "Tu carrito está vacío."
       cancelled: "Reserva cancelada."
       cancel_error: "Solo se pueden cancelar reservas pendientes."
+      item_removed: "Artículo eliminado de la reserva."
+      item_added: "%{name} agregado a la reserva."
+      edit_error: "Solo se pueden editar reservas pendientes."
     admin:
       users:
         updated: "Usuario actualizado exitosamente."
+        created: "Usuario creado exitosamente."
         deleted: "Usuario eliminado exitosamente."
         cannot_delete_fulfilled: "No se puede eliminar un usuario con reservas entregadas."
         access_denied: "Acceso denegado."
@@ -410,6 +426,11 @@ es:
       body: "Se ha creado una nueva reserva (#%{id}) con los siguientes artículos:"
       message_label: "Mensaje:"
       closing: "Revisaré tu reserva y te responderé a la brevedad. ¡Gracias!"
+    updated:
+      subject: "Reserva #%{id} — Actualizada"
+      greeting: "Hola %{name},"
+      body: "La reserva #%{id} ha sido actualizada. Estos son los artículos actuales:"
+      closing: "Revisaré los cambios y te responderé a la brevedad. ¡Gracias!"
     cancelled:
       subject: "Reserva #%{id} — Cancelada"
       greeting: "Hola %{name},"

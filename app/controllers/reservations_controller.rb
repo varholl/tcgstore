@@ -34,4 +34,52 @@ class ReservationsController < ApplicationController
       redirect_to reservations_path, alert: t('controllers.reservations.cancel_error')
     end
   end
+
+  def remove_item
+    @reservation = current_user.reservations.find(params[:id])
+
+    unless @reservation.pending?
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
+      return
+    end
+
+    item = @reservation.reservation_items.find(params[:item_id])
+    item.destroy!
+    ReservationMailer.updated(@reservation).deliver_later
+    redirect_to reservation_path(@reservation), notice: t('controllers.reservations.item_removed')
+  end
+
+  def add_item
+    @reservation = current_user.reservations.find(params[:id])
+
+    unless @reservation.pending?
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
+      return
+    end
+
+    card = Card.find(params[:card_id])
+    quantity = params[:quantity].to_i
+    quantity = 1 if quantity < 1
+
+    if card.available_quantity < quantity
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.unavailable')
+      return
+    end
+
+    existing_item = @reservation.reservation_items.find_by(card: card)
+    if existing_item
+      existing_item.update!(quantity: existing_item.quantity + quantity, unit_price: card.price)
+    else
+      @reservation.reservation_items.create!(card: card, quantity: quantity, unit_price: card.price)
+    end
+
+    ReservationMailer.updated(@reservation).deliver_later
+    redirect_to reservation_path(@reservation), notice: t('controllers.reservations.item_added', name: card.name)
+  end
+
+  def search_cards
+    @reservation = current_user.reservations.find(params[:id])
+    @cards = Card.search_by_name(params[:query]).limit(20)
+    render partial: "search_results", locals: { cards: @cards, reservation: @reservation }
+  end
 end

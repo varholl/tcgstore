@@ -80,6 +80,7 @@ en:
     add_to_cart: "Add to Cart"
     sign_in_to_buy: "Sign in to buy"
     foil: "Foil / Non-Foil"
+    foil_badge: "Foil"
     all_cards: "★ Both"
     foil_only: "★ Foil Only"
     non_foil_only: "Non-Foil Only"
@@ -139,6 +140,13 @@ en:
     total: "Total:"
     cancel: "Cancel Reservation"
     cancel_confirm: "Are you sure you want to cancel this reservation?"
+    remove_item: "Remove"
+    remove_item_confirm: "Remove %{name} from this reservation?"
+    add_cards: "Add Cards"
+    search_cards_placeholder: "Search cards by name..."
+    add: "Add"
+    available: "Available"
+    no_cards_found: "No cards found."
 
   admin:
     sidebar:
@@ -173,6 +181,10 @@ en:
       status: "Status"
       view_reservation: "View"
       no_reservations: "This user has no reservations."
+      new_user: "New User"
+      new_title: "New User"
+      create_hint: "The user will be created with a random password and automatically confirmed. They can use \"Forgot your password?\" to set their own password."
+      create_submit: "Create User"
       edit_title: "Edit User"
       back_to_user: "Back to User"
       form_name: "Name"
@@ -358,9 +370,13 @@ en:
       empty_cart: "Your cart is empty."
       cancelled: "Reservation cancelled."
       cancel_error: "Only pending reservations can be cancelled."
+      item_removed: "Item removed from reservation."
+      item_added: "%{name} added to reservation."
+      edit_error: "Only pending reservations can be edited."
     admin:
       users:
         updated: "User updated successfully."
+        created: "User created successfully."
         deleted: "User deleted successfully."
         cannot_delete_fulfilled: "Cannot delete a user with fulfilled reservations."
         access_denied: "Access denied."
@@ -410,6 +426,11 @@ en:
       body: "A new reservation (#%{id}) has been created with the following items:"
       message_label: "Message:"
       closing: "I'll review your reservation and get back to you shortly. Thank you!"
+    updated:
+      subject: "Reservation #%{id} — Updated"
+      greeting: "Hi %{name},"
+      body: "Reservation #%{id} has been updated. Here are the current items:"
+      closing: "I'll review the changes and get back to you shortly. Thank you!"
     cancelled:
       subject: "Reservation #%{id} — Cancelled"
       greeting: "Hi %{name},"
