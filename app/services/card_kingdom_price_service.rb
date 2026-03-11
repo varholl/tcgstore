@@ -3,16 +3,25 @@ class CardKingdomPriceService
   CACHE_KEY = "card_kingdom_pricelist"
   CACHE_TTL = 1.hour
 
-  # Returns a hash keyed by [scryfall_id, is_foil] => price_retail
+  # Maps our conditions to Card Kingdom condition_values keys
+  CONDITION_MAP = {
+    "NM"  => "nm_price",
+    "LP"  => "ex_price",
+    "MP"  => "vg_price",
+    "HP"  => "g_price",
+    "DMG" => "g_price"
+  }.freeze
+
+  # Returns a hash keyed by [scryfall_id, is_foil, condition] => price
   def self.pricelist
     Rails.cache.fetch(CACHE_KEY, expires_in: CACHE_TTL) { fetch_pricelist }
   end
 
-  def self.lookup(scryfall_id, foil: false)
-    pricelist[[scryfall_id, foil]]
+  def self.lookup(scryfall_id, foil: false, condition: "NM")
+    pricelist[[scryfall_id, foil, condition]]
   end
 
-  # Look up prices for a small set of scryfall_ids without caching the full pricelist.
+  # Look up prices for a set of scryfall_ids. Returns all condition variants.
   def self.lookup_batch(scryfall_ids)
     target_ids = scryfall_ids.to_set
     results = {}
@@ -39,8 +48,14 @@ class CardKingdomPriceService
       sid = entry['scryfall_id']
       next if sid.nil? || sid.empty?
       is_foil = entry['is_foil'] == 'true'
-      price = entry['price_retail'].to_f
-      lookup[[sid, is_foil]] = price if price > 0
+      condition_values = entry['condition_values'] || {}
+
+      CONDITION_MAP.each do |condition, ck_key|
+        price = condition_values[ck_key]&.to_f
+        # Fall back to price_retail if condition_values is missing
+        price = entry['price_retail'].to_f if price.nil? || price <= 0
+        lookup[[sid, is_foil, condition]] = price if price > 0
+      end
     end
     lookup
   end

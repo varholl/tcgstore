@@ -4,7 +4,8 @@ export default class extends Controller {
   static targets = [
     "searchInput", "searchResults", "searchSpinner",
     "stockForm", "selectedCardInfo",
-    "nameField", "scryfallIdField", "setCodeField", "setNameField", "collectorNumberField", "priceField"
+    "nameField", "scryfallIdField", "setCodeField", "setNameField", "collectorNumberField", "priceField",
+    "conditionSelect", "foilCheckbox"
   ]
 
   async search(event) {
@@ -38,7 +39,13 @@ export default class extends Controller {
     this.setCodeFieldTarget.value = btn.dataset.setCode
     this.setNameFieldTarget.value = btn.dataset.setName
     this.collectorNumberFieldTarget.value = btn.dataset.collectorNumber
-    this.priceFieldTarget.value = btn.dataset.price || ""
+
+    // Store condition prices for dynamic updates
+    this._conditionPrices = JSON.parse(btn.dataset.ckConditionPrices || "{}")
+    this._conditionPricesFoil = JSON.parse(btn.dataset.ckConditionPricesFoil || "{}")
+    this._fallbackPrice = btn.dataset.fallbackPrice || ""
+
+    this._updatePrice()
 
     this.selectedCardInfoTarget.innerHTML = `
       <strong>${this.escapeHtml(btn.dataset.name)}</strong>
@@ -47,6 +54,21 @@ export default class extends Controller {
 
     this.stockFormTarget.classList.remove("d-none")
     this.stockFormTarget.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  updatePrice() {
+    this._updatePrice()
+  }
+
+  _updatePrice() {
+    if (!this._conditionPrices) return
+
+    const condition = this.conditionSelectTarget.value
+    const isFoil = this.foilCheckboxTarget.checked
+    const prices = isFoil ? this._conditionPricesFoil : this._conditionPrices
+    const price = prices[condition]
+
+    this.priceFieldTarget.value = price || this._fallbackPrice || ""
   }
 
   escapeHtml(text) {

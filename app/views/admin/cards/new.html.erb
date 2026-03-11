@@ -52,7 +52,9 @@
 
           <div class="col-md-3">
             <label class="form-label"><%= t('admin.cards.condition') %></label>
-            <select name="condition" class="form-select" required>
+            <select name="condition" class="form-select" required
+                    data-admin-scryfall-search-target="conditionSelect"
+                    data-action="change->admin-scryfall-search#updatePrice">
               <% %w[NM LP MP HP DMG].each do |cond| %>
                 <option value="<%= cond %>"><%= cond %></option>
               <% end %>
@@ -71,7 +73,9 @@
           <div class="col-md-3">
             <div class="form-check mt-4 pt-2">
               <input type="hidden" name="foil" value="">
-              <input type="checkbox" name="foil" value="Yes" class="form-check-input" id="foilCheck">
+              <input type="checkbox" name="foil" value="Yes" class="form-check-input" id="foilCheck"
+                     data-admin-scryfall-search-target="foilCheckbox"
+                     data-action="change->admin-scryfall-search#updatePrice">
               <label class="form-check-label" for="foilCheck"><%= t('admin.cards.foil') %></label>
             </div>
           </div>

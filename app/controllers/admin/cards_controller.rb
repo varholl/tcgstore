@@ -91,10 +91,19 @@ class Admin::CardsController < ApplicationController
     scryfall_ids = results.map { |c| c[:scryfall_id] }
     ck_prices = CardKingdomPriceService.lookup_batch(scryfall_ids)
 
+    conditions = %w[NM LP MP HP DMG]
     results.each do |card|
       sid = card[:scryfall_id]
-      card[:ck_price] = ck_prices[[sid, false]]
-      card[:ck_price_foil] = ck_prices[[sid, true]]
+      # NM price for display (backward compat)
+      card[:ck_price] = ck_prices[[sid, false, "NM"]]
+      card[:ck_price_foil] = ck_prices[[sid, true, "NM"]]
+      # Per-condition prices for JS
+      card[:ck_condition_prices] = {}
+      card[:ck_condition_prices_foil] = {}
+      conditions.each do |cond|
+        card[:ck_condition_prices][cond] = ck_prices[[sid, false, cond]]
+        card[:ck_condition_prices_foil][cond] = ck_prices[[sid, true, cond]]
+      end
     end
 
     render partial: "scryfall_results", locals: { results: results }

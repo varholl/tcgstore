@@ -68,7 +68,8 @@ class CardPriceRefreshService
 
     Card.where.not(scryfall_id: [nil, ""]).find_each do |card|
       is_foil = card.foil.present?
-      ck_price = ck_prices[[card.scryfall_id, is_foil]]
+      condition = card.condition.presence || "NM"
+      ck_price = ck_prices[[card.scryfall_id, is_foil, condition]]
 
       if ck_price
         card.update_columns(price: ck_price, price_source: "card_kingdom")

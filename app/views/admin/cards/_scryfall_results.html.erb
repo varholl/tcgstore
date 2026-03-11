@@ -41,7 +41,10 @@
                         data-set-code="<%= card[:set_code] %>"
                         data-set-name="<%= card[:set_name] %>"
                         data-collector-number="<%= card[:collector_number] %>"
-                        data-price="<%= card[:ck_price] || card[:prices_usd] %>">
+                        data-price="<%= card[:ck_price] || card[:prices_usd] %>"
+                        data-ck-condition-prices="<%= card[:ck_condition_prices].to_json %>"
+                        data-ck-condition-prices-foil="<%= card[:ck_condition_prices_foil].to_json %>"
+                        data-fallback-price="<%= card[:prices_usd] %>">
                   <%= t('admin.cards.select') %>
                 </button>
               </div>
