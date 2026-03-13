@@ -114,6 +114,7 @@ es:
     submit_reservation: "Enviar Solicitud de Reserva"
     empty_cart: "Tu carrito está vacío."
     browse_cards: "Explorar cartas"
+    not_available: "No Disponible"
     empty_cart_message: "para agregar algunas!"
 
   reservations:

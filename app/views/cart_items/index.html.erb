@@ -28,24 +28,32 @@
       </thead>
       <tbody>
         <% @cart_items.each do |item| %>
-          <tr>
+          <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
+          <% unavailable = available <= 0 %>
+          <tr class="<%= 'table-danger' if unavailable %>">
             <td class="d-flex align-items-center gap-2">
               <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=small"
                    alt="<%= item.card.name %>"
-                   style="width: 40px; height: auto; border-radius: 3px;"
+                   style="width: 40px; height: auto; border-radius: 3px;<%= ' opacity: 0.5;' if unavailable %>"
                    loading="lazy"
                    onerror="this.style.display='none'">
               <%= item.card.name %>
+              <% if unavailable %>
+                <span class="badge bg-danger"><%= t('cart_items.not_available') %></span>
+              <% end %>
             </td>
             <td><%= item.card.edition_name || item.card.edition.upcase %></td>
             <td><%= item.card.condition %></td>
             <td><%= item.card.price ? number_to_currency(item.card.price) : "—" %></td>
             <td>
-              <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
-              <% max_qty = [available, item.quantity].max %>
-              <%= form_with model: item, url: cart_item_path(item), method: :patch, class: "d-flex align-items-center gap-2" do |f| %>
-                <%= f.number_field :quantity, value: item.quantity, min: 1, max: max_qty, disabled: available <= 1, class: "form-control form-control-sm", style: "width: 70px" %>
-                <%= f.submit t('cart_items.update'), class: "btn btn-sm btn-outline-primary", disabled: available <= 1 %>
+              <% if unavailable %>
+                <span class="text-danger fw-bold">0</span>
+              <% else %>
+                <% max_qty = [available, item.quantity].max %>
+                <%= form_with model: item, url: cart_item_path(item), method: :patch, class: "d-flex align-items-center gap-2" do |f| %>
+                  <%= f.number_field :quantity, value: item.quantity, min: 1, max: max_qty, disabled: available <= 1, class: "form-control form-control-sm", style: "width: 70px" %>
+                  <%= f.submit t('cart_items.update'), class: "btn btn-sm btn-outline-primary", disabled: available <= 1 %>
+                <% end %>
               <% end %>
             </td>
             <td><%= item.card.price ? number_to_currency(item.card.price * item.quantity) : "—" %></td>
@@ -61,16 +69,23 @@
   <%# Mobile card layout — visible only on small screens %>
   <div class="d-md-none">
     <% @cart_items.each do |item| %>
-      <div class="card mb-3">
+      <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
+      <% unavailable = available <= 0 %>
+      <div class="card mb-3<%= ' border-danger' if unavailable %>">
         <div class="card-body">
           <div class="d-flex align-items-start gap-3">
             <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=small"
                  alt="<%= item.card.name %>"
-                 style="width: 60px; height: auto; border-radius: 4px;"
+                 style="width: 60px; height: auto; border-radius: 4px;<%= ' opacity: 0.5;' if unavailable %>"
                  loading="lazy"
                  onerror="this.style.display='none'">
             <div class="flex-grow-1">
-              <h6 class="mb-1"><%= item.card.name %></h6>
+              <h6 class="mb-1">
+                <%= item.card.name %>
+                <% if unavailable %>
+                  <span class="badge bg-danger"><%= t('cart_items.not_available') %></span>
+                <% end %>
+              </h6>
               <p class="text-muted small mb-1">
                 <%= item.card.edition_name || item.card.edition.upcase %> · <%= item.card.condition %>
               </p>
@@ -78,11 +93,14 @@
                 <strong><%= item.card.price ? number_to_currency(item.card.price) : "—" %></strong>
               </p>
               <div class="d-flex align-items-center gap-2">
-                <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
-                <% max_qty = [available, item.quantity].max %>
-                <%= form_with model: item, url: cart_item_path(item), method: :patch, class: "d-flex align-items-center gap-2" do |f| %>
-                  <%= f.number_field :quantity, value: item.quantity, min: 1, max: max_qty, disabled: available <= 1, class: "form-control form-control-sm", style: "width: 65px" %>
-                  <%= f.submit t('cart_items.update'), class: "btn btn-sm btn-outline-primary", disabled: available <= 1 %>
+                <% if unavailable %>
+                  <span class="text-danger fw-bold"><%= t('cart_items.quantity') %>: 0</span>
+                <% else %>
+                  <% max_qty = [available, item.quantity].max %>
+                  <%= form_with model: item, url: cart_item_path(item), method: :patch, class: "d-flex align-items-center gap-2" do |f| %>
+                    <%= f.number_field :quantity, value: item.quantity, min: 1, max: max_qty, disabled: available <= 1, class: "form-control form-control-sm", style: "width: 65px" %>
+                    <%= f.submit t('cart_items.update'), class: "btn btn-sm btn-outline-primary", disabled: available <= 1 %>
+                  <% end %>
                 <% end %>
                 <%= button_to cart_item_path(item), method: :delete, class: "btn btn-sm btn-danger", title: t('cart_items.remove') do %><i class="fa-solid fa-trash"></i><% end %>
               </div>
