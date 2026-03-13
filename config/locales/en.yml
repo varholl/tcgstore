@@ -459,6 +459,21 @@ en:
       subtotal: "Subtotal"
       total: "Total: %{amount}"
 
+  card_price_mailer:
+    fallback_results:
+      subject: "Price Fallback Results — %{updated} updated, %{not_found} not found"
+      title: "Price Fallback Results"
+      summary: "%{ck_updated} card(s) priced via Card Kingdom, %{scryfall_updated} via Scryfall, %{not_found} card(s) could not be priced."
+      ck_updated_title: "Updated from Card Kingdom (%{count})"
+      scryfall_updated_title: "Updated from Scryfall (%{count})"
+      not_found_title: "Cards Not Found (%{count})"
+      card_name: "Card Name"
+      edition: "Edition"
+      collector_number: "#"
+      condition: "Condition"
+      foil: "Foil"
+      price: "Price"
+
   languages:
     english: "English"
     spanish: "Spanish"

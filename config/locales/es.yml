@@ -459,6 +459,21 @@ es:
       subtotal: "Subtotal"
       total: "Total: %{amount}"
 
+  card_price_mailer:
+    fallback_results:
+      subject: "Resultados de precios de respaldo — %{updated} actualizados, %{not_found} no encontrados"
+      title: "Resultados de Precios de Respaldo"
+      summary: "%{ck_updated} carta(s) con precio de Card Kingdom, %{scryfall_updated} de Scryfall, %{not_found} carta(s) sin precio."
+      ck_updated_title: "Actualizadas desde Card Kingdom (%{count})"
+      scryfall_updated_title: "Actualizadas desde Scryfall (%{count})"
+      not_found_title: "Cartas No Encontradas (%{count})"
+      card_name: "Nombre de Carta"
+      edition: "Edición"
+      collector_number: "#"
+      condition: "Condición"
+      foil: "Foil"
+      price: "Precio"
+
   languages:
     english: "Inglés"
     spanish: "Español"

@@ -3,5 +3,6 @@ class CardPriceRefreshJob < ApplicationJob
 
   def perform
     CardPriceRefreshService.new.call
+    CardPriceFallbackJob.perform_later
   end
 end
