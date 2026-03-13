@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<div class="d-flex justify-content-between align-items-center mb-2">
+<div id="items" class="d-flex justify-content-between align-items-center mb-2">
   <h4 class="mb-0"><%= t('admin.reservations.items_title') %></h4>
   <div class="btn-group btn-group-sm">
     <%= link_to admin_reservation_path(@reservation, view: "list"), class: "btn #{params[:view] != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>

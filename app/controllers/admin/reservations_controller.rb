@@ -224,7 +224,7 @@ class Admin::ReservationsController < ApplicationController
       @reservation.reservation_items.create!(card: card, quantity: quantity, unit_price: card.price)
     end
 
-    redirect_to admin_reservation_path(@reservation), notice: t("controllers.admin.reservations.item_added", name: card.name)
+    redirect_to admin_reservation_path(@reservation, anchor: "items"), notice: t("controllers.admin.reservations.item_added", name: card.name)
   end
 
   def remove_item
@@ -237,7 +237,7 @@ class Admin::ReservationsController < ApplicationController
 
     item = @reservation.reservation_items.find(params[:item_id])
     item.destroy!
-    redirect_to admin_reservation_path(@reservation), notice: t("controllers.admin.reservations.item_removed")
+    redirect_to admin_reservation_path(@reservation, anchor: "items"), notice: t("controllers.admin.reservations.item_removed")
   end
 
   def update_item_price

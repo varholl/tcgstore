@@ -1,42 +1,43 @@
 <% if cards.any? %>
-  <table class="table table-sm table-striped">
-    <thead>
-      <tr>
-        <th><%= t('admin.reservations.card_name') %></th>
-        <th><%= t('admin.reservations.edition') %></th>
-        <th><%= t('admin.reservations.condition') %></th>
-        <th><%= t('admin.reservations.price') %></th>
-        <th><%= t('admin.reservations.available') %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% cards.each do |card| %>
-        <% available = card.available_quantity %>
-        <tr>
-          <td>
-            <%= card.name %>
-            <% if card.foil.present? %>
-              <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
-            <% end %>
-          </td>
-          <td><%= card.edition_name || card.edition.upcase %></td>
-          <td><%= card.condition %></td>
-          <td><%= card.price ? number_to_currency(card.price) : "—" %></td>
-          <td><%= available %></td>
-          <td>
-            <% if available > 0 %>
-              <%= form_tag add_item_admin_reservation_path(reservation), method: :post, class: "d-flex align-items-center gap-1" do %>
-                <input type="hidden" name="card_id" value="<%= card.id %>">
-                <input type="number" name="quantity" value="1" min="1" max="<%= available %>" class="form-control form-control-sm" style="width: 60px;">
-                <button type="submit" class="btn btn-sm btn-outline-success"><%= t('admin.reservations.add') %></button>
+  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
+    <% cards.each do |card| %>
+      <% available = card.available_quantity %>
+      <div class="col">
+        <div class="card h-100<%= ' foil-card' if card.foil.present? %>">
+          <img src="https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=normal"
+               class="card-img-top"
+               alt="<%= card.name %>"
+               loading="lazy"
+               onerror="this.onerror=null;this.style.display='none';">
+          <div class="card-body p-2">
+            <h6 class="card-title mb-1">
+              <%= card.name %>
+              <% if card.foil.present? %>
+                <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
               <% end %>
+            </h6>
+            <small class="text-muted">
+              <%= card.edition_name || card.edition.upcase %><br>
+              <%= card.condition %>
+            </small>
+            <div class="mt-1">
+              <strong><%= card.price ? number_to_currency(card.price) : "—" %></strong>
+              <small class="text-muted ms-1">(<%= available %> <%= t('admin.reservations.available').downcase %>)</small>
+            </div>
+            <% if available > 0 %>
+              <div class="mt-2">
+                <%= form_tag add_item_admin_reservation_path(reservation), method: :post, class: "d-flex align-items-center gap-1" do %>
+                  <input type="hidden" name="card_id" value="<%= card.id %>">
+                  <input type="number" name="quantity" value="1" min="1" max="<%= available %>" class="form-control form-control-sm" style="width: 60px;">
+                  <button type="submit" class="btn btn-sm btn-outline-success"><%= t('admin.reservations.add') %></button>
+                <% end %>
+              </div>
             <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 <% else %>
   <p class="text-muted"><%= t('admin.reservations.no_cards_found') %></p>
 <% end %>

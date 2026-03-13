@@ -13,7 +13,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def show
-    @reservations = @user.reservations.order(created_at: :desc)
+    @reservations = @user.reservations.includes(:reservation_items).order(created_at: :desc)
   end
 
   def new

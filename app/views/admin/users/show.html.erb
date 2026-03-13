@@ -19,6 +19,17 @@
   <%= button_to t('admin.users.delete'), admin_user_path(@user), method: :delete, class: "btn btn-danger", data: { turbo_confirm: t('admin.users.delete_confirm') } %>
 </div>
 
+<% unpaid_reservations = @reservations.select { |r| r.pending? || r.prepared? } %>
+<% if unpaid_reservations.any? %>
+  <div class="alert alert-warning d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <strong><%= t('admin.users.unpaid_balance') %></strong>
+      <small class="text-muted ms-2">(<%= unpaid_reservations.size %> <%= t('admin.users.unpaid_reservations_count') %>)</small>
+    </div>
+    <h4 class="mb-0"><%= number_to_currency(unpaid_reservations.sum(&:total_price)) %></h4>
+  </div>
+<% end %>
+
 <h4><%= t('admin.users.reservations_title') %></h4>
 
 <% if @reservations.any? %>
@@ -28,17 +39,19 @@
         <tr>
           <th><%= t('admin.users.reservation_date') %></th>
           <th><%= t('admin.users.items_count') %></th>
+          <th><%= t('admin.users.total') %></th>
           <th><%= t('admin.users.status') %></th>
           <th></th>
         </tr>
       </thead>
       <tbody>
+        <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
         <% @reservations.each do |reservation| %>
           <tr>
             <td><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
+            <td><%= number_to_currency(reservation.total_price) %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td>

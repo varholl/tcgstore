@@ -46,7 +46,7 @@ class ReservationsController < ApplicationController
     item = @reservation.reservation_items.find(params[:item_id])
     item.destroy!
     ReservationMailer.updated(@reservation).deliver_later
-    redirect_to reservation_path(@reservation), notice: t('controllers.reservations.item_removed')
+    redirect_to reservation_path(@reservation, anchor: "items"), notice: t('controllers.reservations.item_removed')
   end
 
   def add_item
@@ -74,7 +74,7 @@ class ReservationsController < ApplicationController
     end
 
     ReservationMailer.updated(@reservation).deliver_later
-    redirect_to reservation_path(@reservation), notice: t('controllers.reservations.item_added', name: card.name)
+    redirect_to reservation_path(@reservation, anchor: "items"), notice: t('controllers.reservations.item_added', name: card.name)
   end
 
   def search_cards
