@@ -1,7 +1,7 @@
 <%= render layout: 'layouts/admin_sidebar' do %>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1><%= t('admin.cards.edit_title') %></h1>
-  <%= link_to t('admin.cards.back'), admin_cards_path, class: "btn btn-outline-secondary" %>
+  <%= link_to t('admin.cards.back'), "javascript:history.back()", class: "btn btn-outline-secondary" %>
 </div>
 
 <div class="card mb-4">
@@ -33,6 +33,7 @@
 </div>
 
 <%= form_with(model: @card, url: admin_card_path(@card), method: :patch) do |f| %>
+  <%= hidden_field_tag :return_to, @return_to %>
   <% if @card.errors.any? %>
     <div class="alert alert-danger">
       <ul class="mb-0">

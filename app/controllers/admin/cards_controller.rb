@@ -1,7 +1,7 @@
 class Admin::CardsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed]
+  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed, :refresh_price]
 
   SORT_OPTIONS = {
     "name_asc"      => "name ASC",
@@ -52,6 +52,7 @@ class Admin::CardsController < ApplicationController
   end
 
   def edit
+    @return_to = request.referer
     @pending_reserved = @card.reservation_items
       .joins(:reservation)
       .where(reservations: { status: "pending" })
@@ -60,18 +61,23 @@ class Admin::CardsController < ApplicationController
 
   def update
     if @card.update(card_update_params)
-      redirect_to admin_cards_path, notice: t("controllers.admin.cards.updated")
+      redirect_to safe_return_path, notice: t("controllers.admin.cards.updated")
     else
+      @return_to = params[:return_to]
+      @pending_reserved = @card.reservation_items
+        .joins(:reservation)
+        .where(reservations: { status: "pending" })
+        .sum(:quantity)
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     if @card.reservation_items.exists?
-      redirect_to admin_cards_path, alert: t("controllers.admin.cards.cannot_delete_with_reservations")
+      redirect_back fallback_location: admin_cards_path, alert: t("controllers.admin.cards.cannot_delete_with_reservations")
     else
       @card.destroy!
-      redirect_to admin_cards_path, notice: t("controllers.admin.cards.deleted")
+      redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.deleted")
     end
   end
 
@@ -83,6 +89,19 @@ class Admin::CardsController < ApplicationController
   def mark_price_reviewed
     @card.update_column(:price_reviewed, true)
     redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_reviewed")
+  end
+
+  def refresh_price
+    result = SingleCardPriceService.new(@card).call
+
+    case result[:source]
+    when "card_kingdom"
+      redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_refreshed_ck", price: result[:price])
+    when "scryfall"
+      redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_refreshed_scryfall", price: result[:price])
+    else
+      redirect_back fallback_location: admin_cards_path, alert: t("controllers.admin.cards.price_refresh_failed")
+    end
   end
 
   def search_scryfall
@@ -125,6 +144,15 @@ class Admin::CardsController < ApplicationController
 
   def card_update_params
     params.require(:card).permit(:quantity, :foil, :price, :condition, :language)
+  end
+
+  def safe_return_path
+    return_to = params[:return_to]
+    if return_to.present? && return_to.start_with?("/")
+      return_to
+    else
+      admin_cards_path
+    end
   end
 
   def require_admin

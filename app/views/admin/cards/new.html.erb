@@ -1,7 +1,7 @@
 <%= render layout: 'layouts/admin_sidebar' do %>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1><%= t('admin.cards.new_title') %></h1>
-  <%= link_to t('admin.cards.back'), admin_cards_path, class: "btn btn-outline-secondary" %>
+  <%= link_to t('admin.cards.back'), "javascript:history.back()", class: "btn btn-outline-secondary" %>
 </div>
 
 <div data-controller="admin-scryfall-search" data-search-url="<%= search_scryfall_admin_cards_path %>">

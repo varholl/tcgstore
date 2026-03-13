@@ -1,7 +1,7 @@
 <%= render layout: 'layouts/admin_sidebar' do %>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1><%= t('admin.reservations.show_title', id: @reservation.id) %></h1>
-  <%= link_to t('admin.reservations.back'), admin_reservations_path, class: "btn btn-outline-secondary" %>
+  <%= link_to t('admin.reservations.back'), "javascript:history.back()", class: "btn btn-outline-secondary" %>
 </div>
 
 <div class="card mb-4">

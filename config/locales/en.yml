@@ -329,6 +329,7 @@ en:
       price_from_scryfall: "Price from Scryfall — not available on Card Kingdom"
       needs_price_review: "Needs Price Review"
       mark_reviewed: "Mark as reviewed"
+      refresh_price: "Refresh price"
 
   profiles:
     title: "Edit Profile"
@@ -415,6 +416,9 @@ en:
         prices_refreshed: "Prices refreshed: %{scryfall_ids_fetched} Scryfall IDs backfilled, %{prices_updated} prices updated, %{prices_not_found} not found on Card Kingdom."
         prices_refresh_started: "Price refresh started in the background. It may take a few minutes to complete."
         price_reviewed: "Card price marked as reviewed."
+        price_refreshed_ck: "Price updated to $%{price} (Card Kingdom)."
+        price_refreshed_scryfall: "Price updated to $%{price} (Scryfall)."
+        price_refresh_failed: "Could not find a price for this card."
       reservation_notes:
         created: "Note added."
         access_denied: "Access denied."

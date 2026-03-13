@@ -50,6 +50,7 @@ Rails.application.routes.draw do
       end
       member do
         patch :mark_price_reviewed
+        patch :refresh_price
       end
     end
   end

@@ -81,6 +81,7 @@
               <% end %>
             </td>
             <td>
+              <%= button_to refresh_price_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success", title: t('admin.cards.refresh_price') do %><i class="fas fa-sync"></i><% end %>
               <%= link_to edit_admin_card_path(card), class: "btn btn-sm btn-outline-secondary", title: t('admin.cards.edit') do %><i class="fas fa-pencil"></i><% end %>
               <%= button_to admin_card_path(card), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.cards.delete'), form: { data: { turbo_confirm: t('admin.cards.delete_confirm') } } do %><i class="fas fa-trash"></i><% end %>
             </td>
