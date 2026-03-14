@@ -1,0 +1,7 @@
+<p><%= t('reservation_mailer.transfer_receipt.greeting') %></p>
+
+<p><%= t('reservation_mailer.transfer_receipt.body', id: @reservation.id, user: @user&.name || 'Guest', email: @user&.email || 'N/A') %></p>
+
+<p><strong><%= t('reservation_mailer.transfer_receipt.total') %></strong> <%= number_to_currency(@reservation.total_price) %></p>
+
+<p><%= t('reservation_mailer.transfer_receipt.closing') %></p>

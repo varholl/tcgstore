@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   resources :reservations, only: [:index, :show, :create] do
     member do
       patch :cancel
+      patch :set_payment_method
+      post :upload_receipt
       delete :remove_item
       post :add_item
       get :search_cards

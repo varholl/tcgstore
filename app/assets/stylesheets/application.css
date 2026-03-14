@@ -418,6 +418,39 @@ hr {
   color: var(--vg-accent-light);
 }
 
+/* --- Accordion (FAQ) --- */
+.accordion-item {
+  background-color: var(--vg-bg-card);
+  border-color: var(--vg-border);
+  color: var(--vg-text);
+}
+
+.accordion-button {
+  background-color: var(--vg-bg-surface);
+  color: var(--vg-text);
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: var(--vg-bg-surface);
+  color: var(--vg-gold);
+  box-shadow: none;
+}
+
+.accordion-button::after {
+  filter: var(--vg-btn-close-filter);
+}
+
+.accordion-button:focus {
+  border-color: var(--vg-accent);
+  box-shadow: 0 0 0 0.2rem rgba(74, 141, 183, 0.25);
+}
+
+.accordion-body {
+  background-color: var(--vg-bg-card);
+  color: var(--vg-text);
+}
+
 /* --- Toast notifications --- */
 .toast {
   border: 1px solid var(--vg-border);

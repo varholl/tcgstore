@@ -2,7 +2,8 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale
   before_action :set_theme
-  helper_method :current_theme
+  before_action :set_blue_rate
+  helper_method :current_theme, :blue_dollar_rate
 
   def set_language
     locale = params[:locale].to_s
@@ -37,6 +38,25 @@ class ApplicationController < ActionController::Base
 
   def current_theme
     @current_theme || "dark"
+  end
+
+  def set_blue_rate
+    @blue_dollar_rate = Rails.cache.fetch("blue_dollar_rate", expires_in: 15.minutes) do
+      uri = URI("https://dolarapi.com/v1/dolares/blue")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.open_timeout = 3
+      http.read_timeout = 3
+      response = http.request(Net::HTTP::Get.new(uri))
+      data = JSON.parse(response.body)
+      data["venta"]&.to_f
+    rescue StandardError
+      nil
+    end
+  end
+
+  def blue_dollar_rate
+    @blue_dollar_rate
   end
 
   def configure_permitted_parameters

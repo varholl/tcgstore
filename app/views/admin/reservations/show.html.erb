@@ -24,6 +24,9 @@
     <% if @reservation.message.present? %>
       <p><strong><%= t('admin.reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>
+    <% if @reservation.payment_method.present? %>
+      <p><strong><%= t('admin.reservations.payment_method_label') %></strong> <%= t("admin.reservations.payment_methods.#{@reservation.payment_method}") %></p>
+    <% end %>
   </div>
 </div>
 

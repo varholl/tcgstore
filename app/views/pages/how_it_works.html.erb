@@ -17,7 +17,7 @@
 
 <h2 class="mb-3"><%= t('pages.how_it_works.faq_title') %></h2>
 <div class="accordion" id="faqAccordion">
-  <% %w[what_is_reservation can_i_cancel do_reservations_expire are_prices_final need_account].each_with_index do |faq, index| %>
+  <% %w[what_is_reservation can_i_cancel do_reservations_expire are_prices_final need_account how_payment_works transfer_receipt].each_with_index do |faq, index| %>
     <div class="accordion-item">
       <h2 class="accordion-header">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-<%= index %>">

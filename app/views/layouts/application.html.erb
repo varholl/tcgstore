@@ -39,6 +39,11 @@
             </li>
           </ul>
           <ul class="navbar-nav align-items-lg-center flex-row flex-wrap gap-1 mt-2 mt-lg-0 pt-2 pt-lg-0 navbar-icons-separator">
+            <% if blue_dollar_rate %>
+              <li class="nav-item d-flex align-items-center">
+                <span class="btn btn-outline-light btn-sm" style="cursor: default; pointer-events: none;" title="<%= t('nav.blue_dollar_tooltip') %>" data-bs-toggle="tooltip">US$ = $<%= number_with_delimiter(blue_dollar_rate.round(0)) %></span>
+              </li>
+            <% end %>
             <li class="nav-item d-flex align-items-center">
               <select class="form-select form-select-sm" style="width: auto;" onchange="fetch(this.value, { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } }).then(() => window.location.reload())">
                 <option value="<%= set_language_path(:es) %>" <%= 'selected' if I18n.locale == :es %>>ES</option>

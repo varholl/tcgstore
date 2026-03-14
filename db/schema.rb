@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_14_034555) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_14_132027) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -71,6 +71,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_14_034555) do
     t.string "guest_name"
     t.string "guest_contact"
     t.decimal "final_price", precision: 10, scale: 2
+    t.string "payment_method"
+    t.datetime "receipt_sent_at"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end

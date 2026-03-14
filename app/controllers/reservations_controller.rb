@@ -77,6 +77,48 @@ class ReservationsController < ApplicationController
     redirect_to reservation_path(@reservation, anchor: "items"), notice: t('controllers.reservations.item_added', name: card.name)
   end
 
+  def set_payment_method
+    @reservation = current_user.reservations.find(params[:id])
+
+    unless @reservation.prepared?
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
+      return
+    end
+
+    payment_method = params[:payment_method]
+    if %w[cash transfer].include?(payment_method)
+      @reservation.update!(payment_method: payment_method)
+      redirect_to reservation_path(@reservation), notice: t('controllers.reservations.payment_method_set')
+    else
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.invalid_payment_method')
+    end
+  end
+
+  def upload_receipt
+    @reservation = current_user.reservations.find(params[:id])
+
+    unless @reservation.prepared? && @reservation.payment_method == "transfer"
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
+      return
+    end
+
+    file = params[:receipt]
+    unless file.is_a?(ActionDispatch::Http::UploadedFile)
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.receipt_missing')
+      return
+    end
+
+    allowed_types = %w[image/jpeg image/png image/webp application/pdf]
+    unless allowed_types.include?(file.content_type)
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.receipt_invalid_type')
+      return
+    end
+
+    ReservationMailer.transfer_receipt(@reservation, file).deliver_now
+    @reservation.update!(receipt_sent_at: Time.current)
+    redirect_to reservation_path(@reservation), notice: t('controllers.reservations.receipt_sent')
+  end
+
   def search_cards
     @reservation = current_user.reservations.find(params[:id])
     @cards = Card.search_by_name(params[:query]).limit(20)

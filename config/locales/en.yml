@@ -7,6 +7,13 @@ en:
         separator: "."
         delimiter: ","
         format: "%u %n"
+  views:
+    pagination:
+      first: "&laquo;"
+      previous: "&lsaquo;"
+      next: "&rsaquo;"
+      last: "&raquo;"
+      truncate: "&hellip;"
   nav:
     brand: "Varholl Garage Sale"
     cards: "Cards"
@@ -22,6 +29,7 @@ en:
     contact: "Contact"
     dark_mode: "Dark Mode"
     light_mode: "Light Mode"
+    blue_dollar_tooltip: "Blue dollar sell rate (ARS)"
 
   pages:
     about:
@@ -49,7 +57,7 @@ en:
           description: "I'll prepare the cards you requested and make sure they are all in top condition."
         step_5:
           title: "Payment & Delivery"
-          description: "Once I confirm everything is OK, I'll contact you to agree on a payment method and how to get your cards to you — either by shipping or in person."
+          description: "Once I confirm everything is OK, you'll be able to choose your payment method — cash or bank transfer — and coordinate delivery."
       faq:
         what_is_reservation:
           question: "What is a reservation?"
@@ -66,6 +74,12 @@ en:
         need_account:
           question: "Do I need an account?"
           answer: "Yes. You need to create an account and sign in to add cards to your cart and submit reservations."
+        how_payment_works:
+          question: "How does payment work?"
+          answer: "Once your reservation is prepared, you can choose between two payment methods: cash (coordinated in person) or bank transfer. If you choose transfer, you'll see the bank details (alias and CBU) on the reservation page. Prices are listed in US dollars, and the page shows the current blue dollar exchange rate so you know the equivalent in pesos."
+        transfer_receipt:
+          question: "How do I confirm a bank transfer?"
+          answer: "After making a transfer, you can upload a receipt (image or PDF) directly from your reservation page. The receipt is sent to the seller for verification. Once confirmed, your reservation will be marked as paid."
 
   cards:
     title: "Cards for Sale"
@@ -158,6 +172,28 @@ en:
     add: "Add"
     available: "Available"
     no_cards_found: "No cards found."
+    payment:
+      title: "Payment"
+      choose_method: "Choose your payment method"
+      cash_title: "Cash"
+      cash_description: "We can arrange an in-person meetup for cash payment. Contact me to coordinate."
+      cash_selected: "You chose to pay in cash. Contact me to arrange the meetup and complete the payment."
+      choose_cash: "Pay Cash"
+      transfer_title: "Bank Transfer"
+      transfer_description_short: "Transfer the peso equivalent to my bank account."
+      transfer_instructions: "Transfer the peso equivalent to the following account:"
+      choose_transfer: "Pay by Transfer"
+      alias: "Alias"
+      cbu: "CBU"
+      amount_pesos: "Amount to transfer"
+      exchange_rate: "Blue dollar rate: $%{rate} pesos — Your total: $%{total_pesos} pesos"
+      exchange_source: "Rate from dolarapi.com (blue dollar sell rate). May vary at the time of transfer."
+      upload_receipt_title: "Send transfer receipt"
+      upload_receipt_description: "Upload a screenshot or PDF of your transfer confirmation and it will be sent to us for verification."
+      send_receipt: "Send Receipt"
+      receipt_sent: "Receipt sent on %{time}. We'll verify it shortly."
+      not_yet_prepared: "Payment options will be available once your order is prepared."
+      already_paid: "This reservation has been paid. Thank you!"
 
   admin:
     sidebar:
@@ -226,6 +262,10 @@ en:
       status_label: "Status:"
       date_label: "Date:"
       message_label: "Message:"
+      payment_method_label: "Payment Method:"
+      payment_methods:
+        cash: "Cash"
+        transfer: "Bank Transfer"
       items_title: "Items"
       card_name: "Card Name"
       edition: "Edition"
@@ -388,6 +428,11 @@ en:
       item_removed: "Item removed from reservation."
       item_added: "%{name} added to reservation."
       edit_error: "Only pending reservations can be edited."
+      payment_method_set: "Payment method saved."
+      invalid_payment_method: "Invalid payment method."
+      receipt_sent: "Transfer receipt sent successfully. We'll verify it shortly."
+      receipt_missing: "Please select a file to upload."
+      receipt_invalid_type: "Invalid file type. Please upload a JPEG, PNG, WebP, or PDF file."
     admin:
       users:
         updated: "User updated successfully."
@@ -473,6 +518,12 @@ en:
       price: "Price"
       subtotal: "Subtotal"
       total: "Total: %{amount}"
+    transfer_receipt:
+      subject: "Transfer Receipt — Reservation #%{id} (%{user})"
+      greeting: "A transfer receipt has been uploaded."
+      body: "User %{user} (%{email}) has sent a transfer receipt for reservation #%{id}."
+      total: "Total:"
+      closing: "Please review the attached receipt and confirm the payment."
 
   card_price_mailer:
     fallback_results:

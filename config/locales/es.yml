@@ -7,6 +7,13 @@ es:
         separator: ","
         delimiter: "."
         format: "%u %n"
+  views:
+    pagination:
+      first: "&laquo;"
+      previous: "&lsaquo;"
+      next: "&rsaquo;"
+      last: "&raquo;"
+      truncate: "&hellip;"
   nav:
     brand: "Varholl Garage Sale"
     cards: "Cartas"
@@ -22,6 +29,7 @@ es:
     contact: "Contacto"
     dark_mode: "Modo Oscuro"
     light_mode: "Modo Claro"
+    blue_dollar_tooltip: "Dólar blue venta (pesos)"
 
   pages:
     about:
@@ -49,7 +57,7 @@ es:
           description: "Prepararé las cartas que solicitaste y me aseguraré de que estén todas en óptimas condiciones."
         step_5:
           title: "Pago y Entrega"
-          description: "Una vez que confirme que todo está bien, te contactaré para acordar un método de pago y cómo hacerte llegar tus cartas, ya sea por envío o en persona."
+          description: "Una vez que confirme que todo está bien, vas a poder elegir tu método de pago — efectivo o transferencia bancaria — y coordinar la entrega."
       faq:
         what_is_reservation:
           question: "¿Qué es una reserva?"
@@ -66,6 +74,12 @@ es:
         need_account:
           question: "¿Necesito una cuenta?"
           answer: "Sí. Necesitás crear una cuenta e iniciar sesión para agregar cartas al carrito y enviar reservas."
+        how_payment_works:
+          question: "¿Cómo funciona el pago?"
+          answer: "Una vez que tu reserva esté preparada, podés elegir entre dos métodos de pago: efectivo (coordinado en persona) o transferencia bancaria. Si elegís transferencia, vas a ver los datos bancarios (alias y CBU) en la página de la reserva. Los precios están en dólares estadounidenses, y la página muestra la cotización actual del dólar blue para que sepas el equivalente en pesos."
+        transfer_receipt:
+          question: "¿Cómo confirmo una transferencia bancaria?"
+          answer: "Después de hacer la transferencia, podés subir un comprobante (imagen o PDF) directamente desde la página de tu reserva. El comprobante se envía al vendedor para verificación. Una vez confirmado, tu reserva se marcará como pagada."
 
   cards:
     title: "Cartas en Venta"
@@ -158,6 +172,28 @@ es:
     add: "Agregar"
     available: "Disponible"
     no_cards_found: "No se encontraron cartas."
+    payment:
+      title: "Pago"
+      choose_method: "Elegí tu forma de pago"
+      cash_title: "Efectivo"
+      cash_description: "Podemos coordinar un encuentro para pago en efectivo. Contactame para coordinar."
+      cash_selected: "Elegiste pagar en efectivo. Contactame para coordinar el encuentro y completar el pago."
+      choose_cash: "Pagar en Efectivo"
+      transfer_title: "Transferencia Bancaria"
+      transfer_description_short: "Transferí el equivalente en pesos a mi cuenta bancaria."
+      transfer_instructions: "Transferí el equivalente en pesos a la siguiente cuenta:"
+      choose_transfer: "Pagar por Transferencia"
+      alias: "Alias"
+      cbu: "CBU"
+      amount_pesos: "Monto a transferir"
+      exchange_rate: "Dólar blue: $%{rate} pesos — Tu total: $%{total_pesos} pesos"
+      exchange_source: "Cotización de dolarapi.com (dólar blue venta). Puede variar al momento de transferir."
+      upload_receipt_title: "Enviar comprobante de transferencia"
+      upload_receipt_description: "Subí una captura de pantalla o PDF de tu comprobante de transferencia y lo enviaremos para su verificación."
+      send_receipt: "Enviar Comprobante"
+      receipt_sent: "Comprobante enviado el %{time}. Lo verificaremos a la brevedad."
+      not_yet_prepared: "Las opciones de pago estarán disponibles una vez que tu pedido esté preparado."
+      already_paid: "Esta reserva ya fue pagada. ¡Gracias!"
 
   admin:
     sidebar:
@@ -226,6 +262,10 @@ es:
       status_label: "Estado:"
       date_label: "Fecha:"
       message_label: "Mensaje:"
+      payment_method_label: "Forma de Pago:"
+      payment_methods:
+        cash: "Efectivo"
+        transfer: "Transferencia Bancaria"
       items_title: "Artículos"
       card_name: "Nombre de Carta"
       edition: "Edición"
@@ -388,6 +428,11 @@ es:
       item_removed: "Artículo eliminado de la reserva."
       item_added: "%{name} agregado a la reserva."
       edit_error: "Solo se pueden editar reservas pendientes."
+      payment_method_set: "Forma de pago guardada."
+      invalid_payment_method: "Forma de pago inválida."
+      receipt_sent: "Comprobante de transferencia enviado. Lo verificaremos a la brevedad."
+      receipt_missing: "Por favor seleccioná un archivo para subir."
+      receipt_invalid_type: "Tipo de archivo inválido. Por favor subí un archivo JPEG, PNG, WebP o PDF."
     admin:
       users:
         updated: "Usuario actualizado exitosamente."
@@ -473,6 +518,12 @@ es:
       price: "Precio"
       subtotal: "Subtotal"
       total: "Total: %{amount}"
+    transfer_receipt:
+      subject: "Comprobante de Transferencia — Reserva #%{id} (%{user})"
+      greeting: "Se ha subido un comprobante de transferencia."
+      body: "El usuario %{user} (%{email}) envió un comprobante de transferencia para la reserva #%{id}."
+      total: "Total:"
+      closing: "Por favor revisá el comprobante adjunto y confirmá el pago."
 
   card_price_mailer:
     fallback_results:

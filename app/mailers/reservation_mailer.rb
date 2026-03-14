@@ -57,6 +57,24 @@ class ReservationMailer < ApplicationMailer
     end
   end
 
+  def transfer_receipt(reservation, file)
+    @reservation = reservation
+    @user = reservation.user
+
+    attachments[file.original_filename] = {
+      mime_type: file.content_type,
+      content: file.read
+    }
+
+    admin_emails = User.where(admin: true).pluck(:email)
+    return if admin_emails.empty?
+
+    mail(
+      to: admin_emails,
+      subject: I18n.t('reservation_mailer.transfer_receipt.subject', id: reservation.id, user: @user&.name || 'Guest')
+    )
+  end
+
   private
 
   def build_recipients(reservation, notify_admins: false)
