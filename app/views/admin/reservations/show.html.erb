@@ -27,6 +27,12 @@
     <% if @reservation.payment_method.present? %>
       <p><strong><%= t('admin.reservations.payment_method_label') %></strong> <%= t("admin.reservations.payment_methods.#{@reservation.payment_method}") %></p>
     <% end %>
+    <% if @reservation.receipt_sent_at.present? %>
+      <p>
+        <strong><%= t('admin.reservations.receipt_label') %></strong>
+        <span class="badge bg-warning text-dark"><i class="fas fa-receipt me-1"></i><%= t('admin.reservations.receipt_sent_at', time: @reservation.receipt_sent_at.in_time_zone.strftime('%d/%m/%Y %H:%M')) %></span>
+      </p>
+    <% end %>
   </div>
 </div>
 

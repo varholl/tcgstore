@@ -6,6 +6,8 @@ class Admin::ReservationsController < ApplicationController
     @reservations = Reservation.includes(:user, :reservation_items).order(created_at: :desc)
     if params[:status] == "all"
       # show all
+    elsif params[:status] == "pending_receipt"
+      @reservations = @reservations.where(status: :prepared).where.not(receipt_sent_at: nil)
     elsif params[:status].present? && Reservation.statuses.key?(params[:status])
       @reservations = @reservations.where(status: params[:status])
     else

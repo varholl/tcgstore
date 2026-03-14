@@ -194,6 +194,12 @@ en:
       receipt_sent: "Receipt sent on %{time}. We'll verify it shortly."
       not_yet_prepared: "Payment options will be available once your order is prepared."
       already_paid: "This reservation has been paid. Thank you!"
+      method_chosen: "Payment method:"
+      methods:
+        cash: "Cash"
+        transfer: "Bank Transfer"
+      whatsapp_contact: "Contact me on WhatsApp"
+      whatsapp_message: "Hi! I have a question about reservation #%{id}"
 
   admin:
     sidebar:
@@ -326,6 +332,9 @@ en:
       remove_item: "Remove"
       remove_item_confirm: "Remove %{name} from this reservation?"
       add_cards: "Add Cards"
+      pending_receipt: "Pending Receipt"
+      receipt_label: "Receipt:"
+      receipt_sent_at: "Receipt sent %{time}"
     cards:
       title: "Admin - Cards"
       add_card: "Add Card to Stock"

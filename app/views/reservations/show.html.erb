@@ -188,9 +188,19 @@
       <% end %>
 
     <% elsif @reservation.paid? || @reservation.fulfilled? %>
-      <p class="mb-0 text-success"><i class="fas fa-check-circle me-1"></i> <%= t('reservations.payment.already_paid') %></p>
+      <p class="text-success"><i class="fas fa-check-circle me-1"></i> <%= t('reservations.payment.already_paid') %></p>
+      <% if @reservation.payment_method.present? %>
+        <p class="mb-0"><strong><%= t('reservations.payment.method_chosen') %></strong> <%= t("reservations.payment.methods.#{@reservation.payment_method}") %></p>
+      <% end %>
     <% else %>
       <p class="mb-0 text-muted"><i class="fas fa-clock me-1"></i> <%= t('reservations.payment.not_yet_prepared') %></p>
+    <% end %>
+
+    <% if @reservation.prepared? || @reservation.paid? || @reservation.fulfilled? %>
+      <hr>
+      <a href="https://wa.me/5491163572143?text=<%= CGI.escape(t('reservations.payment.whatsapp_message', id: @reservation.id)) %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success">
+        <i class="fab fa-whatsapp me-1"></i><%= t('reservations.payment.whatsapp_contact') %>
+      </a>
     <% end %>
   </div>
 </div>

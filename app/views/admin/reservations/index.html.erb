@@ -15,6 +15,15 @@
     </li>
   <% end %>
   <li class="nav-item">
+    <% pending_receipt_count = Reservation.where(status: :prepared).where.not(receipt_sent_at: nil).count %>
+    <%= link_to admin_reservations_path(status: "pending_receipt"), class: "nav-link #{active_status == 'pending_receipt' ? 'active' : ''}" do %>
+      <%= t('admin.reservations.pending_receipt') %>
+      <% if pending_receipt_count > 0 %>
+        <span class="badge bg-warning text-dark"><%= pending_receipt_count %></span>
+      <% end %>
+    <% end %>
+  </li>
+  <li class="nav-item">
     <%= link_to t('admin.reservations.all'), admin_reservations_path(status: "all"), class: "nav-link #{active_status == 'all' ? 'active' : ''}" %>
   </li>
 </ul>
@@ -51,6 +60,9 @@
             <td>
               <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
+              <% if reservation.receipt_sent_at.present? && !reservation.paid? && !reservation.fulfilled? %>
+                <span class="badge bg-warning text-dark" title="<%= t('admin.reservations.receipt_sent_at', time: reservation.receipt_sent_at.in_time_zone.strftime('%d/%m/%Y %H:%M')) %>"><i class="fas fa-receipt"></i></span>
+              <% end %>
             </td>
             <td>
               <%= link_to admin_reservation_path(reservation), class: "btn btn-sm btn-outline-primary", title: t('admin.reservations.view') do %><i class="fas fa-eye"></i><% end %>

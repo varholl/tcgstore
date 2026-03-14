@@ -194,6 +194,12 @@ es:
       receipt_sent: "Comprobante enviado el %{time}. Lo verificaremos a la brevedad."
       not_yet_prepared: "Las opciones de pago estarán disponibles una vez que tu pedido esté preparado."
       already_paid: "Esta reserva ya fue pagada. ¡Gracias!"
+      method_chosen: "Forma de pago:"
+      methods:
+        cash: "Efectivo"
+        transfer: "Transferencia Bancaria"
+      whatsapp_contact: "Contactame por WhatsApp"
+      whatsapp_message: "¡Hola! Tengo una consulta sobre la reserva #%{id}"
 
   admin:
     sidebar:
@@ -326,6 +332,9 @@ es:
       remove_item: "Quitar"
       remove_item_confirm: "¿Quitar %{name} de esta reserva?"
       add_cards: "Agregar Cartas"
+      pending_receipt: "Comprobante Pendiente"
+      receipt_label: "Comprobante:"
+      receipt_sent_at: "Comprobante enviado %{time}"
     cards:
       title: "Admin - Cartas"
       add_card: "Agregar Carta al Stock"
