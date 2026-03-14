@@ -71,15 +71,17 @@
                alt="<%= card.name %>"
                loading="lazy"
                onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
-          <div class="card-body p-2">
-            <h6 class="card-title mb-1"><%= card.name %></h6>
-            <small class="text-muted">
-              <%= card.edition_name || card.edition.upcase %> (<%= card.edition.upcase %>) #<%= card.collector_number %><br>
-              <%= card.condition %> · <%= card.language %>
-              <% if card.foil.present? %>
-                · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
-              <% end %>
-            </small>
+          <div class="card-body p-2 d-flex flex-column">
+            <div class="flex-grow-1">
+              <h6 class="card-title mb-1"><%= card.name %></h6>
+              <small class="text-muted">
+                <%= card.edition_name || card.edition.upcase %> (<%= card.edition.upcase %>) #<%= card.collector_number %><br>
+                <%= card.condition %> · <%= card.language %>
+                <% if card.foil.present? %>
+                  · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
+                <% end %>
+              </small>
+            </div>
             <div class="mt-1">
               <% if card.price %>
                 <strong class="text-price"><%= number_to_currency(card.price) %></strong>

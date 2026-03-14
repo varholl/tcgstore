@@ -1,4 +1,12 @@
 en:
+  number:
+    currency:
+      format:
+        unit: "US$"
+        precision: 2
+        separator: "."
+        delimiter: ","
+        format: "%u %n"
   nav:
     brand: "Varholl Garage Sale"
     cards: "Cards"
