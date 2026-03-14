@@ -1,60 +1,180 @@
-/* Application styles */
+/* ============================================
+   Varholl Garage Sale — MTG-inspired dark theme
+   ============================================ */
 
+/* --- Google Font --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+
+/* --- Color palette --- */
+:root {
+  --vg-bg:          #1a1a2e;
+  --vg-bg-card:     #16213e;
+  --vg-bg-surface:  #1e2a45;
+  --vg-bg-input:    #1e2a45;
+  --vg-border:      #2a3a5c;
+  --vg-text:        #e0e0e0;
+  --vg-text-muted:  #8a9bb5;
+  --vg-gold:        #c9a84c;
+  --vg-gold-light:  #e0c872;
+  --vg-gold-dark:   #a88832;
+  --vg-accent:      #4a6d8c;
+  --vg-accent-light:#5a8fba;
+  --vg-danger:      #dc3545;
+  --vg-success:     #198754;
+  --vg-warning:     #d4a017;
+}
+
+/* --- Base --- */
 body {
-  background-color: #ffffff;
+  background-color: var(--vg-bg);
+  color: var(--vg-text);
 }
 
+h1, h2, h3, h4, h5, h6,
+.card-title {
+  font-family: 'Cinzel', serif;
+  color: var(--vg-gold);
+}
+
+a {
+  color: var(--vg-accent-light);
+}
+
+a:hover {
+  color: var(--vg-gold-light);
+}
+
+hr {
+  border-color: var(--vg-border);
+  opacity: 0.5;
+}
+
+/* --- Navbar --- */
 .navbar {
-  background-color: #4a6d8c !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid var(--vg-gold-dark);
 }
 
+.navbar .nav-link {
+  color: var(--vg-text) !important;
+  transition: color 0.2s;
+}
+
+.navbar .nav-link:hover {
+  color: var(--vg-gold) !important;
+}
+
+/* --- Footer --- */
 footer.bg-dark {
-  background-color: #4a6d8c !important;
+  background: linear-gradient(0deg, #0f0f23 0%, #1a1a2e 100%) !important;
+  border-top: 1px solid var(--vg-gold-dark);
 }
 
-.table-dark {
-  --bs-table-bg: #5a7fa0;
-  --bs-table-border-color: #4a6d8c;
+/* --- Cards (Bootstrap .card) --- */
+.card {
+  background-color: var(--vg-bg-card);
+  border-color: var(--vg-border);
+  color: var(--vg-text);
 }
 
+.card-header {
+  background-color: var(--vg-bg-surface);
+  border-bottom-color: var(--vg-border);
+  color: var(--vg-gold);
+}
+
+.card-footer {
+  background-color: var(--vg-bg-surface);
+  border-top-color: var(--vg-border);
+}
+
+/* --- Foil cards --- */
+.foil-card {
+  border: 2px solid var(--vg-warning);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.3);
+}
+
+/* --- Buttons --- */
 .btn-primary {
-  background-color: #5a7fa0 !important;
-  border-color: #4a6d8c !important;
-}
-
-.btn-primary:hover {
-  background-color: #4a6d8c !important;
-  border-color: #3d5c75 !important;
-}
-
-.btn-outline-primary {
-  color: #5a7fa0 !important;
-  border-color: #5a7fa0 !important;
-}
-
-.btn-outline-primary:hover {
-  background-color: #5a7fa0 !important;
-  border-color: #5a7fa0 !important;
+  background-color: var(--vg-gold-dark) !important;
+  border-color: var(--vg-gold) !important;
   color: #fff !important;
 }
 
-.footer-link:hover {
-  opacity: 0.75;
-  transition: opacity 0.2s ease;
+.btn-primary:hover {
+  background-color: var(--vg-gold) !important;
+  border-color: var(--vg-gold-light) !important;
+  color: #1a1a2e !important;
 }
 
-.alert {
-  border-radius: 0.5rem;
+.btn-outline-primary {
+  color: var(--vg-gold) !important;
+  border-color: var(--vg-gold) !important;
 }
 
-/* Price text in chalky blue */
-.text-price {
-  color: #4a6d8c;
-  font-weight: bold;
+.btn-outline-primary:hover {
+  background-color: var(--vg-gold) !important;
+  border-color: var(--vg-gold) !important;
+  color: #1a1a2e !important;
 }
 
-/* Compact list view table */
+.btn-outline-secondary {
+  color: var(--vg-text-muted) !important;
+  border-color: var(--vg-border) !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--vg-bg-surface) !important;
+  border-color: var(--vg-text-muted) !important;
+  color: var(--vg-text) !important;
+}
+
+.btn-outline-light {
+  border-color: var(--vg-gold-dark) !important;
+  color: var(--vg-gold) !important;
+}
+
+.btn-outline-light:hover {
+  background-color: var(--vg-gold-dark) !important;
+  color: #fff !important;
+}
+
+/* --- Tables --- */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--vg-text);
+  --bs-table-border-color: var(--vg-border);
+  color: var(--vg-text);
+}
+
+.table-dark {
+  --bs-table-bg: var(--vg-bg-surface);
+  --bs-table-border-color: var(--vg-border);
+  --bs-table-color: var(--vg-gold);
+}
+
+.table-dark th {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-bg-type: rgba(30, 42, 69, 0.5);
+  color: var(--vg-text);
+}
+
+.table-hover > tbody > tr:hover > * {
+  --bs-table-bg-state: rgba(201, 168, 76, 0.08);
+  color: var(--vg-text);
+}
+
+.table-danger {
+  --bs-table-bg: rgba(220, 53, 69, 0.15) !important;
+  --bs-table-color: var(--vg-text);
+}
+
 .table td, .table th {
   font-size: 0.85rem;
 }
@@ -65,9 +185,120 @@ footer.bg-dark {
   }
 }
 
-/* Navbar icon separator on mobile */
+/* --- Forms --- */
+.form-control,
+.form-select {
+  background-color: var(--vg-bg-input);
+  border-color: var(--vg-border);
+  color: var(--vg-text);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--vg-bg-surface);
+  border-color: var(--vg-gold);
+  color: var(--vg-text);
+  box-shadow: 0 0 0 0.2rem rgba(201, 168, 76, 0.25);
+}
+
+.form-control::placeholder {
+  color: var(--vg-text-muted);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  background-color: var(--vg-bg) !important;
+  color: var(--vg-text-muted) !important;
+  opacity: 0.6;
+}
+
+.form-label {
+  color: var(--vg-text);
+}
+
+.form-text {
+  color: var(--vg-text-muted) !important;
+}
+
+.form-check-label {
+  color: var(--vg-text);
+}
+
+/* --- Alerts --- */
+.alert {
+  border-radius: 0.5rem;
+}
+
+.alert-info {
+  background-color: rgba(74, 109, 140, 0.2);
+  border-color: var(--vg-accent);
+  color: var(--vg-text);
+}
+
+.alert-warning {
+  background-color: rgba(212, 160, 23, 0.15);
+  border-color: var(--vg-warning);
+  color: var(--vg-gold-light);
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.15);
+  border-color: var(--vg-danger);
+  color: #f0a0a8;
+}
+
+/* --- Badges --- */
+.badge.bg-primary {
+  background-color: var(--vg-gold-dark) !important;
+  color: #fff;
+}
+
+.badge.bg-info {
+  background-color: var(--vg-accent) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--vg-bg-surface) !important;
+  border: 1px solid var(--vg-border);
+}
+
+/* --- Price text --- */
+.text-price {
+  color: var(--vg-gold);
+  font-weight: bold;
+}
+
+/* --- Muted text --- */
+.text-muted {
+  color: var(--vg-text-muted) !important;
+}
+
+/* --- Modals --- */
+.modal-content {
+  background-color: var(--vg-bg-card);
+  border-color: var(--vg-border);
+  color: var(--vg-text);
+}
+
+.modal-header {
+  border-bottom-color: var(--vg-border);
+}
+
+.modal-header .modal-title {
+  color: var(--vg-gold);
+}
+
+.modal-footer {
+  border-top-color: var(--vg-border);
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* --- Navbar icon separator on mobile --- */
 .navbar-icons-separator {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(201, 168, 76, 0.3);
 }
 
 @media (min-width: 992px) {
@@ -76,21 +307,163 @@ footer.bg-dark {
   }
 }
 
-/* Admin navigation */
+/* --- Admin navigation --- */
 .admin-nav .nav-link.active {
-  background-color: #4a6d8c !important;
+  background-color: var(--vg-gold-dark) !important;
+  color: #fff !important;
 }
 
 .admin-nav .nav-link:not(.active) {
-  color: #4a6d8c;
+  color: var(--vg-gold);
 }
 
 .admin-nav .nav-link:not(.active):hover {
-  background-color: #e9ecef;
+  background-color: var(--vg-bg-surface);
+  color: var(--vg-gold-light);
 }
 
-/* Foil highlight - grid view cards */
+/* --- Pagination (Kaminari) --- */
+.pagination .page-link {
+  background-color: var(--vg-bg-card);
+  border-color: var(--vg-border);
+  color: var(--vg-gold);
+}
+
+.pagination .page-link:hover {
+  background-color: var(--vg-bg-surface);
+  border-color: var(--vg-gold-dark);
+  color: var(--vg-gold-light);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--vg-gold-dark);
+  border-color: var(--vg-gold);
+  color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: var(--vg-bg);
+  border-color: var(--vg-border);
+  color: var(--vg-text-muted);
+}
+
+/* --- Dropdowns --- */
+.dropdown-menu {
+  background-color: var(--vg-bg-card);
+  border-color: var(--vg-border);
+}
+
+.dropdown-item {
+  color: var(--vg-text);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--vg-bg-surface);
+  color: var(--vg-gold);
+}
+
+/* --- Nav tabs (reservation status) --- */
+.nav-tabs {
+  border-bottom-color: var(--vg-border);
+}
+
+.nav-tabs .nav-link {
+  color: var(--vg-text-muted);
+}
+
+.nav-tabs .nav-link:hover {
+  border-color: var(--vg-border);
+  color: var(--vg-gold);
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--vg-bg-card);
+  border-color: var(--vg-border) var(--vg-border) var(--vg-bg-card);
+  color: var(--vg-gold);
+}
+
+/* --- Toast notifications --- */
+.toast {
+  border: 1px solid var(--vg-border);
+}
+
+/* --- Selection & scrollbar --- */
+::selection {
+  background-color: var(--vg-gold-dark);
+  color: #fff;
+}
+
+/* --- Footer link hover --- */
+.footer-link:hover {
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+}
+
+/* --- Subtle shimmer for foil cards in grid --- */
+@keyframes foil-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.foil-card .card-img-top {
+  position: relative;
+}
+
+.foil-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(212, 160, 23, 0.08) 45%,
+    rgba(180, 130, 255, 0.06) 50%,
+    rgba(100, 200, 255, 0.06) 55%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: foil-shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
 .foil-card {
-  border: 2px solid #d4a017;
-  box-shadow: 0 0 8px rgba(212, 160, 23, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- Misc Bootstrap overrides for dark theme --- */
+.border-danger {
+  border-color: var(--vg-danger) !important;
+}
+
+strong {
+  color: var(--vg-text);
+}
+
+.card h5, .card h6 {
+  color: var(--vg-gold);
+}
+
+dl .row dt {
+  color: var(--vg-text-muted);
+}
+
+dl .row dd {
+  color: var(--vg-text);
+}
+
+/* Input group buttons */
+.input-group .btn-outline-primary {
+  border-color: var(--vg-gold) !important;
+  color: var(--vg-gold) !important;
+}
+
+.input-group .btn-outline-primary:hover {
+  background-color: var(--vg-gold) !important;
+  color: #1a1a2e !important;
 }
