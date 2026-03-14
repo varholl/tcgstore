@@ -12,6 +12,8 @@ en:
     how_it_works: "How It Works"
     about_this_site: "About This Site"
     contact: "Contact"
+    dark_mode: "Dark Mode"
+    light_mode: "Light Mode"
 
   pages:
     about:

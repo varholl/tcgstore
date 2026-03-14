@@ -1,27 +1,58 @@
 /* ============================================
-   Varholl Garage Sale — MTG-inspired dark theme
+   Varholl Garage Sale — MTG-inspired theme
+   Dark (default) + Light mode
    ============================================ */
 
 /* --- Google Font --- */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
 
-/* --- Color palette --- */
-:root {
-  --vg-bg:          #1a1a2e;
-  --vg-bg-card:     #16213e;
-  --vg-bg-surface:  #1e2a45;
-  --vg-bg-input:    #1e2a45;
-  --vg-border:      #2a3a5c;
+/* --- Color palette: Dark (default) --- */
+:root,
+[data-theme="dark"] {
+  --vg-bg:          #141414;
+  --vg-bg-card:     #1c1c1c;
+  --vg-bg-surface:  #252525;
+  --vg-bg-input:    #1e1e1e;
+  --vg-border:      #3a3a3a;
   --vg-text:        #e0e0e0;
-  --vg-text-muted:  #8a9bb5;
+  --vg-text-muted:  #8a8a8a;
   --vg-gold:        #c9a84c;
   --vg-gold-light:  #e0c872;
   --vg-gold-dark:   #a88832;
-  --vg-accent:      #4a6d8c;
-  --vg-accent-light:#5a8fba;
+  --vg-accent:      #4a8db7;
+  --vg-accent-light:#6ab0d8;
   --vg-danger:      #dc3545;
   --vg-success:     #198754;
   --vg-warning:     #d4a017;
+  --vg-navbar-bg:   linear-gradient(180deg, #0e0e0e 0%, #141414 100%);
+  --vg-footer-bg:   linear-gradient(0deg, #0e0e0e 0%, #141414 100%);
+  --vg-shadow:      rgba(0, 0, 0, 0.6);
+  --vg-stripe-bg:   rgba(50, 50, 50, 0.4);
+  --vg-btn-close-filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* --- Color palette: Light --- */
+[data-theme="light"] {
+  --vg-bg:          #f5f3ef;
+  --vg-bg-card:     #ffffff;
+  --vg-bg-surface:  #ece8e1;
+  --vg-bg-input:    #ffffff;
+  --vg-border:      #d4cfc7;
+  --vg-text:        #2c2c2c;
+  --vg-text-muted:  #6b6b6b;
+  --vg-gold:        #8b6914;
+  --vg-gold-light:  #a37d1c;
+  --vg-gold-dark:   #6b5010;
+  --vg-accent:      #2e6e99;
+  --vg-accent-light:#1a5a85;
+  --vg-danger:      #dc3545;
+  --vg-success:     #198754;
+  --vg-warning:     #b8860b;
+  --vg-navbar-bg:   linear-gradient(180deg, #e8e4dc 0%, #f5f3ef 100%);
+  --vg-footer-bg:   linear-gradient(0deg, #e8e4dc 0%, #f5f3ef 100%);
+  --vg-shadow:      rgba(0, 0, 0, 0.1);
+  --vg-stripe-bg:   rgba(139, 105, 20, 0.04);
+  --vg-btn-close-filter: none;
 }
 
 /* --- Base --- */
@@ -51,8 +82,8 @@ hr {
 
 /* --- Navbar --- */
 .navbar {
-  background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%) !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  background: var(--vg-navbar-bg) !important;
+  box-shadow: 0 2px 12px var(--vg-shadow);
   border-bottom: 1px solid var(--vg-gold-dark);
 }
 
@@ -62,13 +93,14 @@ hr {
 }
 
 .navbar .nav-link:hover {
-  color: var(--vg-gold) !important;
+  color: var(--vg-accent-light) !important;
 }
 
 /* --- Footer --- */
-footer.bg-dark {
-  background: linear-gradient(0deg, #0f0f23 0%, #1a1a2e 100%) !important;
+.site-footer {
+  background: var(--vg-footer-bg);
   border-top: 1px solid var(--vg-gold-dark);
+  color: var(--vg-text);
 }
 
 /* --- Cards (Bootstrap .card) --- */
@@ -91,32 +123,35 @@ footer.bg-dark {
 
 /* --- Foil cards --- */
 .foil-card {
-  border: 2px solid var(--vg-warning);
-  box-shadow: 0 0 12px rgba(212, 160, 23, 0.3);
+  border: 2px solid var(--vg-gold);
+  box-shadow:
+    0 0 8px rgba(212, 160, 23, 0.4),
+    0 0 20px rgba(212, 160, 23, 0.15),
+    inset 0 0 8px rgba(212, 160, 23, 0.05);
 }
 
 /* --- Buttons --- */
 .btn-primary {
-  background-color: var(--vg-gold-dark) !important;
-  border-color: var(--vg-gold) !important;
+  background-color: var(--vg-accent) !important;
+  border-color: var(--vg-accent) !important;
   color: #fff !important;
 }
 
 .btn-primary:hover {
-  background-color: var(--vg-gold) !important;
-  border-color: var(--vg-gold-light) !important;
-  color: #1a1a2e !important;
+  background-color: var(--vg-accent-light) !important;
+  border-color: var(--vg-accent-light) !important;
+  color: #fff !important;
 }
 
 .btn-outline-primary {
-  color: var(--vg-gold) !important;
-  border-color: var(--vg-gold) !important;
+  color: var(--vg-accent-light) !important;
+  border-color: var(--vg-accent) !important;
 }
 
 .btn-outline-primary:hover {
-  background-color: var(--vg-gold) !important;
-  border-color: var(--vg-gold) !important;
-  color: #1a1a2e !important;
+  background-color: var(--vg-accent) !important;
+  border-color: var(--vg-accent) !important;
+  color: #fff !important;
 }
 
 .btn-outline-secondary {
@@ -131,12 +166,12 @@ footer.bg-dark {
 }
 
 .btn-outline-light {
-  border-color: var(--vg-gold-dark) !important;
-  color: var(--vg-gold) !important;
+  border-color: var(--vg-accent) !important;
+  color: var(--vg-accent-light) !important;
 }
 
 .btn-outline-light:hover {
-  background-color: var(--vg-gold-dark) !important;
+  background-color: var(--vg-accent) !important;
   color: #fff !important;
 }
 
@@ -161,12 +196,12 @@ footer.bg-dark {
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-  --bs-table-bg-type: rgba(30, 42, 69, 0.5);
+  --bs-table-bg-type: var(--vg-stripe-bg);
   color: var(--vg-text);
 }
 
 .table-hover > tbody > tr:hover > * {
-  --bs-table-bg-state: rgba(201, 168, 76, 0.08);
+  --bs-table-bg-state: rgba(74, 141, 183, 0.08);
   color: var(--vg-text);
 }
 
@@ -196,9 +231,9 @@ footer.bg-dark {
 .form-control:focus,
 .form-select:focus {
   background-color: var(--vg-bg-surface);
-  border-color: var(--vg-gold);
+  border-color: var(--vg-accent);
   color: var(--vg-text);
-  box-shadow: 0 0 0 0.2rem rgba(201, 168, 76, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(74, 141, 183, 0.25);
 }
 
 .form-control::placeholder {
@@ -249,7 +284,7 @@ footer.bg-dark {
 
 /* --- Badges --- */
 .badge.bg-primary {
-  background-color: var(--vg-gold-dark) !important;
+  background-color: var(--vg-accent) !important;
   color: #fff;
 }
 
@@ -293,12 +328,12 @@ footer.bg-dark {
 }
 
 .btn-close {
-  filter: invert(1) grayscale(100%) brightness(200%);
+  filter: var(--vg-btn-close-filter);
 }
 
 /* --- Navbar icon separator on mobile --- */
 .navbar-icons-separator {
-  border-top: 1px solid rgba(201, 168, 76, 0.3);
+  border-top: 1px solid rgba(74, 141, 183, 0.3);
 }
 
 @media (min-width: 992px) {
@@ -309,35 +344,35 @@ footer.bg-dark {
 
 /* --- Admin navigation --- */
 .admin-nav .nav-link.active {
-  background-color: var(--vg-gold-dark) !important;
+  background-color: var(--vg-accent) !important;
   color: #fff !important;
 }
 
 .admin-nav .nav-link:not(.active) {
-  color: var(--vg-gold);
+  color: var(--vg-accent-light);
 }
 
 .admin-nav .nav-link:not(.active):hover {
   background-color: var(--vg-bg-surface);
-  color: var(--vg-gold-light);
+  color: var(--vg-text);
 }
 
 /* --- Pagination (Kaminari) --- */
 .pagination .page-link {
   background-color: var(--vg-bg-card);
   border-color: var(--vg-border);
-  color: var(--vg-gold);
+  color: var(--vg-accent-light);
 }
 
 .pagination .page-link:hover {
   background-color: var(--vg-bg-surface);
-  border-color: var(--vg-gold-dark);
-  color: var(--vg-gold-light);
+  border-color: var(--vg-accent);
+  color: var(--vg-text);
 }
 
 .pagination .page-item.active .page-link {
-  background-color: var(--vg-gold-dark);
-  border-color: var(--vg-gold);
+  background-color: var(--vg-accent);
+  border-color: var(--vg-accent);
   color: #fff;
 }
 
@@ -360,7 +395,7 @@ footer.bg-dark {
 .dropdown-item:hover,
 .dropdown-item:focus {
   background-color: var(--vg-bg-surface);
-  color: var(--vg-gold);
+  color: var(--vg-accent-light);
 }
 
 /* --- Nav tabs (reservation status) --- */
@@ -374,13 +409,13 @@ footer.bg-dark {
 
 .nav-tabs .nav-link:hover {
   border-color: var(--vg-border);
-  color: var(--vg-gold);
+  color: var(--vg-accent-light);
 }
 
 .nav-tabs .nav-link.active {
   background-color: var(--vg-bg-card);
   border-color: var(--vg-border) var(--vg-border) var(--vg-bg-card);
-  color: var(--vg-gold);
+  color: var(--vg-accent-light);
 }
 
 /* --- Toast notifications --- */
@@ -390,7 +425,7 @@ footer.bg-dark {
 
 /* --- Selection & scrollbar --- */
 ::selection {
-  background-color: var(--vg-gold-dark);
+  background-color: var(--vg-accent);
   color: #fff;
 }
 
@@ -400,40 +435,21 @@ footer.bg-dark {
   transition: opacity 0.2s ease;
 }
 
-/* --- Subtle shimmer for foil cards in grid --- */
+/* --- Foil card shimmer --- */
 @keyframes foil-shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-.foil-card .card-img-top {
-  position: relative;
-}
-
-.foil-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    120deg,
-    transparent 30%,
-    rgba(212, 160, 23, 0.08) 45%,
-    rgba(180, 130, 255, 0.06) 50%,
-    rgba(100, 200, 255, 0.06) 55%,
-    transparent 70%
-  );
-  background-size: 200% 100%;
-  animation: foil-shimmer 4s ease-in-out infinite;
-  pointer-events: none;
-  border-radius: inherit;
+@keyframes foil-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(212, 160, 23, 0.45), 0 0 25px rgba(212, 160, 23, 0.2); }
+  50%      { box-shadow: 0 0 16px rgba(212, 160, 23, 0.55), 0 0 40px rgba(212, 160, 23, 0.3); }
 }
 
 .foil-card {
   position: relative;
   overflow: hidden;
+  animation: foil-glow 5s ease-in-out infinite;
 }
 
 /* --- Misc Bootstrap overrides for dark theme --- */
@@ -459,11 +475,76 @@ dl .row dd {
 
 /* Input group buttons */
 .input-group .btn-outline-primary {
-  border-color: var(--vg-gold) !important;
-  color: var(--vg-gold) !important;
+  border-color: var(--vg-accent) !important;
+  color: var(--vg-accent-light) !important;
 }
 
 .input-group .btn-outline-primary:hover {
-  background-color: var(--vg-gold) !important;
-  color: #1a1a2e !important;
+  background-color: var(--vg-accent) !important;
+  color: #fff !important;
+}
+
+/* ============================================
+   Light theme overrides
+   ============================================ */
+[data-theme="light"] body {
+  background-color: var(--vg-bg);
+  color: var(--vg-text);
+}
+
+[data-theme="light"] .navbar {
+  border-bottom: 1px solid var(--vg-border);
+}
+
+[data-theme="light"] .navbar .nav-link {
+  color: var(--vg-text) !important;
+}
+
+[data-theme="light"] .navbar .navbar-toggler-icon {
+  filter: invert(0.5);
+}
+
+[data-theme="light"] .site-footer {
+  border-top: 1px solid var(--vg-border);
+}
+
+[data-theme="light"] .alert-warning {
+  background-color: rgba(184, 134, 11, 0.1);
+  border-color: var(--vg-warning);
+  color: #6b5010;
+}
+
+[data-theme="light"] .alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: var(--vg-danger);
+  color: #842029;
+}
+
+[data-theme="light"] .alert-info {
+  background-color: rgba(46, 110, 153, 0.1);
+  border-color: var(--vg-accent);
+  color: var(--vg-text);
+}
+
+[data-theme="light"] .table-danger {
+  --bs-table-bg: rgba(220, 53, 69, 0.08) !important;
+}
+
+[data-theme="light"] .foil-card {
+  box-shadow:
+    0 0 8px rgba(139, 105, 20, 0.3),
+    0 0 20px rgba(139, 105, 20, 0.1);
+}
+
+@keyframes foil-glow-light {
+  0%, 100% { box-shadow: 0 0 10px rgba(139, 105, 20, 0.3), 0 0 25px rgba(139, 105, 20, 0.1); }
+  50%      { box-shadow: 0 0 16px rgba(139, 105, 20, 0.4), 0 0 40px rgba(139, 105, 20, 0.2); }
+}
+
+[data-theme="light"] .foil-card {
+  animation: foil-glow-light 5s ease-in-out infinite;
+}
+
+[data-theme="light"] .card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }

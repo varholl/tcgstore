@@ -60,6 +60,7 @@ Rails.application.routes.draw do
   get 'how_it_works', to: 'pages#how_it_works'
   get 'about', to: 'pages#about'
   post '/set_language/:locale', to: 'application#set_language', as: :set_language
+  post '/toggle_theme', to: 'application#toggle_theme', as: :toggle_theme
 
   root "cards#index"
 end

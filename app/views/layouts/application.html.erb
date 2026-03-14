@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="<%= current_theme %>">
   <head>
     <title>Varholl Garage Sale</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -16,7 +16,7 @@
   </head>
 
   <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <nav class="navbar navbar-expand-lg <%= current_theme == 'dark' ? 'navbar-dark' : 'navbar-light' %> mb-4">
       <div class="container align-items-center">
         <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
           <%= image_tag "logo.png", alt: t('nav.brand'), height: 80 %>
@@ -44,6 +44,11 @@
                 <option value="<%= set_language_path(:es) %>" <%= 'selected' if I18n.locale == :es %>>ES</option>
                 <option value="<%= set_language_path(:en) %>" <%= 'selected' if I18n.locale == :en %>>EN</option>
               </select>
+            </li>
+            <li class="nav-item d-flex align-items-center">
+              <a href="#" class="nav-link" title="<%= current_theme == 'dark' ? t('nav.light_mode') : t('nav.dark_mode') %>" data-bs-toggle="tooltip" onclick="fetch('<%= toggle_theme_path %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } }).then(() => window.location.reload()); return false;">
+                <i class="fas <%= current_theme == 'dark' ? 'fa-sun' : 'fa-moon' %>"></i>
+              </a>
             </li>
             <% if user_signed_in? %>
               <li class="nav-item">
@@ -117,18 +122,18 @@
       <%= yield %>
     </div>
 
-    <footer class="text-light mt-auto py-3 bg-dark">
+    <footer class="mt-auto py-3 site-footer">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
             <span>&copy; <%= Date.today.year %> Varholl Garage Sale</span>
-            <span class="text-light opacity-75 ms-2"><%= t('footer.tagline') %></span>
+            <span class="opacity-75 ms-2"><%= t('footer.tagline') %></span>
           </div>
           <div class="col-md-6 text-center text-md-end">
-            <a href="mailto:matias.laino@gmail.com" class="text-light text-decoration-none me-3">
+            <a href="mailto:matias.laino@gmail.com" class="text-decoration-none me-3" style="color: var(--vg-text-muted);">
               <i class="fas fa-envelope" style="font-size: 18px;"></i>
             </a>
-            <a href="https://www.instagram.com/varholl_mtg" target="_blank" rel="noopener noreferrer" class="text-light text-decoration-none">
+            <a href="https://www.instagram.com/varholl_mtg" target="_blank" rel="noopener noreferrer" class="text-decoration-none" style="color: var(--vg-text-muted);">
               <i class="fab fa-instagram" style="font-size: 18px;"></i>
             </a>
           </div>

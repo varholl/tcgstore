@@ -12,6 +12,8 @@ es:
     how_it_works: "Cómo Funciona"
     about_this_site: "Acerca de Este Sitio"
     contact: "Contacto"
+    dark_mode: "Modo Oscuro"
+    light_mode: "Modo Claro"
 
   pages:
     about:
