@@ -1,5 +1,5 @@
 <%= render layout: 'layouts/admin_sidebar' do %>
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 admin-header-actions">
   <h1><%= t('admin.reservations.show_title', id: @reservation.id) %></h1>
   <%= link_to t('admin.reservations.back'), "javascript:history.back()", class: "btn btn-outline-secondary" %>
 </div>
@@ -100,7 +100,7 @@
   </div>
 <% else %>
 <div class="table-responsive">
-  <table class="table table-striped">
+  <table class="table table-striped admin-mobile-table">
     <thead class="table-dark">
       <tr>
         <th><%= t('admin.reservations.card_name') %></th>
@@ -117,7 +117,7 @@
       <% @reservation.reservation_items.each do |item| %>
         <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid?) && item.card.quantity < item.quantity %>
         <tr class="<%= 'table-danger' if stock_short %>">
-          <td>
+          <td data-label="<%= t('admin.reservations.card_name') %>">
             <%= item.card.name %>
             <% if stock_short %>
               <span class="badge bg-danger" title="<%= t('admin.reservations.stock_warning_detail', in_stock: item.card.quantity, reserved: item.quantity) %>">
@@ -125,16 +125,16 @@
               </span>
             <% end %>
           </td>
-          <td><%= item.card.edition_name || item.card.edition.upcase %></td>
-          <td><%= item.card.condition %></td>
-          <td><%= item.quantity %></td>
-          <td>
+          <td data-label="<%= t('admin.reservations.edition') %>"><%= item.card.edition_name || item.card.edition.upcase %></td>
+          <td data-label="<%= t('admin.reservations.condition') %>"><%= item.card.condition %></td>
+          <td data-label="<%= t('admin.reservations.quantity') %>"><%= item.quantity %></td>
+          <td data-label="<%= t('admin.reservations.current_price') %>">
             <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
             <% if item.card.price_source == "scryfall" && !item.card.price_reviewed? %>
               <span class="badge bg-warning text-dark" title="<%= t('admin.cards.price_from_scryfall') %>"><i class="fas fa-exclamation-triangle"></i></span>
             <% end %>
           </td>
-          <td>
+          <td data-label="<%= t('admin.reservations.price') %>">
             <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %>
             <% if @reservation.pending? || @reservation.prepared? || @reservation.paid? %>
               <button type="button" class="btn btn-sm btn-link p-0 ms-1" data-bs-toggle="modal" data-bs-target="#editPriceModal<%= item.id %>" title="<%= t('admin.reservations.edit_price') %>">
@@ -142,9 +142,9 @@
               </button>
             <% end %>
           </td>
-          <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
+          <td data-label="<%= t('admin.reservations.subtotal') %>"><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
           <% if @reservation.pending? || @reservation.prepared? %>
-            <td>
+            <td data-label="">
               <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
             </td>
           <% end %>

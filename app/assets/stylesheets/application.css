@@ -581,3 +581,120 @@ dl .row dd {
 [data-theme="light"] .card {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+
+/* ============================================
+   Admin tables — mobile card layout
+   ============================================ */
+@media (max-width: 767.98px) {
+  .admin-mobile-table thead {
+    display: none;
+  }
+
+  .admin-mobile-table tbody tr {
+    display: block;
+    background-color: var(--vg-bg-card);
+    border: 1px solid var(--vg-border);
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .admin-mobile-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border: none;
+    font-size: 0.85rem;
+  }
+
+  .admin-mobile-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--vg-gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .admin-mobile-table tbody td:last-child {
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--vg-border);
+    margin-top: 0.25rem;
+  }
+
+  .admin-mobile-table tbody td[data-label=""]::before,
+  .admin-mobile-table tbody td:not([data-label])::before {
+    display: none;
+  }
+
+  .admin-mobile-table tfoot tr {
+    display: block;
+    padding: 0.5rem 0;
+  }
+
+  .admin-mobile-table tfoot td {
+    display: block;
+    border: none;
+    text-align: right;
+    padding: 0.25rem 0;
+  }
+
+  /* Header button wrapping */
+  .admin-header-actions {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .admin-header-actions h1 {
+    font-size: 1.4rem;
+  }
+
+  .admin-header-actions .d-flex {
+    flex-wrap: wrap;
+  }
+
+  /* Status tabs scrollable on mobile */
+  .nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-tabs .nav-link {
+    white-space: nowrap;
+  }
+}
+
+/* --- Admin cards compact mobile rows --- */
+.admin-card-row {
+  background-color: var(--vg-bg-card);
+  border: 1px solid var(--vg-border);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-card-row-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--vg-text);
+  margin-bottom: 0.3rem;
+}
+
+.admin-card-row-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--vg-text-muted);
+}
+
+.admin-card-row-actions {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
