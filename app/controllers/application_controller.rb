@@ -3,7 +3,8 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :set_theme
   before_action :set_blue_rate
-  helper_method :current_theme, :blue_dollar_rate
+  before_action :set_maintenance_mode
+  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?
 
   def set_language
     locale = params[:locale].to_s
@@ -57,6 +58,22 @@ class ApplicationController < ActionController::Base
 
   def blue_dollar_rate
     @blue_dollar_rate
+  end
+
+  def set_maintenance_mode
+    @maintenance_mode = SiteSetting.maintenance_mode?
+    @maintenance_message = SiteSetting.maintenance_message
+  end
+
+  def maintenance_mode?
+    @maintenance_mode
+  end
+
+  def require_no_maintenance!
+    return unless maintenance_mode?
+    return if user_signed_in? && current_user.admin?
+
+    redirect_back fallback_location: root_path, alert: @maintenance_message.presence || t('maintenance.default_message')
   end
 
   def configure_permitted_parameters

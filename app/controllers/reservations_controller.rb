@@ -1,5 +1,6 @@
 class ReservationsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_no_maintenance!, only: [:create, :add_item]
 
   def index
     @reservations = current_user.reservations.includes(:reservation_items).order(created_at: :desc).page(params[:page]).per(20)

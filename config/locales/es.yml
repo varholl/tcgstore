@@ -206,6 +206,16 @@ es:
       reservations: "Reservas"
       users: "Usuarios"
       cards: "Cartas"
+      settings: "Configuración"
+    site_settings:
+      title: "Configuración del Sitio"
+      maintenance_mode_label: "Modo Mantenimiento"
+      maintenance_mode_hint: "Cuando está activo, los usuarios no pueden crear reservas ni agregar artículos al carrito. Los administradores no se ven afectados."
+      message_label: "Mensaje de Mantenimiento"
+      message_placeholder: "Estamos actualizando el inventario, ¡volvé pronto!"
+      message_hint: "Mensaje personalizado opcional que se muestra a los usuarios. Si se deja vacío, se usa un mensaje por defecto."
+      maintenance_active_warning: "El modo mantenimiento está activo. Los usuarios no pueden crear reservas."
+      save: "Guardar Configuración"
     users:
       title: "Admin - Usuarios"
       search_placeholder: "Buscar por nombre o email..."
@@ -490,6 +500,9 @@ es:
         no_items: "Por favor agregá al menos una carta a la reserva."
     profiles:
       updated: "Perfil actualizado exitosamente."
+    site_settings:
+      updated: "Configuración actualizada exitosamente."
+      access_denied: "Acceso denegado."
 
   reservation_mailer:
     created:
@@ -555,6 +568,9 @@ es:
     japanese: "Japonés"
     italian: "Italiano"
     portuguese: "Portugués"
+
+  maintenance:
+    default_message: "Estamos actualizando nuestro inventario. Las reservas están temporalmente pausadas — ¡volvé pronto!"
 
   footer:
     tagline: "Singles de MTG y más"

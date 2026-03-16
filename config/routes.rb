@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    resource :site_settings, only: [:edit, :update]
     resources :reservations, only: [:index, :show, :new, :create] do
       collection do
         get :search_cards

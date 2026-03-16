@@ -698,3 +698,13 @@ dl .row dd {
   gap: 0.25rem;
   margin-left: auto;
 }
+
+/* --- Maintenance banner --- */
+.maintenance-banner {
+  background-color: var(--vg-warning);
+  color: #1a1a1a;
+  text-align: center;
+  padding: 0.6rem 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}

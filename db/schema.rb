@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_14_132027) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_16_200000) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -75,6 +75,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_14_132027) do
     t.datetime "receipt_sent_at"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
+  end
+
+  create_table "site_settings", force: :cascade do |t|
+    t.boolean "maintenance_mode", default: false, null: false
+    t.text "maintenance_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

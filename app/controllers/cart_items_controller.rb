@@ -1,5 +1,6 @@
 class CartItemsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_no_maintenance!, only: [:create, :update]
 
   def index
     @cart_items = current_user.cart_items.includes(:card)

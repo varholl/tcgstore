@@ -112,6 +112,15 @@
       </div>
     </nav>
 
+    <% if maintenance_mode? %>
+      <div class="maintenance-banner">
+        <div class="container">
+          <i class="fas fa-tools me-2"></i>
+          <%= @maintenance_message.presence || t('maintenance.default_message') %>
+        </div>
+      </div>
+    <% end %>
+
     <div class="container flex-grow-1">
       <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
         <% if notice.present? %>

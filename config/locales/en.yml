@@ -206,6 +206,16 @@ en:
       reservations: "Reservations"
       users: "Users"
       cards: "Cards"
+      settings: "Settings"
+    site_settings:
+      title: "Site Settings"
+      maintenance_mode_label: "Maintenance Mode"
+      maintenance_mode_hint: "When enabled, users cannot create reservations or add items to cart. Admins are not affected."
+      message_label: "Maintenance Message"
+      message_placeholder: "We're updating our inventory, check back soon!"
+      message_hint: "Optional custom message shown to users. If blank, a default message is used."
+      maintenance_active_warning: "Maintenance mode is currently active. Users cannot create reservations."
+      save: "Save Settings"
     users:
       title: "Admin - Users"
       search_placeholder: "Search by name or email..."
@@ -490,6 +500,9 @@ en:
         no_items: "Please add at least one card to the reservation."
     profiles:
       updated: "Profile updated successfully."
+    site_settings:
+      updated: "Settings updated successfully."
+      access_denied: "Access denied."
 
   reservation_mailer:
     created:
@@ -555,6 +568,9 @@ en:
     japanese: "Japanese"
     italian: "Italian"
     portuguese: "Portuguese"
+
+  maintenance:
+    default_message: "We're currently updating our inventory. Reservations are temporarily paused — please check back soon!"
 
   footer:
     tagline: "MTG singles & more"
