@@ -15,6 +15,11 @@
     <% end %>
   </li>
   <li class="nav-item">
+    <%= link_to new_admin_stock_reconciliation_path, class: "nav-link #{'active' if controller_name == 'stock_reconciliations'}" do %>
+      <i class="fas fa-boxes-stacked me-1"></i> <%= t('admin.sidebar.stock') %>
+    <% end %>
+  </li>
+  <li class="nav-item">
     <%= link_to edit_admin_site_settings_path, class: "nav-link #{'active' if controller_name == 'site_settings'}" do %>
       <i class="fas fa-gear me-1"></i> <%= t('admin.sidebar.settings') %>
     <% end %>

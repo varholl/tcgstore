@@ -56,6 +56,11 @@ Rails.application.routes.draw do
         patch :refresh_price
       end
     end
+    resources :stock_reconciliations, only: [:new, :create] do
+      collection do
+        get :export
+      end
+    end
   end
 
   resource :profile, only: [:edit, :update]
