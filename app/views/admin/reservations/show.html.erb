@@ -69,7 +69,7 @@
             <h6 class="card-title mb-1"><%= item.card.name %></h6>
             <small class="text-muted">
               <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
-              <%= item.card.condition %>
+              <%= item.card.condition %> · <%= item.card.language %>
               <% if item.card.foil.present? %>
                 · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
               <% end %>
@@ -106,6 +106,7 @@
         <th><%= t('admin.reservations.card_name') %></th>
         <th><%= t('admin.reservations.edition') %></th>
         <th><%= t('admin.reservations.condition') %></th>
+        <th><%= t('admin.reservations.language') %></th>
         <th><%= t('admin.reservations.quantity') %></th>
         <th><%= t('admin.reservations.current_price') %></th>
         <th><%= t('admin.reservations.price') %></th>
@@ -127,6 +128,7 @@
           </td>
           <td data-label="<%= t('admin.reservations.edition') %>"><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td data-label="<%= t('admin.reservations.condition') %>"><%= item.card.condition %></td>
+          <td data-label="<%= t('admin.reservations.language') %>"><%= item.card.language %></td>
           <td data-label="<%= t('admin.reservations.quantity') %>"><%= item.quantity %></td>
           <td data-label="<%= t('admin.reservations.current_price') %>">
             <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
@@ -153,11 +155,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 7 : 6 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
+        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 8 : 7 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
       <tr>
-        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 7 : 6 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
+        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 8 : 7 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
         <td>
           <%= form_tag update_final_price_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-1" do %>
             <input type="number" name="final_price" step="0.01" min="0" value="<%= @reservation.final_price %>" class="form-control form-control-sm" style="width: 120px;" placeholder="—">

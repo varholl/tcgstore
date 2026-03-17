@@ -46,7 +46,7 @@
             <h6 class="card-title mb-1"><%= item.card.name %></h6>
             <small class="text-muted">
               <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
-              <%= item.card.condition %>
+              <%= item.card.condition %> · <%= item.card.language %>
               <% if item.card.foil.present? %>
                 · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
               <% end %>
@@ -73,6 +73,7 @@
         <th><%= t('reservations.card_name') %></th>
         <th><%= t('reservations.edition') %></th>
         <th><%= t('reservations.condition') %></th>
+        <th><%= t('reservations.language') %></th>
         <th><%= t('reservations.quantity') %></th>
         <th><%= t('reservations.price') %></th>
         <th><%= t('reservations.subtotal') %></th>
@@ -87,6 +88,7 @@
           <td><%= item.card.name %></td>
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
+          <td><%= item.card.language %></td>
           <td><%= item.quantity %></td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
@@ -100,7 +102,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= @reservation.pending? ? 6 : 5 %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
+        <td colspan="<%= @reservation.pending? ? 7 : 6 %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
     </tfoot>

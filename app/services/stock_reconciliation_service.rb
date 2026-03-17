@@ -74,6 +74,9 @@ class StockReconciliationService
 
   def reconcile(csv_rows)
     existing_cards = Card.all.index_by { |c| card_key(c) }
+    edition_names = Card.where.not(edition_name: [nil, ""]).distinct.pluck(:edition, :edition_name).to_h
+    scryfall_ids = Card.where.not(scryfall_id: [nil, ""]).pluck(:edition, :collector_number, :scryfall_id)
+                       .each_with_object({}) { |(ed, cn, sid), h| h[[ed, cn]] = sid }
 
     created = 0
     updated = 0
@@ -100,12 +103,14 @@ class StockReconciliationService
           Card.create!(
             name: row_data[:name],
             edition: row_data[:edition],
+            edition_name: edition_names[row_data[:edition]],
             collector_number: row_data[:collector_number],
             condition: row_data[:condition],
             language: row_data[:language],
             foil: row_data[:foil],
             quantity: row_data[:quantity],
-            purchase_price: row_data[:purchase_price]
+            purchase_price: row_data[:purchase_price],
+            scryfall_id: scryfall_ids[[row_data[:edition], row_data[:collector_number]]]
           )
           created += 1
         end
