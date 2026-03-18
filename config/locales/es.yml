@@ -551,6 +551,12 @@ es:
       greeting: "Hola %{name},"
       body: "La reserva #%{id} ha sido cancelada."
       closing: "Las cartas reservadas están disponibles nuevamente. Si fue un error, podés crear una nueva reserva."
+    prepared:
+      subject: "Reserva #%{id} — Lista para Pagar"
+      greeting: "Hola %{name},"
+      body: "Tu reserva #%{id} ha sido preparada y está lista para el pago. Estos son los detalles:"
+      view_reservation: "Ver Reserva y Pagar"
+      closing: "Visitá el enlace de arriba para elegir tu forma de pago y completar tu pedido. ¡Gracias!"
     fulfilled:
       subject: "Reserva #%{id} — Entregada"
       greeting: "Hola %{name},"

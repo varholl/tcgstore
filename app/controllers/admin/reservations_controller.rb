@@ -132,6 +132,7 @@ class Admin::ReservationsController < ApplicationController
 
     if @reservation.pending?
       @reservation.update!(status: :prepared)
+      ReservationMailer.prepared(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.prepared')
     else
       redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.prepare_error')

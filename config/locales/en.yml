@@ -551,6 +551,12 @@ en:
       greeting: "Hi %{name},"
       body: "Reservation #%{id} has been cancelled."
       closing: "The reserved cards are now available again. If this was a mistake, you can create a new reservation."
+    prepared:
+      subject: "Reservation #%{id} — Ready for Payment"
+      greeting: "Hi %{name},"
+      body: "Your reservation #%{id} has been prepared and is ready for payment! Here are the details:"
+      view_reservation: "View Reservation & Pay"
+      closing: "Please visit the link above to choose your payment method and complete your order. Thank you!"
     fulfilled:
       subject: "Reservation #%{id} — Fulfilled"
       greeting: "Hi %{name},"

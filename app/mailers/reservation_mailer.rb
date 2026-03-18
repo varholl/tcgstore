@@ -35,6 +35,18 @@ class ReservationMailer < ApplicationMailer
     end
   end
 
+  def prepared(reservation)
+    @reservation = reservation
+    @items = reservation.reservation_items.includes(:card)
+    @reservation_url = reservation_url(reservation)
+
+    return if reservation.guest?
+
+    I18n.with_locale(user_locale(reservation)) do
+      mail(to: reservation.user.email, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
   def fulfilled(reservation)
     @reservation = reservation
     @items = reservation.reservation_items.includes(:card)
