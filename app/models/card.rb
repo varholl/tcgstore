@@ -4,16 +4,13 @@ class Card < ApplicationRecord
   validates :name, presence: true
   validates :quantity, numericality: { greater_than_or_equal_to: 0 }
 
-  scope :search_by_name, ->(query) { where("name LIKE ?", "%#{query}%") if query.present? }
-  scope :filter_by_edition, ->(edition) { where(edition: edition) if edition.present? }
-
-  def foil_display
-    case foil_type
-    when "surge" then "Surge Foil"
-    when "etched" then "Etched Foil"
-    else "Foil"
+  scope :search_by_name, ->(query) {
+    if query.present?
+      terms = query.strip.split(/\s+/)
+      terms.inject(all) { |scope, term| scope.where("name LIKE ?", "%#{term}%") }
     end
-  end
+  }
+  scope :filter_by_edition, ->(edition) { where(edition: edition) if edition.present? }
 
   def foil_display
     case foil_type

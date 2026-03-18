@@ -18,8 +18,10 @@ class Admin::CardsController < ApplicationController
   def index
     @cards = Card.all
     if params[:search].present?
-      search = "%#{params[:search]}%"
-      @cards = @cards.where("name LIKE :q OR edition_name LIKE :q", q: search)
+      params[:search].strip.split(/\s+/).each do |term|
+        pattern = "%#{term}%"
+        @cards = @cards.where("name LIKE :q OR edition_name LIKE :q", q: pattern)
+      end
     end
     @cards = @cards.where(edition: params[:edition]) if params[:edition].present?
     @cards = @cards.where(price: nil) if params[:no_price] == "1"
