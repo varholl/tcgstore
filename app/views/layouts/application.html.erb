@@ -61,10 +61,7 @@
                 <%= link_to cart_items_path, class: "nav-link", title: t('nav.cart'), data: { bs_toggle: "tooltip" } do %>
                   <i class="fas fa-shopping-cart"></i>
                   <span class="d-lg-none ms-1"><%= t('nav.cart') %></span>
-                  <% count = current_user.cart_items.sum(:quantity) %>
-                  <% if count > 0 %>
-                    <span class="badge bg-primary rounded-pill"><%= count %></span>
-                  <% end %>
+                  <span id="cart_badge"><% count = current_user.cart_items.sum(:quantity) %><% if count > 0 %><span class="badge bg-primary rounded-pill"><%= count %></span><% end %></span>
                 <% end %>
               </li>
               <li class="nav-item">

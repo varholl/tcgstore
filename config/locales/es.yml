@@ -140,6 +140,8 @@ es:
     browse_cards: "Explorar cartas"
     not_available: "No Disponible"
     empty_cart_message: "para agregar algunas!"
+    empty_cart_button: "Vaciar Carrito"
+    empty_cart_confirm: "¿Estás seguro de que querés eliminar todos los artículos del carrito?"
 
   reservations:
     title: "Mis Reservas"
@@ -465,6 +467,7 @@ es:
       updated: "Carrito actualizado."
       update_error: "No se pudo actualizar la cantidad."
       removed: "Artículo eliminado del carrito."
+      cleared: "El carrito ha sido vaciado."
     reservations:
       created: "¡Solicitud de reserva enviada exitosamente!"
       unavailable: "Algunos artículos no están disponibles en la cantidad solicitada."

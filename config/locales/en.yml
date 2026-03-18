@@ -140,6 +140,8 @@ en:
     browse_cards: "Browse cards"
     not_available: "Not Available"
     empty_cart_message: "to add some!"
+    empty_cart_button: "Empty Cart"
+    empty_cart_confirm: "Are you sure you want to remove all items from your cart?"
 
   reservations:
     title: "My Reservations"
@@ -465,6 +467,7 @@ en:
       updated: "Cart updated."
       update_error: "Could not update quantity."
       removed: "Item removed from cart."
+      cleared: "Cart has been emptied."
     reservations:
       created: "Reservation request submitted successfully!"
       unavailable: "Some items are not available in the requested quantity."

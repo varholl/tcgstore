@@ -71,11 +71,12 @@ class CardPriceFallbackJob < ApplicationJob
 
     is_foil = card.foil.present?
     condition = card.condition.presence || "NM"
+    collector = card.collector_number.to_s.gsub(/\A0+/, '')
 
     edition_name = scryfall_data["set_name"]&.downcase&.strip
     return nil if edition_name.blank?
 
-    price = ck_by_name[[name, edition_name, is_foil, condition]]
+    price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
     return price if price && price > 0
 
     nil

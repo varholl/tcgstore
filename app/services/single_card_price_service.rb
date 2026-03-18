@@ -44,7 +44,8 @@ class SingleCardPriceService
     if name.present? && edition_name.present?
       is_foil = @card.foil.present?
       condition = @card.condition.presence || "NM"
-      ck_price = ck_by_name[[name, edition_name, is_foil, condition]]
+      collector = @card.collector_number.to_s.gsub(/\A0+/, '')
+      ck_price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
       if ck_price && ck_price > 0
         @card.update_columns(price: ck_price, price_source: "card_kingdom")
         return { source: "card_kingdom", price: ck_price }

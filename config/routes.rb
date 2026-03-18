@@ -10,7 +10,11 @@ Rails.application.routes.draw do
       post :dismiss_how_it_works
     end
   end
-  resources :cart_items, only: [:index, :create, :update, :destroy]
+  resources :cart_items, only: [:index, :create, :update, :destroy] do
+    collection do
+      delete :destroy_all
+    end
+  end
 
   resources :reservations, only: [:index, :show, :create] do
     member do

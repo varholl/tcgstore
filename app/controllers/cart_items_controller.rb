@@ -31,7 +31,12 @@ class CartItemsController < ApplicationController
     @cart_item.quantity = new_quantity
 
     if @cart_item.save
-      redirect_back fallback_location: cards_path, notice: t('controllers.cart_items.added', name: @card.name)
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("cart_badge", cart_badge_html)
+        end
+        format.html { redirect_back fallback_location: cards_path, notice: t('controllers.cart_items.added', name: @card.name) }
+      end
     else
       redirect_back fallback_location: cards_path, alert: t('controllers.cart_items.add_error')
     end
@@ -54,5 +59,17 @@ class CartItemsController < ApplicationController
     @cart_item = current_user.cart_items.find(params[:id])
     @cart_item.destroy
     redirect_to cart_items_path, notice: t('controllers.cart_items.removed')
+  end
+
+  def destroy_all
+    current_user.cart_items.destroy_all
+    redirect_to cart_items_path, notice: t('controllers.cart_items.cleared')
+  end
+
+  private
+
+  def cart_badge_html
+    count = current_user.cart_items.sum(:quantity)
+    count > 0 ? "<span class=\"badge bg-primary rounded-pill\">#{count}</span>" : ""
   end
 end

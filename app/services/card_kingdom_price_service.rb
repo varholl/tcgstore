@@ -55,22 +55,28 @@ class CardKingdomPriceService
       next if sid.nil? || sid.empty?
       next unless known_scryfall_ids.include?(sid)
 
+      # Skip variant printings (e.g. showcase, silver foil) — they share
+      # the same scryfall_id but have different prices and would overwrite
+      # the base card's price in the lookup hash.
+      variation = entry['variation'].to_s.strip
+      next if variation.present?
+
       is_foil = entry['is_foil'] == 'true'
       condition_values = entry['condition_values'] || {}
 
       CONDITION_MAP.each do |condition, ck_key|
         price = condition_values[ck_key]&.to_f
-        # Fall back to price_retail if condition_values is missing
-        price = entry['price_retail'].to_f if price.nil? || price <= 0
-        lookup[[sid, is_foil, condition]] = price if price > 0
+        lookup[[sid, is_foil, condition]] = price if price && price > 0
       end
     end
     data = nil # allow GC to reclaim parsed JSON
     lookup
   end
 
-  # Returns a hash keyed by [name_downcased, is_foil, condition] => price
-  # Used as fallback when scryfall_id matching fails
+  # Returns a hash keyed by [name_downcased, edition, collector_number, is_foil, condition] => price
+  # Used as fallback when scryfall_id matching fails.
+  # Includes collector_number (extracted from CK SKU) to distinguish base
+  # printings from variants that share the same card name.
   CACHE_KEY_BY_NAME = "card_kingdom_pricelist_by_name"
 
   def self.pricelist_by_name
@@ -98,14 +104,18 @@ class CardKingdomPriceService
       next if name.nil? || name.empty?
 
       is_foil = entry['is_foil'] == 'true'
-      edition = entry['edition']&.downcase&.strip
+      # Normalize edition: strip " variants" suffix so variant entries
+      # share the same edition key as base entries (matching Scryfall's set_name).
+      edition = entry['edition']&.downcase&.strip&.sub(/ variants\z/, '')
+      # Extract collector number from SKU (e.g. "LTR-0026" → "26", "SFLTR-0477" → "477")
+      sku = entry['sku'].to_s
+      sku_collector = sku.split('-').last.to_s.gsub(/\A0+/, '')
       condition_values = entry['condition_values'] || {}
 
       CONDITION_MAP.each do |condition, ck_key|
         price = condition_values[ck_key]&.to_f
-        price = entry['price_retail'].to_f if price.nil? || price <= 0
-        if price > 0 && edition.present?
-          lookup[[name, edition, is_foil, condition]] = price
+        if price && price > 0 && edition.present? && sku_collector.present?
+          lookup[[name, edition, sku_collector, is_foil, condition]] = price
         end
       end
     end

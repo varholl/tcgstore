@@ -35,7 +35,7 @@
 <% if params[:view] == "grid" %>
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 mb-3">
     <% @reservation.reservation_items.each do |item| %>
-      <div class="col">
+      <div class="col" id="<%= dom_id(item) %>">
         <div class="card h-100<%= ' foil-card' if item.card.foil.present? %>">
           <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
                class="card-img-top"
@@ -57,7 +57,7 @@
             </div>
             <% if @reservation.pending? %>
               <div class="mt-1">
-                <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
+                <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
               </div>
             <% end %>
           </div>
@@ -84,7 +84,7 @@
     </thead>
     <tbody>
       <% @reservation.reservation_items.each do |item| %>
-        <tr>
+        <tr id="<%= dom_id(item) %>">
           <td><%= item.card.name %></td>
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
@@ -94,14 +94,14 @@
           <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
           <% if @reservation.pending? %>
             <td>
-              <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
+              <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
             </td>
           <% end %>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
-      <tr>
+      <tr id="reservation_total">
         <td colspan="<%= @reservation.pending? ? 7 : 6 %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>

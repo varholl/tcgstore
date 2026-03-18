@@ -117,6 +117,10 @@
     <% end %>
   </div>
 
+  <div class="text-end mb-3">
+    <%= button_to t('cart_items.empty_cart_button'), destroy_all_cart_items_path, method: :delete, class: "btn btn-outline-danger btn-sm", data: { turbo_confirm: t('cart_items.empty_cart_confirm') } %>
+  </div>
+
   <% total_price = @cart_items.sum { |item| (item.card.price || 0) * item.quantity } %>
   <div class="d-flex justify-content-between align-items-center">
     <p class="text-muted mb-0"><%= t('cart_items.total_items', count: @cart_items.sum(:quantity)) %></p>
