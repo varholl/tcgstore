@@ -7,6 +7,22 @@ class Card < ApplicationRecord
   scope :search_by_name, ->(query) { where("name LIKE ?", "%#{query}%") if query.present? }
   scope :filter_by_edition, ->(edition) { where(edition: edition) if edition.present? }
 
+  def foil_display
+    case foil_type
+    when "surge" then "Surge Foil"
+    when "etched" then "Etched Foil"
+    else "Foil"
+    end
+  end
+
+  def foil_display
+    case foil_type
+    when "surge" then "Surge Foil"
+    when "etched" then "Etched Foil"
+    else "Foil"
+    end
+  end
+
   def available_quantity
     reserved = reservation_items.joins(:reservation)
       .where(reservations: { status: %w[pending paid] })

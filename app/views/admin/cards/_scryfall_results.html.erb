@@ -44,7 +44,8 @@
                         data-price="<%= card[:ck_price] || card[:prices_usd] %>"
                         data-ck-condition-prices="<%= card[:ck_condition_prices].to_json %>"
                         data-ck-condition-prices-foil="<%= card[:ck_condition_prices_foil].to_json %>"
-                        data-fallback-price="<%= card[:prices_usd] %>">
+                        data-fallback-price="<%= card[:prices_usd] %>"
+                        data-foil-type="<%= card[:promo_types].include?('surgefoil') ? 'surge' : (card[:finishes].include?('etched') ? 'etched' : 'foil') %>">
                   <%= t('admin.cards.select') %>
                 </button>
               </div>

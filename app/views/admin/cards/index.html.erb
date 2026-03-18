@@ -102,7 +102,7 @@
             <td><%= card.collector_number %></td>
             <td><%= card.condition %></td>
             <td><%= card.language %></td>
-            <td><% if card.foil.present? %><span class="badge bg-info"><%= t('admin.cards.foil') %></span><% end %></td>
+            <td><% if card.foil.present? %><span class="badge bg-info"><%= card.foil_display %></span><% end %></td>
             <td><%= card.quantity %></td>
             <td>
               <%= card.price ? number_to_currency(card.price) : "—" %>

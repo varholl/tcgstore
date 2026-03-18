@@ -23,6 +23,7 @@ class AdminCardStockAdder
         condition: @params[:condition],
         language: @params[:language],
         foil: @params[:foil],
+        foil_type: @params[:foil].present? ? @params[:foil_type] : nil,
         quantity: @params[:quantity].to_i,
         price: @params[:price]
       )

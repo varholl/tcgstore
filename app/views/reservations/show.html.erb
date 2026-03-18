@@ -48,7 +48,7 @@
               <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
               <%= item.card.condition %> · <%= item.card.language %>
               <% if item.card.foil.present? %>
-                · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
+                · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= item.card.foil_display %></span>
               <% end %>
             </small>
             <div class="mt-1">

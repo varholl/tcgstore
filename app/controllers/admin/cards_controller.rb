@@ -138,7 +138,7 @@ class Admin::CardsController < ApplicationController
     params.permit(
       :name, :scryfall_id, :set_code, :set_name,
       :collector_number, :condition, :language, :foil,
-      :quantity, :price
+      :quantity, :price, :foil_type
     )
   end
 

@@ -78,7 +78,7 @@
                 <%= card.edition_name || card.edition.upcase %> (<%= card.edition.upcase %>) #<%= card.collector_number %><br>
                 <%= card.condition %> · <%= card.language %>
                 <% if card.foil.present? %>
-                  · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span>
+                  · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span>
                 <% end %>
               </small>
             </div>
@@ -168,7 +168,7 @@
       <tbody>
         <% @cards.each do |card| %>
           <tr>
-            <td><%= card.name %><% if card.foil.present? %> <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= t('cards.foil_badge') %></span><% end %></td>
+            <td><%= card.name %><% if card.foil.present? %> <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %></td>
             <td><%= card.edition_name || card.edition.upcase %></td>
             <td class="d-none d-lg-table-cell"><%= card.condition %></td>
             <td class="d-none d-lg-table-cell"><%= card.language %></td>

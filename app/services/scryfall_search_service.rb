@@ -26,7 +26,9 @@ class ScryfallSearchService
         collector_number: card["collector_number"],
         image_small: card.dig("image_uris", "small") || card.dig("card_faces", 0, "image_uris", "small"),
         prices_usd: card.dig("prices", "usd"),
-        prices_usd_foil: card.dig("prices", "usd_foil")
+        prices_usd_foil: card.dig("prices", "usd_foil"),
+        finishes: card["finishes"] || [],
+        promo_types: card["promo_types"] || []
       }
     end
   end

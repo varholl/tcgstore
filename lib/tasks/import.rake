@@ -188,4 +188,57 @@ namespace :cards do
 
     puts "\nDone! Updated #{updated} cards with Card Kingdom prices. #{not_found} not found in CK."
   end
+
+  desc "Fetch foil types from Scryfall for foil cards"
+  task fetch_foil_types: :environment do
+    require 'net/http'
+    require 'json'
+
+    cards = Card.where.not(foil: [nil, '']).where(foil_type: [nil, ''])
+    total = cards.count
+
+    if total == 0
+      puts "All foil cards already have foil types."
+      next
+    end
+
+    puts "Fetching foil types for #{total} cards..."
+    updated = 0
+    errors = 0
+
+    cards.find_each.with_index do |card, index|
+      begin
+        uri = URI("https://api.scryfall.com/cards/#{card.edition}/#{card.collector_number}")
+        response = Net::HTTP.get_response(uri)
+
+        if response.is_a?(Net::HTTPSuccess)
+          data = JSON.parse(response.body)
+          promo_types = data['promo_types'] || []
+          finishes = data['finishes'] || []
+
+          foil_type = if promo_types.include?('surgefoil')
+                        'surge'
+                      elsif finishes.include?('etched')
+                        'etched'
+                      else
+                        'foil'
+                      end
+
+          card.update_column(:foil_type, foil_type)
+          updated += 1
+        else
+          errors += 1
+          puts "\nHTTP #{response.code} for #{card.name} (#{card.edition}/#{card.collector_number})"
+        end
+      rescue => e
+        errors += 1
+        puts "\nError for #{card.name}: #{e.message}"
+      end
+
+      print "\rProcessed #{index + 1}/#{total} (#{updated} updated, #{errors} errors)..."
+      sleep 0.1
+    end
+
+    puts "\nDone! Updated #{updated} foil types. #{errors} errors."
+  end
 end

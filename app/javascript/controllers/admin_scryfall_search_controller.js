@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
     "searchInput", "searchResults", "searchSpinner",
     "stockForm", "selectedCardInfo",
-    "nameField", "scryfallIdField", "setCodeField", "setNameField", "collectorNumberField", "priceField",
+    "nameField", "scryfallIdField", "setCodeField", "setNameField", "collectorNumberField", "priceField", "foilTypeField",
     "conditionSelect", "foilCheckbox"
   ]
 
@@ -39,6 +39,7 @@ export default class extends Controller {
     this.setCodeFieldTarget.value = btn.dataset.setCode
     this.setNameFieldTarget.value = btn.dataset.setName
     this.collectorNumberFieldTarget.value = btn.dataset.collectorNumber
+    this.foilTypeFieldTarget.value = btn.dataset.foilType
 
     // Store condition prices for dynamic updates
     this._conditionPrices = JSON.parse(btn.dataset.ckConditionPrices || "{}")
