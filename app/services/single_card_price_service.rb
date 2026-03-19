@@ -44,8 +44,11 @@ class SingleCardPriceService
     if name.present? && edition_name.present?
       is_foil = @card.foil.present?
       condition = @card.condition.presence || "NM"
-      collector = @card.collector_number.to_s.gsub(/\A0+/, '')
+      collector = CardKingdomPriceService.normalize_collector(@card.collector_number)
+      # Try exact edition match first
       ck_price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
+      # Try "promotional" edition (CK lists many promos under this edition)
+      ck_price = ck_by_name[[name, "promotional", collector, is_foil, condition]] unless ck_price && ck_price > 0
       if ck_price && ck_price > 0
         @card.update_columns(price: ck_price, price_source: "card_kingdom")
         return { source: "card_kingdom", price: ck_price }

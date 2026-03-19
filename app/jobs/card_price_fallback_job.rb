@@ -71,12 +71,17 @@ class CardPriceFallbackJob < ApplicationJob
 
     is_foil = card.foil.present?
     condition = card.condition.presence || "NM"
-    collector = card.collector_number.to_s.gsub(/\A0+/, '')
+    collector = CardKingdomPriceService.normalize_collector(card.collector_number)
 
     edition_name = scryfall_data["set_name"]&.downcase&.strip
     return nil if edition_name.blank?
 
+    # Try exact edition match first
     price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
+    return price if price && price > 0
+
+    # Try "promotional" edition (CK lists many promos under this edition)
+    price = ck_by_name[[name, "promotional", collector, is_foil, condition]]
     return price if price && price > 0
 
     nil

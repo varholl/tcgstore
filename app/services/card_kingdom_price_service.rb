@@ -12,13 +12,12 @@ class CardKingdomPriceService
     "DMG" => "g_price"
   }.freeze
 
-  # Returns a hash keyed by [scryfall_id, is_foil, condition] => price
+  # Returns a hash keyed by [scryfall_id, is_foil, condition] => price.
+  # When multiple CK entries share the same scryfall_id (base + variants),
+  # non-variant entries are preferred. Variant cards with different Scryfall
+  # IDs will fall through to the by-name pricelist which uses collector_number.
   def self.pricelist
     Rails.cache.fetch(CACHE_KEY, expires_in: CACHE_TTL) { fetch_pricelist }
-  end
-
-  def self.lookup(scryfall_id, foil: false, condition: "NM")
-    pricelist[[scryfall_id, foil, condition]]
   end
 
   # Look up prices for a set of scryfall_ids. Returns all condition variants.
@@ -55,18 +54,21 @@ class CardKingdomPriceService
       next if sid.nil? || sid.empty?
       next unless known_scryfall_ids.include?(sid)
 
-      # Skip variant printings (e.g. showcase, silver foil) — they share
-      # the same scryfall_id but have different prices and would overwrite
-      # the base card's price in the lookup hash.
       variation = entry['variation'].to_s.strip
-      next if variation.present?
-
       is_foil = entry['is_foil'] == 'true'
       condition_values = entry['condition_values'] || {}
 
       CONDITION_MAP.each do |condition, ck_key|
         price = condition_values[ck_key]&.to_f
-        lookup[[sid, is_foil, condition]] = price if price && price > 0
+        next unless price && price > 0
+
+        key = [sid, is_foil, condition]
+        # When multiple entries share the same scryfall_id (base + variants),
+        # prefer the non-variant entry. Variant entries are only stored when
+        # no entry exists yet for the same key.
+        if !lookup.key?(key) || variation.blank?
+          lookup[key] = price
+        end
       end
     end
     data = nil # allow GC to reclaim parsed JSON
@@ -109,7 +111,7 @@ class CardKingdomPriceService
       edition = entry['edition']&.downcase&.strip&.sub(/ variants\z/, '')
       # Extract collector number from SKU (e.g. "LTR-0026" → "26", "SFLTR-0477" → "477")
       sku = entry['sku'].to_s
-      sku_collector = sku.split('-').last.to_s.gsub(/\A0+/, '')
+      sku_collector = normalize_collector(sku.split('-').last)
       condition_values = entry['condition_values'] || {}
 
       CONDITION_MAP.each do |condition, ck_key|
@@ -121,6 +123,13 @@ class CardKingdomPriceService
     end
     data = nil
     lookup
+  end
+
+  # Normalize a collector number for matching: strip leading zeros, downcase,
+  # and take only the part after the last dash (handles Scryfall's "The List"
+  # format like "LRW-256" → "256", matching CK's SKU extraction).
+  def self.normalize_collector(value)
+    value.to_s.split('-').last.to_s.gsub(/\A0+/, '').downcase
   end
 
   private_class_method :fetch_pricelist, :fetch_pricelist_by_name
