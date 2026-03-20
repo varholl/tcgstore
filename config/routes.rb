@@ -50,6 +50,7 @@ Rails.application.routes.draw do
         get :search_cards_for_add
       end
       resources :notes, only: [:create], controller: 'reservation_notes'
+      resources :payments, only: [:create, :destroy], controller: 'reservation_payments'
     end
     resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
     resources :cards, except: [:show] do

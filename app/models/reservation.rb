@@ -2,11 +2,20 @@ class Reservation < ApplicationRecord
   belongs_to :user, optional: true
   has_many :reservation_items, dependent: :destroy
   has_many :reservation_notes, dependent: :destroy
+  has_many :reservation_payments, dependent: :destroy
 
   enum :status, { pending: "pending", prepared: "prepared", paid: "paid", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
 
   def total_price
     final_price.presence || reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }
+  end
+
+  def total_paid
+    reservation_payments.sum(:amount)
+  end
+
+  def remaining_balance
+    total_price - total_paid
   end
 
   validates :message, length: { maximum: 1000 }

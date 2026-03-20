@@ -228,6 +228,71 @@
   </div>
 <% end %>
 
+<% if @reservation.prepared? || @reservation.reservation_payments.any? %>
+<h4 class="mt-4"><%= t('admin.reservations.payments_title') %></h4>
+<div class="card mb-3">
+  <div class="card-body">
+    <% if @reservation.reservation_payments.any? %>
+      <table class="table table-sm mb-3">
+        <thead>
+          <tr>
+            <th><%= t('admin.reservations.payment_date') %></th>
+            <th><%= t('admin.reservations.payment_amount') %></th>
+            <th><%= t('admin.reservations.payment_note') %></th>
+            <% if @reservation.prepared? %><th></th><% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reservation.reservation_payments.order(created_at: :asc).each do |payment| %>
+            <tr>
+              <td><%= payment.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
+              <td><%= number_to_currency(payment.amount) %></td>
+              <td><%= payment.note %></td>
+              <% if @reservation.prepared? %>
+                <td>
+                  <%= button_to admin_reservation_payment_path(@reservation, payment), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.delete_payment_confirm') } } do %>
+                    <i class="fas fa-trash"></i>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+
+    <div class="d-flex gap-4 mb-3">
+      <div>
+        <strong><%= t('admin.reservations.total_label') %></strong> <%= number_to_currency(@reservation.total_price) %>
+      </div>
+      <div>
+        <strong><%= t('admin.reservations.total_paid_label') %></strong> <%= number_to_currency(@reservation.total_paid) %>
+      </div>
+      <div>
+        <strong><%= t('admin.reservations.remaining_label') %></strong>
+        <span class="<%= @reservation.remaining_balance > 0 ? 'text-danger' : 'text-success' %>">
+          <%= number_to_currency(@reservation.remaining_balance) %>
+        </span>
+      </div>
+    </div>
+
+    <% if @reservation.prepared? %>
+      <%= form_tag admin_reservation_payments_path(@reservation), method: :post, class: "d-flex align-items-end gap-2 flex-wrap" do %>
+        <div>
+          <label class="form-label mb-1"><%= t('admin.reservations.payment_amount') %></label>
+          <input type="number" name="amount" step="0.01" min="0.01" class="form-control form-control-sm" style="width: 120px;" required>
+        </div>
+        <div>
+          <label class="form-label mb-1"><%= t('admin.reservations.payment_note') %></label>
+          <input type="text" name="note" class="form-control form-control-sm" style="width: 200px;" placeholder="<%= t('admin.reservations.payment_note_placeholder') %>">
+        </div>
+        <%= submit_tag t('admin.reservations.add_payment'), class: "btn btn-sm btn-outline-success" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+<% end %>
+
 <h4 class="mt-4"><%= t('admin.reservations.internal_notes') %></h4>
 <div class="card mb-3">
   <div class="card-body">
