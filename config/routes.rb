@@ -43,6 +43,7 @@ Rails.application.routes.draw do
         patch :revert_to_paid
         patch :expire
         patch :update_final_price
+        patch :force_decrement
         patch :toggle_trade
         patch :update_item_price
         delete :remove_item

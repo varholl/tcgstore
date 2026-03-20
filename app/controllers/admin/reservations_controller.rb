@@ -197,6 +197,23 @@ class Admin::ReservationsController < ApplicationController
     end
   end
 
+  def force_decrement
+    @reservation = Reservation.find(params[:id])
+
+    unless @reservation.fulfilled?
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.force_decrement_error')
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @reservation.reservation_items.includes(:card).each do |item|
+        item.card.decrement!(:quantity, item.quantity)
+      end
+    end
+
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.force_decremented')
+  end
+
   def toggle_trade
     @reservation = Reservation.find(params[:id])
     @reservation.update!(trade: !@reservation.trade)

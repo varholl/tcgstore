@@ -380,6 +380,7 @@
     <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#revertToPaidModal">
       <%= t('admin.reservations.revert_to_paid') %>
     </button>
+    <%= button_to t('admin.reservations.force_decrement'), force_decrement_admin_reservation_path(@reservation), method: :patch, class: "btn btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.force_decrement_confirm') } } %>
   </div>
 
   <div class="modal fade" id="revertToPaidModal" tabindex="-1" aria-labelledby="revertToPaidModalLabel" aria-hidden="true">

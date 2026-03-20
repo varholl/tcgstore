@@ -22,7 +22,7 @@ class Card < ApplicationRecord
 
   def available_quantity
     reserved = reservation_items.joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid fulfilled] })
+      .where(reservations: { status: %w[pending prepared paid] })
       .sum(:quantity)
     quantity - reserved
   end
