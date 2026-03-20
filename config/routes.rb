@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    get "dashboard", to: "dashboard#index", as: :dashboard
     resource :site_settings, only: [:edit, :update]
     resources :reservations, only: [:index, :show, :new, :create] do
       collection do
@@ -42,6 +43,7 @@ Rails.application.routes.draw do
         patch :revert_to_paid
         patch :expire
         patch :update_final_price
+        patch :toggle_trade
         patch :update_item_price
         delete :remove_item
         post :add_item

@@ -197,6 +197,12 @@ class Admin::ReservationsController < ApplicationController
     end
   end
 
+  def toggle_trade
+    @reservation = Reservation.find(params[:id])
+    @reservation.update!(trade: !@reservation.trade)
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.trade_toggled')
+  end
+
   def update_final_price
     @reservation = Reservation.find(params[:id])
     @reservation.update!(final_price: params[:final_price].presence)

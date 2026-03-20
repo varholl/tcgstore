@@ -206,11 +206,18 @@ es:
 
   admin:
     sidebar:
+      dashboard: "Resumen"
       reservations: "Reservas"
       users: "Usuarios"
       cards: "Cartas"
       stock: "Stock"
       settings: "Configuración"
+    dashboard:
+      title: "Resumen"
+      income: "Cobrado"
+      pending: "Pendiente de cobro"
+      trades: "Trades"
+      reservations_count: "reservas"
     stock_reconciliations:
       title: "Reconciliación de Stock"
       upload_label: "Archivo CSV de Moxfield"
@@ -307,6 +314,12 @@ es:
       date_label: "Fecha:"
       message_label: "Mensaje:"
       payment_method_label: "Forma de Pago:"
+      trade_label: "Trade:"
+      trade_yes: "Sí"
+      trade_no: "No"
+      mark_trade: "Marcar como Trade"
+      unmark_trade: "Desmarcar Trade"
+      trade_badge: "Trade"
       payment_methods:
         cash: "Efectivo"
         transfer: "Transferencia Bancaria"
@@ -504,6 +517,7 @@ es:
         created: "Reserva creada exitosamente."
         import_created: "Reserva creada: %{matched} coincidencias, %{unmatched} sin coincidencia."
         import_no_matches: "No se pudo encontrar ninguna carta de la lista. Por favor revisá el formato e intentá de nuevo."
+        trade_toggled: "Trade actualizado."
         final_price_updated: "Precio final actualizado."
         item_price_updated: "Precio del artículo actualizado."
         item_removed: "Artículo eliminado de la reserva."

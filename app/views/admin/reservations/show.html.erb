@@ -27,6 +27,17 @@
     <% if @reservation.payment_method.present? %>
       <p><strong><%= t('admin.reservations.payment_method_label') %></strong> <%= t("admin.reservations.payment_methods.#{@reservation.payment_method}") %></p>
     <% end %>
+    <p>
+      <strong><%= t('admin.reservations.trade_label') %></strong>
+      <% if @reservation.trade? %>
+        <span class="badge bg-info"><%= t('admin.reservations.trade_yes') %></span>
+      <% else %>
+        <span class="badge bg-secondary"><%= t('admin.reservations.trade_no') %></span>
+      <% end %>
+      <%= button_to toggle_trade_admin_reservation_path(@reservation), method: :patch, class: "btn btn-sm btn-outline-secondary ms-2" do %>
+        <%= @reservation.trade? ? t('admin.reservations.unmark_trade') : t('admin.reservations.mark_trade') %>
+      <% end %>
+    </p>
     <% if @reservation.receipt_sent_at.present? %>
       <p>
         <strong><%= t('admin.reservations.receipt_label') %></strong>

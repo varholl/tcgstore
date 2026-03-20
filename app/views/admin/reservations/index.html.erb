@@ -60,6 +60,9 @@
             <td data-label="<%= t('admin.reservations.status') %>">
               <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
+              <% if reservation.trade? %>
+                <span class="badge bg-info"><%= t('admin.reservations.trade_badge') %></span>
+              <% end %>
               <% if reservation.receipt_sent_at.present? && !reservation.paid? && !reservation.fulfilled? %>
                 <span class="badge bg-warning text-dark" title="<%= t('admin.reservations.receipt_sent_at', time: reservation.receipt_sent_at.in_time_zone.strftime('%d/%m/%Y %H:%M')) %>"><i class="fas fa-receipt"></i></span>
               <% end %>

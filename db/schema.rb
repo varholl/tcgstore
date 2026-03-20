@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_18_025034) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_20_151347) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -74,6 +74,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_18_025034) do
     t.decimal "final_price", precision: 10, scale: 2
     t.string "payment_method"
     t.datetime "receipt_sent_at"
+    t.boolean "trade", default: false, null: false
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end

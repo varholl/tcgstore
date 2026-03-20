@@ -1,0 +1,60 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<h1 class="mb-4"><%= t('admin.dashboard.title') %></h1>
+
+<div class="row g-4 mb-4">
+  <!-- Income -->
+  <div class="col-md-4">
+    <div class="card border-success">
+      <div class="card-body">
+        <h5 class="card-title text-success"><i class="fas fa-money-bill-wave me-2"></i><%= t('admin.dashboard.income') %></h5>
+        <h2 class="mb-3"><%= number_to_currency(@total_income) %></h2>
+        <ul class="list-unstyled mb-0">
+          <li>
+            <span class="badge bg-info me-1"><%= t('statuses.paid') %></span>
+            <%= number_to_currency(@income_paid) %>
+            <small class="text-muted">(<%= @income_paid_count %> <%= t('admin.dashboard.reservations_count') %>)</small>
+          </li>
+          <li class="mt-1">
+            <span class="badge bg-success me-1"><%= t('statuses.fulfilled') %></span>
+            <%= number_to_currency(@income_fulfilled) %>
+            <small class="text-muted">(<%= @income_fulfilled_count %> <%= t('admin.dashboard.reservations_count') %>)</small>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending -->
+  <div class="col-md-4">
+    <div class="card border-warning">
+      <div class="card-body">
+        <h5 class="card-title text-warning"><i class="fas fa-clock me-2"></i><%= t('admin.dashboard.pending') %></h5>
+        <h2 class="mb-3"><%= number_to_currency(@pending_total) %></h2>
+        <ul class="list-unstyled mb-0">
+          <li>
+            <span class="badge bg-warning text-dark me-1"><%= t('statuses.pending') %></span>
+            <%= number_to_currency(@pending_pending) %>
+            <small class="text-muted">(<%= @pending_pending_count %> <%= t('admin.dashboard.reservations_count') %>)</small>
+          </li>
+          <li class="mt-1">
+            <span class="badge bg-primary me-1"><%= t('statuses.prepared') %></span>
+            <%= number_to_currency(@pending_prepared) %>
+            <small class="text-muted">(<%= @pending_prepared_count %> <%= t('admin.dashboard.reservations_count') %>)</small>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trades -->
+  <div class="col-md-4">
+    <div class="card border-info">
+      <div class="card-body">
+        <h5 class="card-title text-info"><i class="fas fa-exchange-alt me-2"></i><%= t('admin.dashboard.trades') %></h5>
+        <h2 class="mb-3"><%= number_to_currency(@trade_total) %></h2>
+        <small class="text-muted"><%= @trade_count %> <%= t('admin.dashboard.reservations_count') %></small>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
