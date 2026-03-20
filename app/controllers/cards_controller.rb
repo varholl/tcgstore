@@ -30,7 +30,7 @@ class CardsController < ApplicationController
     card_ids = @cards.map(&:id)
     @reserved_quantities = ReservationItem
       .joins(:reservation)
-      .where(reservations: { status: %w[pending paid] }, card_id: card_ids)
+      .where(reservations: { status: %w[pending prepared paid fulfilled] }, card_id: card_ids)
       .group(:card_id)
       .sum(:quantity)
 
