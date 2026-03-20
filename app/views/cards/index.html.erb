@@ -60,7 +60,7 @@
   </div>
 </div>
 
-<turbo-frame id="cards-list" data-turbo-action="advance">
+<turbo-frame id="cards-list" data-turbo-action="advance" data-controller="scroll-top">
 <% if @current_view == "grid" %>
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
     <% @cards.each do |card| %>
