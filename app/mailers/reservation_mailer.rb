@@ -69,6 +69,25 @@ class ReservationMailer < ApplicationMailer
     end
   end
 
+  def new_public_note(reservation, author)
+    @reservation = reservation
+    @author = author
+
+    if author.admin?
+      # Admin replied — notify the reservation owner
+      return if reservation.guest?
+      recipient = reservation.user.email
+      I18n.with_locale(user_locale(reservation)) do
+        mail(to: recipient, subject: default_i18n_subject(id: reservation.id))
+      end
+    else
+      # User posted — notify admins
+      admin_emails = User.where(admin: true).pluck(:email)
+      return if admin_emails.empty?
+      mail(to: admin_emails, subject: default_i18n_subject(id: reservation.id))
+    end
+  end
+
   def transfer_receipt(reservation, file)
     @reservation = reservation
     @user = reservation.user

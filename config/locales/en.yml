@@ -203,6 +203,12 @@ en:
         transfer: "Bank Transfer"
       whatsapp_contact: "Contact me on WhatsApp"
       whatsapp_message: "Hi! I have a question about reservation #%{id}"
+    notes:
+      title: "Notes"
+      empty: "No notes yet."
+      placeholder: "Write a note..."
+      add: "Add Note"
+      admin_label: "Admin"
 
   admin:
     sidebar:
@@ -358,6 +364,11 @@ en:
       card_list_hint: "Paste the card list below — one card per line, same format as trade evaluation lists."
       card_list_placeholder: "2 Lightning Bolt #141 3\nArid Mesa #234 15\n..."
       create_new: "New Reservation"
+      public_notes: "Public Notes"
+      no_public_notes: "No public notes yet."
+      public_note_placeholder: "Reply to the customer..."
+      add_public_note: "Reply"
+      admin_label: "Admin"
       internal_notes: "Internal Notes"
       add_note: "Add Note"
       note_placeholder: "Write a note..."
@@ -481,6 +492,8 @@ en:
       invalid_payment_method: "Invalid payment method."
       receipt_sent: "Transfer receipt sent successfully. We'll verify it shortly."
       receipt_missing: "Please select a file to upload."
+    reservation_notes:
+      created: "Note added."
       receipt_invalid_type: "Invalid file type. Please upload a JPEG, PNG, WebP, or PDF file."
     admin:
       users:
@@ -576,6 +589,11 @@ en:
       price: "Price"
       subtotal: "Subtotal"
       total: "Total: %{amount}"
+    new_public_note:
+      subject: "New Note on Reservation #%{id}"
+      greeting: "Hi,"
+      body: "%{author} left a note on reservation #%{id}:"
+      closing: "Please check the reservation to view or reply."
     transfer_receipt:
       subject: "Transfer Receipt — Reservation #%{id} (%{user})"
       greeting: "A transfer receipt has been uploaded."

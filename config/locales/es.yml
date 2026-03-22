@@ -203,6 +203,12 @@ es:
         transfer: "Transferencia Bancaria"
       whatsapp_contact: "Contactame por WhatsApp"
       whatsapp_message: "¡Hola! Tengo una consulta sobre la reserva #%{id}"
+    notes:
+      title: "Notas"
+      empty: "No hay notas todavía."
+      placeholder: "Escribí una nota..."
+      add: "Agregar Nota"
+      admin_label: "Admin"
 
   admin:
     sidebar:
@@ -383,6 +389,11 @@ es:
       total_label: "Total:"
       total_paid_label: "Pagado:"
       remaining_label: "Restante:"
+      public_notes: "Notas Públicas"
+      no_public_notes: "No hay notas públicas todavía."
+      public_note_placeholder: "Respondé al cliente..."
+      add_public_note: "Responder"
+      admin_label: "Admin"
       internal_notes: "Notas Internas"
       add_note: "Agregar Nota"
       note_placeholder: "Escribí una nota..."
@@ -506,6 +517,8 @@ es:
       invalid_payment_method: "Forma de pago inválida."
       receipt_sent: "Comprobante de transferencia enviado. Lo verificaremos a la brevedad."
       receipt_missing: "Por favor seleccioná un archivo para subir."
+    reservation_notes:
+      created: "Nota agregada."
       receipt_invalid_type: "Tipo de archivo inválido. Por favor subí un archivo JPEG, PNG, WebP o PDF."
     admin:
       users:
@@ -608,6 +621,11 @@ es:
       price: "Precio"
       subtotal: "Subtotal"
       total: "Total: %{amount}"
+    new_public_note:
+      subject: "Nueva Nota en Reserva #%{id}"
+      greeting: "Hola,"
+      body: "%{author} dejó una nota en la reserva #%{id}:"
+      closing: "Revisá la reserva para ver o responder."
     transfer_receipt:
       subject: "Comprobante de Transferencia — Reserva #%{id} (%{user})"
       greeting: "Se ha subido un comprobante de transferencia."

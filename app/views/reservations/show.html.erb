@@ -228,6 +228,34 @@
   </div>
 <% end %>
 
+<div id="notes">
+  <h4 class="mt-4"><%= t('reservations.notes.title') %></h4>
+  <div class="card mb-3">
+    <div class="card-body">
+      <% public_notes = @reservation.reservation_notes.public_notes.order(created_at: :asc) %>
+      <% if public_notes.any? %>
+        <% public_notes.each do |note| %>
+          <div class="mb-2">
+            <strong><%= note.user&.admin? ? t('reservations.notes.admin_label') : note.user&.name %></strong>
+            <small class="text-muted ms-2"><%= note.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></small>
+            <p class="mb-0"><%= simple_format(note.body) %></p>
+          </div>
+          <hr class="my-1">
+        <% end %>
+      <% else %>
+        <p class="text-muted mb-2"><%= t('reservations.notes.empty') %></p>
+      <% end %>
+
+      <%= form_tag reservation_notes_path(@reservation), method: :post, class: "mt-2" do %>
+        <div class="mb-2">
+          <textarea name="body" class="form-control" rows="2" placeholder="<%= t('reservations.notes.placeholder') %>" required></textarea>
+        </div>
+        <%= submit_tag t('reservations.notes.add'), class: "btn btn-sm btn-outline-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
 <% if @reservation.pending? || @reservation.prepared? %>
   <div class="mt-3">
     <%= button_to t('reservations.cancel'), cancel_reservation_path(@reservation), method: :patch, class: "btn btn-danger", data: { turbo_confirm: t('reservations.cancel_confirm') } %>

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       post :add_item
       get :search_cards
     end
+    resources :notes, only: [:create], controller: 'reservation_notes'
   end
 
   namespace :admin do

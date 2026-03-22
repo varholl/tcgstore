@@ -4,7 +4,13 @@ class Admin::ReservationNotesController < ApplicationController
 
   def create
     @reservation = Reservation.find(params[:reservation_id])
-    @reservation.reservation_notes.create!(body: params[:body])
+    is_public = params[:public] == "true"
+    @reservation.reservation_notes.create!(body: params[:body], public: is_public, user: current_user)
+
+    if is_public && @reservation.user.present?
+      ReservationMailer.new_public_note(@reservation, current_user).deliver_later
+    end
+
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservation_notes.created')
   end
 

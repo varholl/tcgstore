@@ -293,11 +293,39 @@
 </div>
 <% end %>
 
+<h4 class="mt-4"><%= t('admin.reservations.public_notes') %></h4>
+<div class="card mb-3">
+  <div class="card-body">
+    <% public_notes = @reservation.reservation_notes.public_notes.order(created_at: :asc) %>
+    <% if public_notes.any? %>
+      <% public_notes.each do |note| %>
+        <div class="mb-2">
+          <strong><%= note.user&.admin? ? t('admin.reservations.admin_label') : note.user&.name %></strong>
+          <small class="text-muted ms-2"><%= note.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></small>
+          <p class="mb-0"><%= simple_format(note.body) %></p>
+        </div>
+        <hr class="my-1">
+      <% end %>
+    <% else %>
+      <p class="text-muted mb-2"><%= t('admin.reservations.no_public_notes') %></p>
+    <% end %>
+
+    <%= form_tag admin_reservation_notes_path(@reservation), method: :post, class: "mt-2" do %>
+      <input type="hidden" name="public" value="true">
+      <div class="mb-2">
+        <textarea name="body" class="form-control" rows="2" placeholder="<%= t('admin.reservations.public_note_placeholder') %>" required></textarea>
+      </div>
+      <%= submit_tag t('admin.reservations.add_public_note'), class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+  </div>
+</div>
+
 <h4 class="mt-4"><%= t('admin.reservations.internal_notes') %></h4>
 <div class="card mb-3">
   <div class="card-body">
-    <% if @reservation.reservation_notes.any? %>
-      <% @reservation.reservation_notes.order(created_at: :desc).each do |note| %>
+    <% internal_notes = @reservation.reservation_notes.internal.order(created_at: :desc) %>
+    <% if internal_notes.any? %>
+      <% internal_notes.each do |note| %>
         <div class="mb-2">
           <small class="text-muted"><%= note.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></small>
           <p class="mb-0"><%= simple_format(note.body) %></p>
