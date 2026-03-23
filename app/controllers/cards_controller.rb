@@ -6,6 +6,7 @@ class CardsController < ApplicationController
     "price_desc"  => { order: "price DESC NULLS LAST" },
     "edition_asc" => { order: "edition ASC, name ASC" },
     "edition_desc"=> { order: "edition DESC, name ASC" },
+    "newest"      => { order: "last_stocked_at DESC" },
   }.freeze
 
   def index

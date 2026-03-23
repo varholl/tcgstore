@@ -17,6 +17,15 @@
   </div>
 <% end %>
 
+<% new_arrivals_count = Card.where("quantity > 0").where("last_stocked_at >= ?", 7.days.ago).count %>
+<% if new_arrivals_count > 0 %>
+  <div class="mb-3">
+    <%= link_to cards_path(sort: "newest", view: @current_view), class: "btn btn-outline-success" do %>
+      <i class="fas fa-sparkles"></i> <%= t('cards.new_arrivals', count: new_arrivals_count) %>
+    <% end %>
+  </div>
+<% end %>
+
 <%= form_tag cards_path, method: :get, class: "row g-3 mb-4" do %>
   <div class="col-12 col-md-4">
     <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
@@ -65,7 +74,10 @@
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
     <% @cards.each do |card| %>
       <div class="col">
-        <div class="card h-100<%= ' foil-card' if card.foil.present? %>">
+        <div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="position: relative; overflow: hidden;">
+          <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
+            <span class="new-arrival-badge"><%= t('cards.new_badge') %></span>
+          <% end %>
           <img src="https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=normal"
                class="card-img-top"
                alt="<%= card.name %>"
@@ -117,6 +129,9 @@
           <div class="d-flex justify-content-between align-items-start">
             <div>
               <strong><%= card.name %></strong>
+              <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
+                <span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span>
+              <% end %>
               <% if card.foil.present? %>
                 <i class="fa-solid fa-star" style="color: #d4a017;"></i>
               <% end %>
@@ -168,7 +183,7 @@
       <tbody>
         <% @cards.each do |card| %>
           <tr>
-            <td><%= card.name %><% if card.foil.present? %> <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %></td>
+            <td><%= card.name %><% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %> <span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span><% end %><% if card.foil.present? %> <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %></td>
             <td><%= card.edition_name || card.edition.upcase %></td>
             <td class="d-none d-lg-table-cell"><%= card.condition %></td>
             <td class="d-none d-lg-table-cell"><%= card.language %></td>

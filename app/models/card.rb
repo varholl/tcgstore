@@ -4,6 +4,8 @@ class Card < ApplicationRecord
   validates :name, presence: true
   validates :quantity, numericality: { greater_than_or_equal_to: 0 }
 
+  before_save :touch_last_stocked_at, if: -> { quantity_changed? && quantity > quantity_was.to_i }
+
   scope :search_by_name, ->(query) {
     if query.present?
       terms = query.strip.split(/\s+/)
@@ -25,5 +27,11 @@ class Card < ApplicationRecord
       .where(reservations: { status: %w[pending prepared paid] })
       .sum(:quantity)
     quantity - reserved
+  end
+
+  private
+
+  def touch_last_stocked_at
+    self.last_stocked_at = Time.current
   end
 end

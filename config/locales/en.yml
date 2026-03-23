@@ -100,6 +100,10 @@ en:
     price: "Price"
     qty: "Qty"
     no_price: "No price"
+    new_badge: "New"
+    new_arrivals:
+      one: "1 new arrival this week"
+      other: "%{count} new arrivals this week"
     out_of_stock: "Out of Stock"
     add_to_cart: "Add to Cart"
     sign_in_to_buy: "Sign in to buy"
@@ -117,6 +121,7 @@ en:
       price_desc: "Price (High to Low)"
       edition_asc: "Edition (A-Z)"
       edition_desc: "Edition (Z-A)"
+      newest: "Recently Added"
 
   cart_items:
     title: "Your Cart"

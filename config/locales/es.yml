@@ -100,6 +100,10 @@ es:
     price: "Precio"
     qty: "Cant."
     no_price: "Sin precio"
+    new_badge: "Nuevo"
+    new_arrivals:
+      one: "1 novedad esta semana"
+      other: "%{count} novedades esta semana"
     out_of_stock: "Sin Stock"
     add_to_cart: "Agregar al Carrito"
     sign_in_to_buy: "Iniciá sesión para comprar"
@@ -117,6 +121,7 @@ es:
       price_desc: "Precio (Mayor a Menor)"
       edition_asc: "Edición (A-Z)"
       edition_desc: "Edición (Z-A)"
+      newest: "Agregadas Recientemente"
 
   cart_items:
     title: "Tu Carrito"
