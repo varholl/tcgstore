@@ -1,0 +1,105 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('wishlists.results_title') %></h1>
+  <%= link_to t('wishlists.back'), wishlists_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="alert alert-info mb-4">
+  <%= t('wishlists.summary', found: @found_count, not_found: @not_found_count, total: @results.size) %>
+</div>
+
+<% found_results = @results.select { |r| r[:cards].any? } %>
+<% not_found_results = @results.select { |r| r[:cards].empty? } %>
+
+<%# --- Found cards section --- %>
+<% if found_results.any? %>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><%= t('wishlists.found_title') %> (<%= found_results.size %>)</h3>
+    <% if user_signed_in? && !maintenance_mode? %>
+      <% all_card_ids = found_results.flat_map { |r| r[:cards].map(&:id) } %>
+      <%= form_tag bulk_add_cart_items_path, method: :post do %>
+        <% all_card_ids.each do |id| %>
+          <input type="hidden" name="card_ids[]" value="<%= id %>">
+        <% end %>
+        <button type="submit" class="btn btn-success">
+          <i class="fa-solid fa-cart-plus me-1"></i><%= t('wishlists.add_all') %>
+        </button>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% found_results.each_with_index do |result, idx| %>
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <%= result[:name] %>
+          <small class="text-muted ms-2">x<%= result[:qty] %></small>
+          <span class="badge bg-success ms-2"><%= t('wishlists.available') %></span>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 g-2">
+          <% result[:cards].each do |card| %>
+            <% available = card.quantity - (result[:reserved_quantities][card.id] || 0) %>
+            <div class="col">
+              <div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="font-size: 0.75rem;">
+                <img src="https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=small"
+                     class="card-img-top"
+                     alt="<%= card.name %>"
+                     loading="lazy"
+                     onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=normal';this.onerror=function(){this.style.display='none'};">
+                <div class="card-body p-1 d-flex flex-column">
+                  <div class="flex-grow-1">
+                    <small class="text-muted">
+                      <%= card.edition.upcase %> #<%= card.collector_number %><br>
+                      <%= card.condition %> · <%= card.language %>
+                      <% if card.foil.present? %>
+                        · <i class="fa-solid fa-star" style="color: #d4a017;"></i>
+                      <% end %>
+                    </small>
+                  </div>
+                  <div class="mt-1">
+                    <% if card.price %>
+                      <strong class="text-price"><%= number_to_currency(card.price) %></strong>
+                    <% else %>
+                      <small class="text-muted"><%= t('cards.no_price') %></small>
+                    <% end %>
+                    <small class="text-muted ms-1">· <%= available %></small>
+                  </div>
+                </div>
+                <div class="card-footer p-1">
+                  <% if user_signed_in? %>
+                    <% if maintenance_mode? %>
+                      <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i></button>
+                    <% else %>
+                      <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %>
+                        <i class="fa-solid fa-cart-plus"></i>
+                      <% end %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%# --- Not found cards section --- %>
+<% if not_found_results.any? %>
+  <h3 class="mt-4 mb-3"><%= t('wishlists.not_found_title') %> (<%= not_found_results.size %>)</h3>
+
+  <div class="card">
+    <ul class="list-group list-group-flush">
+      <% not_found_results.each do |result| %>
+        <li class="list-group-item text-muted" style="background-color: var(--vg-bg-surface); border-color: var(--vg-border);">
+          <%= result[:name] %>
+          <small class="ms-2">x<%= result[:qty] %></small>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

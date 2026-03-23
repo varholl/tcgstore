@@ -30,7 +30,7 @@
               <%= link_to t('nav.cards'), cards_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <%= link_to t('nav.about_this_site'), about_path, class: "nav-link" %>
+              <%= link_to t('nav.wishlist'), wishlists_path, class: "nav-link" %>
             </li>
             <li class="nav-item d-flex align-items-center">
               <%= link_to how_it_works_path, class: "btn btn-outline-light btn-sm" do %>
@@ -118,7 +118,7 @@
       </div>
     <% end %>
 
-    <div class="container flex-grow-1">
+    <div class="container flex-grow-1 mb-5">
       <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
         <% if notice.present? %>
           <div class="toast align-items-center text-bg-success border-0" role="alert" data-controller="toast">

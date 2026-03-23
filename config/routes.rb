@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resources :cart_items, only: [:index, :create, :update, :destroy] do
     collection do
       delete :destroy_all
+      post :bulk_add
     end
   end
 
@@ -69,6 +70,12 @@ Rails.application.routes.draw do
       collection do
         get :export
       end
+    end
+  end
+
+  resources :wishlists, only: [:index] do
+    collection do
+      get :search
     end
   end
 

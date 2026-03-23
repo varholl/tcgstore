@@ -61,6 +61,28 @@ class CartItemsController < ApplicationController
     redirect_to cart_items_path, notice: t('controllers.cart_items.removed')
   end
 
+  def bulk_add
+    card_ids = params[:card_ids] || []
+    added = 0
+
+    card_ids.each do |card_id|
+      card = Card.find_by(id: card_id)
+      next unless card
+
+      cart_item = current_user.cart_items.find_or_initialize_by(card: card)
+      available = card.available_quantity
+      current_in_cart = cart_item.persisted? ? cart_item.quantity : 0
+      new_quantity = current_in_cart + 1
+      new_quantity = [new_quantity, available].min
+      next if new_quantity <= 0
+
+      cart_item.quantity = new_quantity
+      added += 1 if cart_item.save
+    end
+
+    redirect_back fallback_location: cards_path, notice: t('controllers.cart_items.bulk_added', count: added)
+  end
+
   def destroy_all
     current_user.cart_items.destroy_all
     redirect_to cart_items_path, notice: t('controllers.cart_items.cleared')
