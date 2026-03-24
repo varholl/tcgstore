@@ -1,7 +1,7 @@
 require "csv"
 
 class StockReconciliationService
-  CONDITION_MAPPING = {
+  MOXFIELD_CONDITION_MAPPING = {
     "Near Mint" => "NM",
     "Good (Lightly Played)" => "LP",
     "Played" => "MP",
@@ -9,12 +9,35 @@ class StockReconciliationService
     "Damaged" => "DMG"
   }.freeze
 
+  MANABOX_CONDITION_MAPPING = {
+    "near_mint" => "NM",
+    "lightly_played" => "LP",
+    "moderately_played" => "MP",
+    "heavily_played" => "HP",
+    "damaged" => "DMG"
+  }.freeze
+
+  MANABOX_LANGUAGE_MAPPING = {
+    "en" => "English",
+    "es" => "Spanish",
+    "ja" => "Japanese",
+    "it" => "Italian",
+    "pt" => "Portuguese",
+    "fr" => "French",
+    "de" => "German",
+    "ko" => "Korean",
+    "ru" => "Russian",
+    "zhs" => "Chinese (Simplified)",
+    "zht" => "Chinese (Traditional)"
+  }.freeze
+
   Result = Struct.new(:success, :cards_created, :cards_updated, :cards_zeroed,
                       :cards_unchanged, :reservation_conflicts, :errors, keyword_init: true)
 
-  def initialize(csv_file, mode:)
+  def initialize(csv_file, mode:, format: :moxfield)
     @csv_file = csv_file
     @mode = mode.to_sym
+    @format = format.to_sym
   end
 
   def call
@@ -36,40 +59,58 @@ class StockReconciliationService
     content = content.sub(/\A\xEF\xBB\xBF/, "") # strip BOM
 
     CSV.parse(content, headers: true) do |row|
-      edition = row["Edition"].to_s.strip.downcase
-      collector_number = row["Collector Number"].to_s.strip
-      condition = normalize_condition(row["Condition"].to_s.strip)
-      language = row["Language"].to_s.strip
-      foil = normalize_foil(row["Foil"].to_s.strip)
+      parsed = @format == :manabox ? parse_manabox_row(row) : parse_moxfield_row(row)
 
-      if edition.blank? || collector_number.blank?
-        errors << "Skipped row: missing edition or collector number for '#{row['Name']}'"
+      if parsed[:edition].blank? || parsed[:collector_number].blank?
+        errors << "Skipped row: missing edition or collector number for '#{parsed[:name]}'"
         next
       end
 
-      key = [edition, collector_number, condition, language, foil]
-      count = row["Count"].to_i
-      purchase_price = row["Purchase Price"].to_s.strip
-      purchase_price = purchase_price.present? ? purchase_price.to_f : nil
+      key = [parsed[:edition], parsed[:collector_number], parsed[:condition], parsed[:language], parsed[:foil]]
 
       if rows[key]
-        rows[key][:quantity] += count
+        rows[key][:quantity] += parsed[:quantity]
       else
-        rows[key] = {
-          name: row["Name"].to_s.strip,
-          edition: edition,
-          collector_number: collector_number,
-          condition: condition,
-          language: language,
-          foil: foil,
-          quantity: count,
-          purchase_price: purchase_price
-        }
+        rows[key] = parsed
       end
     end
 
     return errors if errors.any? && rows.empty?
     rows
+  end
+
+  def parse_moxfield_row(row)
+    {
+      name: row["Name"].to_s.strip,
+      edition: row["Edition"].to_s.strip.downcase,
+      edition_name: nil,
+      collector_number: row["Collector Number"].to_s.strip,
+      condition: normalize_moxfield_condition(row["Condition"].to_s.strip),
+      language: row["Language"].to_s.strip,
+      foil: normalize_foil(row["Foil"].to_s.strip),
+      quantity: row["Count"].to_i,
+      purchase_price: parse_purchase_price(row["Purchase Price"].to_s.strip),
+      scryfall_id: nil
+    }
+  end
+
+  def parse_manabox_row(row)
+    {
+      name: row["Name"].to_s.strip,
+      edition: row["Set code"].to_s.strip.downcase,
+      edition_name: row["Set name"].to_s.strip.presence,
+      collector_number: row["Collector number"].to_s.strip,
+      condition: normalize_manabox_condition(row["Condition"].to_s.strip),
+      language: normalize_manabox_language(row["Language"].to_s.strip),
+      foil: normalize_foil(row["Foil"].to_s.strip),
+      quantity: row["Quantity"].to_i,
+      purchase_price: parse_purchase_price(row["Purchase price"].to_s.strip),
+      scryfall_id: row["Scryfall ID"].to_s.strip.presence
+    }
+  end
+
+  def parse_purchase_price(raw)
+    raw.present? ? raw.to_f : nil
   end
 
   def reconcile(csv_rows)
@@ -94,7 +135,9 @@ class StockReconciliationService
           new_quantity = @mode == :full ? row_data[:quantity] : card.quantity + row_data[:quantity]
 
           if card.quantity != new_quantity || card.purchase_price != row_data[:purchase_price]
-            card.update_columns(quantity: new_quantity, purchase_price: row_data[:purchase_price])
+            attrs = { quantity: new_quantity, purchase_price: row_data[:purchase_price] }
+            attrs[:last_stocked_at] = Time.current if new_quantity > card.quantity
+            card.update_columns(attrs)
             updated += 1
           else
             unchanged += 1
@@ -103,14 +146,14 @@ class StockReconciliationService
           Card.create!(
             name: row_data[:name],
             edition: row_data[:edition],
-            edition_name: edition_names[row_data[:edition]],
+            edition_name: row_data[:edition_name] || edition_names[row_data[:edition]],
             collector_number: row_data[:collector_number],
             condition: row_data[:condition],
             language: row_data[:language],
             foil: row_data[:foil],
             quantity: row_data[:quantity],
             purchase_price: row_data[:purchase_price],
-            scryfall_id: scryfall_ids[[row_data[:edition], row_data[:collector_number]]]
+            scryfall_id: row_data[:scryfall_id] || scryfall_ids[[row_data[:edition], row_data[:collector_number]]]
           )
           created += 1
         end
@@ -158,14 +201,23 @@ class StockReconciliationService
     [card.edition.to_s.downcase, card.collector_number.to_s.strip, card.condition, card.language, card.foil]
   end
 
-  def normalize_condition(raw)
-    CONDITION_MAPPING[raw] || raw
+  def normalize_moxfield_condition(raw)
+    MOXFIELD_CONDITION_MAPPING[raw] || raw
+  end
+
+  def normalize_manabox_condition(raw)
+    MANABOX_CONDITION_MAPPING[raw] || raw
+  end
+
+  def normalize_manabox_language(raw)
+    MANABOX_LANGUAGE_MAPPING[raw] || raw
   end
 
   def normalize_foil(raw)
     case raw.downcase
     when "foil" then "Yes"
     when "etched" then "Yes (Etched)"
+    when "normal", "" then ""
     else ""
     end
   end

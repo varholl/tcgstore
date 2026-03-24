@@ -253,7 +253,9 @@ en:
       settings: "Settings"
     stock_reconciliations:
       title: "Stock Reconciliation"
-      upload_label: "Moxfield CSV File"
+      format_label: "CSV Format"
+      manabox_hint: "Always imports in partial mode (adds to existing stock)."
+      upload_label: "CSV File"
       mode_label: "Reconciliation Mode"
       full_mode: "Full"
       full_mode_hint: "CSV is source of truth. Cards not in the CSV will be set to quantity 0."

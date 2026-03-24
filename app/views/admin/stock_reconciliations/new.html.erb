@@ -8,13 +8,30 @@
 
 <div class="card">
   <div class="card-body">
-    <%= form_tag admin_stock_reconciliations_path, method: :post, multipart: true, data: { turbo: false } do %>
+    <%= form_tag admin_stock_reconciliations_path, method: :post, multipart: true, data: { turbo: false, controller: "stock-reconciliation-form" } do %>
+      <div class="mb-3">
+        <label class="form-label"><%= t('admin.stock_reconciliations.format_label') %></label>
+        <div class="form-check">
+          <%= radio_button_tag :format_type, "moxfield", true, class: "form-check-input", id: "format_moxfield", data: { action: "stock-reconciliation-form#toggleFormat", stock_reconciliation_form_target: "formatRadio" } %>
+          <label class="form-check-label" for="format_moxfield">
+            <strong>Moxfield</strong>
+          </label>
+        </div>
+        <div class="form-check mt-2">
+          <%= radio_button_tag :format_type, "manabox", false, class: "form-check-input", id: "format_manabox", data: { action: "stock-reconciliation-form#toggleFormat", stock_reconciliation_form_target: "formatRadio" } %>
+          <label class="form-check-label" for="format_manabox">
+            <strong>ManaBox</strong>
+          </label>
+          <div class="form-text"><%= t('admin.stock_reconciliations.manabox_hint') %></div>
+        </div>
+      </div>
+
       <div class="mb-3">
         <%= label_tag :file, t('admin.stock_reconciliations.upload_label'), class: "form-label" %>
         <%= file_field_tag :file, accept: ".csv", class: "form-control" %>
       </div>
 
-      <div class="mb-3">
+      <div class="mb-3" data-stock-reconciliation-form-target="modeSection">
         <label class="form-label"><%= t('admin.stock_reconciliations.mode_label') %></label>
         <div class="form-check">
           <%= radio_button_tag :mode, "full", true, class: "form-check-input", id: "mode_full" %>

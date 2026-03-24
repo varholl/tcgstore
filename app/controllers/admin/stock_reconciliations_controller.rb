@@ -20,8 +20,9 @@ class Admin::StockReconciliationsController < ApplicationController
       return
     end
 
-    mode = params[:mode] == "partial" ? :partial : :full
-    service = StockReconciliationService.new(params[:file], mode: mode)
+    format = params[:format_type] == "manabox" ? :manabox : :moxfield
+    mode = format == :manabox ? :partial : (params[:mode] == "partial" ? :partial : :full)
+    service = StockReconciliationService.new(params[:file], mode: mode, format: format)
     @result = service.call
     @mode = mode
 

@@ -260,7 +260,9 @@ es:
       reservations_count: "reservas"
     stock_reconciliations:
       title: "Reconciliación de Stock"
-      upload_label: "Archivo CSV de Moxfield"
+      format_label: "Formato CSV"
+      manabox_hint: "Siempre importa en modo parcial (suma al stock existente)."
+      upload_label: "Archivo CSV"
       mode_label: "Modo de Reconciliación"
       full_mode: "Completa"
       full_mode_hint: "El CSV es la fuente de verdad. Las cartas que no estén en el CSV se pondrán en cantidad 0."
