@@ -16,6 +16,7 @@ class User < ApplicationRecord
     super && provider.blank?
   end
 
+  has_one :seller
   has_many :cart_items, dependent: :destroy
   has_many :cards, through: :cart_items
   has_many :reservations, dependent: :destroy

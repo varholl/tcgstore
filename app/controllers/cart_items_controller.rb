@@ -4,19 +4,19 @@ class CartItemsController < ApplicationController
 
   def index
     @cart_items = current_user.cart_items.includes(:card)
-    card_ids = @cart_items.map(&:card_id)
-    @reserved_quantities = ReservationItem
-      .joins(:reservation)
-      .where(reservations: { status: %w[pending paid] }, card_id: card_ids)
-      .group(:card_id)
-      .sum(:quantity)
+
+    # Compute grouped available quantities for each cart item's card
+    @available_quantities = {}
+    @cart_items.each do |item|
+      @available_quantities[item.card_id] = item.card.grouped_available_quantity
+    end
   end
 
   def create
     @card = Card.find(params[:card_id])
     @cart_item = current_user.cart_items.find_or_initialize_by(card: @card)
 
-    available = @card.available_quantity
+    available = @card.grouped_available_quantity
     current_in_cart = @cart_item.persisted? ? @cart_item.quantity : 0
     requested_add = (params[:quantity] || 1).to_i
 
@@ -44,7 +44,7 @@ class CartItemsController < ApplicationController
 
   def update
     @cart_item = current_user.cart_items.find(params[:id])
-    available = @cart_item.card.available_quantity
+    available = @cart_item.card.grouped_available_quantity
     new_quantity = [params[:cart_item][:quantity].to_i, available].min
     new_quantity = [new_quantity, 1].max
 
@@ -70,7 +70,7 @@ class CartItemsController < ApplicationController
       next unless card
 
       cart_item = current_user.cart_items.find_or_initialize_by(card: card)
-      available = card.available_quantity
+      available = card.grouped_available_quantity
       current_in_cart = cart_item.persisted? ? cart_item.quantity : 0
       new_quantity = current_in_cart + 1
       new_quantity = [new_quantity, available].min

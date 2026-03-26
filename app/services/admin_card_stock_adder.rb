@@ -8,9 +8,12 @@ class AdminCardStockAdder
   def call
     existing = find_existing
 
+    qty = @params[:quantity].to_i
+
     if existing
       existing.update(scryfall_id: @params[:scryfall_id]) if existing.scryfall_id.blank?
-      existing.increment!(:quantity, @params[:quantity].to_i)
+      existing.increment!(:quantity, qty)
+      existing.stock_entries.create!(quantity: qty, added_at: Time.current)
       @card = existing
       @result = :incremented
     else
@@ -24,11 +27,13 @@ class AdminCardStockAdder
         language: @params[:language],
         foil: @params[:foil],
         foil_type: @params[:foil].present? ? @params[:foil_type] : nil,
-        quantity: @params[:quantity].to_i,
-        price: @params[:price]
+        quantity: qty,
+        price: @params[:price],
+        seller_id: @params[:seller_id]
       )
 
       if @card.save
+        @card.stock_entries.create!(quantity: qty, added_at: Time.current)
         @result = :added
       else
         @result = false
@@ -42,6 +47,7 @@ class AdminCardStockAdder
 
   def find_existing
     scope = Card.where(condition: @params[:condition], language: @params[:language])
+    scope = scope.where(seller_id: @params[:seller_id]) if @params[:seller_id].present?
     scope = scope.where(foil_condition)
 
     # Try by scryfall_id first

@@ -34,8 +34,9 @@
 
 <% if params[:view] == "grid" %>
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 mb-3">
-    <% @reservation.reservation_items.each do |item| %>
-      <div class="col" id="<%= dom_id(item) %>">
+    <% items_to_show = @grouped_items || @reservation.reservation_items %>
+    <% items_to_show.each do |item| %>
+      <div class="col" id="<%= @grouped_items ? "grouped_item_#{item.id}" : dom_id(item) %>">
         <div class="card h-100<%= ' foil-card' if item.card.foil.present? %>">
           <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
                class="card-img-top"
@@ -55,7 +56,10 @@
               <strong class="text-price"><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></strong>
               <small class="text-muted ms-1">x<%= item.quantity %></small>
             </div>
-            <% if @reservation.pending? %>
+            <% if admin_or_seller? %>
+              <small class="text-muted"><%= t('admin.cards.seller') %>: <%= item.card.seller.name %></small>
+            <% end %>
+            <% if @reservation.pending? && !@grouped_items %>
               <div class="mt-1">
                 <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
               </div>
@@ -75,24 +79,31 @@
         <th><%= t('reservations.condition') %></th>
         <th><%= t('reservations.language') %></th>
         <th><%= t('reservations.quantity') %></th>
+        <% if admin_or_seller? %>
+          <th><%= t('admin.cards.seller') %></th>
+        <% end %>
         <th><%= t('reservations.price') %></th>
         <th><%= t('reservations.subtotal') %></th>
-        <% if @reservation.pending? %>
+        <% if @reservation.pending? && !@grouped_items %>
           <th></th>
         <% end %>
       </tr>
     </thead>
     <tbody>
-      <% @reservation.reservation_items.each do |item| %>
-        <tr id="<%= dom_id(item) %>">
+      <% items_to_show = @grouped_items || @reservation.reservation_items %>
+      <% items_to_show.each do |item| %>
+        <tr id="<%= @grouped_items ? "grouped_item_#{item.id}" : dom_id(item) %>">
           <td><%= item.card.name %></td>
           <td><%= item.card.edition_name || item.card.edition.upcase %></td>
           <td><%= item.card.condition %></td>
           <td><%= item.card.language %></td>
           <td><%= item.quantity %></td>
+          <% if admin_or_seller? %>
+            <td><%= item.card.seller.name %></td>
+          <% end %>
           <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
           <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
-          <% if @reservation.pending? %>
+          <% if @reservation.pending? && !@grouped_items %>
             <td>
               <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
             </td>
@@ -102,8 +113,9 @@
     </tbody>
     <tfoot>
       <tr id="reservation_total">
-        <td colspan="<%= @reservation.pending? ? 7 : 6 %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
-        <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
+        <% extra_cols = (admin_or_seller? ? 1 : 0) + (@reservation.pending? && !@grouped_items ? 1 : 0) %>
+        <td colspan="<%= 6 + extra_cols %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
+        <td><strong><%= number_to_currency((@grouped_items || @reservation.reservation_items).sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
     </tfoot>
   </table>

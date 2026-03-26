@@ -1,4 +1,6 @@
 class Reservation < ApplicationRecord
+  DELIVERY_LOCATIONS = %w[batikueva magic_palace correo moto otro].freeze
+
   belongs_to :user, optional: true
   has_many :reservation_items, dependent: :destroy
   has_many :reservation_notes, dependent: :destroy

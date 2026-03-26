@@ -47,6 +47,11 @@
 
         <div class="row g-3">
           <div class="col-md-3">
+            <label class="form-label"><%= t('admin.stock_reconciliations.seller_label') %></label>
+            <%= select_tag :seller_id, options_from_collection_for_select(@sellers, :id, :name, Seller.default&.id), class: "form-select" %>
+          </div>
+
+          <div class="col-md-3">
             <label class="form-label"><%= t('admin.cards.quantity') %></label>
             <input type="number" name="quantity" value="1" min="1" class="form-control" required>
           </div>

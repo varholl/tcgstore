@@ -23,6 +23,9 @@
       <%= select_tag :price_source, options_for_select([[t('admin.cards.needs_price_review'), "needs_review"], [t('admin.cards.price_source_scryfall'), "scryfall"], [t('admin.cards.price_source_card_kingdom'), "card_kingdom"]], params[:price_source]), include_blank: t('admin.cards.all_price_sources'), class: "form-select" %>
     </div>
     <div class="col-md-2">
+      <%= select_tag :seller_id, options_from_collection_for_select(@sellers, :id, :name, params[:seller_id]), include_blank: t('admin.cards.all_sellers'), class: "form-select" %>
+    </div>
+    <div class="col-md-2">
       <div class="form-check">
         <%= check_box_tag :no_price, "1", params[:no_price] == "1", class: "form-check-input", id: "no_price" %>
         <label class="form-check-label" for="no_price"><%= t('admin.cards.no_price') %></label>
@@ -30,7 +33,7 @@
     </div>
     <div class="col-auto">
       <button class="btn btn-outline-primary" type="submit"><%= t('admin.cards.search') %></button>
-      <% if params[:search].present? || params[:edition].present? || params[:no_price].present? || params[:sort].present? || params[:price_source].present? %>
+      <% if params[:search].present? || params[:edition].present? || params[:no_price].present? || params[:sort].present? || params[:price_source].present? || params[:seller_id].present? %>
         <%= link_to t('admin.cards.clear'), admin_cards_path, class: "btn btn-outline-secondary ms-1" %>
       <% end %>
     </div>
@@ -57,6 +60,7 @@
           <% if card.foil.present? %><i class="fa-solid fa-star" style="color: #d4a017;"></i><% end %>
         </div>
         <div class="admin-card-row-details">
+          <span><%= card.seller.name %></span>
           <span><%= card.condition %> · <%= card.language %></span>
           <span>x<%= card.quantity %></span>
           <span class="text-price">
@@ -89,6 +93,7 @@
           <th><%= t('admin.cards.condition') %></th>
           <th><%= t('admin.cards.language') %></th>
           <th><%= t('admin.cards.foil') %></th>
+          <th><%= t('admin.cards.seller') %></th>
           <th><%= t('admin.cards.quantity') %></th>
           <th><%= t('admin.cards.price') %></th>
           <th></th>
@@ -103,6 +108,7 @@
             <td><%= card.condition %></td>
             <td><%= card.language %></td>
             <td><% if card.foil.present? %><span class="badge bg-info"><%= card.foil_display %></span><% end %></td>
+            <td><%= card.seller.name %></td>
             <td><%= card.quantity %></td>
             <td>
               <%= card.price ? number_to_currency(card.price) : "—" %>

@@ -40,26 +40,40 @@ class WishlistMatcherService
     results = []
 
     entries.each do |entry|
-      cards = Card.where("quantity > 0").where("LOWER(name) = ?", entry.name.downcase)
+      cards = Card.where("quantity > 0").where("LOWER(name) = ?", entry.name.downcase).to_a
 
-      # Filter out fully reserved cards
       if cards.any?
         reserved = ReservationItem
           .joins(:reservation)
-          .where(reservations: { status: %w[pending prepared paid] }, card_id: cards.pluck(:id))
+          .where(reservations: { status: %w[pending prepared paid] }, card_id: cards.map(&:id))
           .group(:card_id)
           .sum(:quantity)
 
-        available_cards = cards.select { |c| c.quantity - (reserved[c.id] || 0) > 0 }
+        # Group by card identity (across sellers) and aggregate
+        groups = cards.group_by(&:card_identity)
+        available_cards = []
+        available_quantities = {}
+
+        groups.each do |_identity, group|
+          total_qty = group.sum(&:quantity)
+          total_reserved = group.sum { |c| reserved[c.id] || 0 }
+          available = total_qty - total_reserved
+          next if available <= 0
+
+          representative = group.min_by { |c| c.last_stocked_at || Time.at(0) }
+          available_cards << representative
+          available_quantities[representative.id] = available
+        end
       else
         available_cards = []
+        available_quantities = {}
       end
 
       results << {
         name: entry.name,
         qty: entry.qty,
         cards: available_cards,
-        reserved_quantities: reserved || {}
+        available_quantities: available_quantities
       }
     end
 

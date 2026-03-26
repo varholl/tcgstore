@@ -12,13 +12,13 @@
       <div class="mb-3">
         <label class="form-label"><%= t('admin.stock_reconciliations.format_label') %></label>
         <div class="form-check">
-          <%= radio_button_tag :format_type, "moxfield", true, class: "form-check-input", id: "format_moxfield", data: { action: "stock-reconciliation-form#toggleFormat", stock_reconciliation_form_target: "formatRadio" } %>
+          <%= radio_button_tag :format_type, "moxfield", false, class: "form-check-input", id: "format_moxfield", data: { action: "stock-reconciliation-form#toggleFormat", stock_reconciliation_form_target: "formatRadio" } %>
           <label class="form-check-label" for="format_moxfield">
             <strong>Moxfield</strong>
           </label>
         </div>
         <div class="form-check mt-2">
-          <%= radio_button_tag :format_type, "manabox", false, class: "form-check-input", id: "format_manabox", data: { action: "stock-reconciliation-form#toggleFormat", stock_reconciliation_form_target: "formatRadio" } %>
+          <%= radio_button_tag :format_type, "manabox", true, class: "form-check-input", id: "format_manabox", data: { action: "stock-reconciliation-form#toggleFormat", stock_reconciliation_form_target: "formatRadio" } %>
           <label class="form-check-label" for="format_manabox">
             <strong>ManaBox</strong>
           </label>
@@ -27,21 +27,26 @@
       </div>
 
       <div class="mb-3">
+        <%= label_tag :seller_id, t('admin.stock_reconciliations.seller_label'), class: "form-label" %>
+        <%= select_tag :seller_id, options_from_collection_for_select(@sellers, :id, :name, Seller.default&.id), class: "form-select" %>
+      </div>
+
+      <div class="mb-3">
         <%= label_tag :file, t('admin.stock_reconciliations.upload_label'), class: "form-label" %>
         <%= file_field_tag :file, accept: ".csv", class: "form-control" %>
       </div>
 
-      <div class="mb-3" data-stock-reconciliation-form-target="modeSection">
+      <div class="mb-3" data-stock-reconciliation-form-target="modeSection" style="display: none;">
         <label class="form-label"><%= t('admin.stock_reconciliations.mode_label') %></label>
         <div class="form-check">
-          <%= radio_button_tag :mode, "full", true, class: "form-check-input", id: "mode_full" %>
+          <%= radio_button_tag :mode, "full", false, class: "form-check-input", id: "mode_full" %>
           <label class="form-check-label" for="mode_full">
             <strong><%= t('admin.stock_reconciliations.full_mode') %></strong>
           </label>
           <div class="form-text"><%= t('admin.stock_reconciliations.full_mode_hint') %></div>
         </div>
         <div class="form-check mt-2">
-          <%= radio_button_tag :mode, "partial", false, class: "form-check-input", id: "mode_partial" %>
+          <%= radio_button_tag :mode, "partial", true, class: "form-check-input", id: "mode_partial" %>
           <label class="form-check-label" for="mode_partial">
             <strong><%= t('admin.stock_reconciliations.partial_mode') %></strong>
           </label>

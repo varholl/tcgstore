@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :set_theme
   before_action :set_blue_rate
   before_action :set_maintenance_mode
-  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?
+  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?, :admin_or_seller?
 
   def set_language
     locale = params[:locale].to_s
@@ -67,6 +67,10 @@ class ApplicationController < ActionController::Base
 
   def maintenance_mode?
     @maintenance_mode
+  end
+
+  def admin_or_seller?
+    user_signed_in? && (current_user.admin? || current_user.seller.present?)
   end
 
   def require_no_maintenance!

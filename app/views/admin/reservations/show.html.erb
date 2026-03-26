@@ -44,6 +44,33 @@
         <span class="badge bg-warning text-dark"><i class="fas fa-receipt me-1"></i><%= t('admin.reservations.receipt_sent_at', time: @reservation.receipt_sent_at.in_time_zone.strftime('%d/%m/%Y %H:%M')) %></span>
       </p>
     <% end %>
+    <hr>
+
+    <h5><%= t('admin.reservations.delivery_title') %></h5>
+    <%= form_tag update_delivery_admin_reservation_path(@reservation), method: :patch, data: { controller: "delivery-form" } do %>
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label"><%= t('admin.reservations.delivery_date_label') %></label>
+          <input type="date" name="delivery_date" value="<%= @reservation.delivery_date %>" class="form-control form-control-sm">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label"><%= t('admin.reservations.delivery_location_label') %></label>
+          <select name="delivery_location" class="form-select form-select-sm" data-delivery-form-target="locationSelect" data-action="delivery-form#toggleOther">
+            <option value=""><%= t('admin.reservations.delivery_location_blank') %></option>
+            <% Reservation::DELIVERY_LOCATIONS.each do |loc| %>
+              <option value="<%= loc %>" <%= 'selected' if @reservation.delivery_location == loc %>><%= t("admin.reservations.delivery_locations.#{loc}") %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="col-md-4" data-delivery-form-target="otherField" style="<%= 'display:none' unless @reservation.delivery_location == 'otro' %>">
+          <label class="form-label"><%= t('admin.reservations.delivery_location_other_label') %></label>
+          <input type="text" name="delivery_location_other" value="<%= @reservation.delivery_location_other %>" class="form-control form-control-sm" placeholder="<%= t('admin.reservations.delivery_location_other_placeholder') %>">
+        </div>
+        <div class="col-md-2">
+          <%= submit_tag t('admin.reservations.delivery_save'), class: "btn btn-sm btn-outline-primary" %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
 
@@ -92,7 +119,8 @@
                 <% end %>
               </small><br>
               <strong class="text-price"><%= t('admin.reservations.price') %>: <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></strong><br>
-              <small><%= t('admin.reservations.quantity') %>: <%= item.quantity %></small>
+              <small><%= t('admin.reservations.quantity') %>: <%= item.quantity %></small><br>
+              <small class="text-muted"><%= t('admin.cards.seller') %>: <%= item.card.seller.name %></small>
             </div>
             <% if stock_short %>
               <span class="badge bg-danger mt-1" title="<%= t('admin.reservations.stock_warning_detail', in_stock: item.card.quantity, reserved: item.quantity) %>">
@@ -119,6 +147,7 @@
         <th><%= t('admin.reservations.condition') %></th>
         <th><%= t('admin.reservations.language') %></th>
         <th><%= t('admin.reservations.quantity') %></th>
+        <th><%= t('admin.cards.seller') %></th>
         <th><%= t('admin.reservations.current_price') %></th>
         <th><%= t('admin.reservations.price') %></th>
         <th><%= t('admin.reservations.subtotal') %></th>
@@ -141,6 +170,7 @@
           <td data-label="<%= t('admin.reservations.condition') %>"><%= item.card.condition %></td>
           <td data-label="<%= t('admin.reservations.language') %>"><%= item.card.language %></td>
           <td data-label="<%= t('admin.reservations.quantity') %>"><%= item.quantity %></td>
+          <td data-label="<%= t('admin.cards.seller') %>"><%= item.card.seller.name %></td>
           <td data-label="<%= t('admin.reservations.current_price') %>">
             <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
             <% if item.card.price_source == "scryfall" && !item.card.price_reviewed? %>
@@ -166,11 +196,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 8 : 7 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
+        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 9 : 8 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
       <tr>
-        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 8 : 7 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
+        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 9 : 8 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
         <td>
           <%= form_tag update_final_price_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-1" do %>
             <input type="number" name="final_price" step="0.01" min="0" value="<%= @reservation.final_price %>" class="form-control form-control-sm" style="width: 120px;" placeholder="—">

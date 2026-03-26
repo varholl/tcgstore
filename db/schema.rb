@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_22_153334) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_26_160000) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -29,9 +29,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_22_153334) do
     t.boolean "price_reviewed", default: false, null: false
     t.string "foil_type"
     t.datetime "last_stocked_at"
+    t.integer "seller_id", null: false
     t.index ["edition"], name: "index_cards_on_edition"
     t.index ["name"], name: "index_cards_on_name"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"
+    t.index ["seller_id"], name: "index_cards_on_seller_id"
   end
 
   create_table "cart_items", force: :cascade do |t|
@@ -88,8 +90,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_22_153334) do
     t.string "payment_method"
     t.datetime "receipt_sent_at"
     t.boolean "trade", default: false, null: false
+    t.date "delivery_date"
+    t.string "delivery_location"
+    t.string "delivery_location_other"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
+  end
+
+  create_table "sellers", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email"
+    t.integer "user_id"
+    t.boolean "default", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sellers_on_user_id"
   end
 
   create_table "site_settings", force: :cascade do |t|
@@ -97,6 +112,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_22_153334) do
     t.text "maintenance_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "stock_entries", force: :cascade do |t|
+    t.integer "card_id", null: false
+    t.integer "quantity", null: false
+    t.datetime "added_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["added_at"], name: "index_stock_entries_on_added_at"
+    t.index ["card_id"], name: "index_stock_entries_on_card_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -125,6 +150,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_22_153334) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "cards", "sellers"
   add_foreign_key "cart_items", "cards"
   add_foreign_key "cart_items", "users"
   add_foreign_key "reservation_items", "cards"
@@ -133,4 +159,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_22_153334) do
   add_foreign_key "reservation_notes", "users"
   add_foreign_key "reservation_payments", "reservations"
   add_foreign_key "reservations", "users"
+  add_foreign_key "sellers", "users"
+  add_foreign_key "stock_entries", "cards"
 end

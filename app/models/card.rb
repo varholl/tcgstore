@@ -1,5 +1,7 @@
 class Card < ApplicationRecord
+  belongs_to :seller
   has_many :reservation_items
+  has_many :stock_entries
 
   validates :name, presence: true
   validates :quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -13,6 +15,24 @@ class Card < ApplicationRecord
     end
   }
   scope :filter_by_edition, ->(edition) { where(edition: edition) if edition.present? }
+
+  def card_identity
+    [edition.to_s.downcase, collector_number.to_s.strip, condition, language, foil]
+  end
+
+  def sibling_cards
+    Card.where(edition: edition, collector_number: collector_number,
+               condition: condition, language: language, foil: foil)
+  end
+
+  def grouped_available_quantity
+    total_qty = sibling_cards.sum(:quantity)
+    total_reserved = ReservationItem.joins(:reservation)
+      .where(card_id: sibling_cards.select(:id))
+      .where(reservations: { status: %w[pending prepared paid] })
+      .sum(:quantity)
+    total_qty - total_reserved
+  end
 
   def foil_display
     case foil_type

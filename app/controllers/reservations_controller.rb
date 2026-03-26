@@ -1,3 +1,5 @@
+require "ostruct"
+
 class ReservationsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_no_maintenance!, only: [:create, :add_item]
@@ -7,7 +9,19 @@ class ReservationsController < ApplicationController
   end
 
   def show
-    @reservation = current_user.reservations.includes(reservation_items: :card).find(params[:id])
+    @reservation = current_user.reservations.includes(reservation_items: { card: :seller }).find(params[:id])
+
+    unless admin_or_seller?
+      @grouped_items = @reservation.reservation_items.group_by { |i| i.card.card_identity }.map do |_identity, items|
+        representative = items.first
+        ::OpenStruct.new(
+          card: representative.card,
+          quantity: items.sum(&:quantity),
+          unit_price: representative.unit_price,
+          id: representative.id
+        )
+      end
+    end
   end
 
   def create

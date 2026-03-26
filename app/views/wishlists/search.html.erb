@@ -39,7 +39,7 @@
       <div class="card-body">
         <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 g-2">
           <% result[:cards].each do |card| %>
-            <% available = card.quantity - (result[:reserved_quantities][card.id] || 0) %>
+            <% available = result[:available_quantities][card.id] || 0 %>
             <div class="col">
               <div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="font-size: 0.75rem;">
                 <img src="https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=small"

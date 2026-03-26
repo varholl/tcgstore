@@ -34,10 +34,11 @@ class StockReconciliationService
   Result = Struct.new(:success, :cards_created, :cards_updated, :cards_zeroed,
                       :cards_unchanged, :reservation_conflicts, :errors, keyword_init: true)
 
-  def initialize(csv_file, mode:, format: :moxfield)
+  def initialize(csv_file, mode:, format: :moxfield, seller:)
     @csv_file = csv_file
     @mode = mode.to_sym
     @format = format.to_sym
+    @seller = seller
   end
 
   def call
@@ -114,7 +115,7 @@ class StockReconciliationService
   end
 
   def reconcile(csv_rows)
-    existing_cards = Card.all.index_by { |c| card_key(c) }
+    existing_cards = Card.where(seller: @seller).index_by { |c| card_key(c) }
     edition_names = Card.where.not(edition_name: [nil, ""]).distinct.pluck(:edition, :edition_name).to_h
     scryfall_ids = Card.where.not(scryfall_id: [nil, ""]).pluck(:edition, :collector_number, :scryfall_id)
                        .each_with_object({}) { |(ed, cn, sid), h| h[[ed, cn]] = sid }
@@ -135,15 +136,19 @@ class StockReconciliationService
           new_quantity = @mode == :full ? row_data[:quantity] : card.quantity + row_data[:quantity]
 
           if card.quantity != new_quantity || card.purchase_price != row_data[:purchase_price]
+            added_qty = new_quantity - card.quantity
             attrs = { quantity: new_quantity, purchase_price: row_data[:purchase_price] }
-            attrs[:last_stocked_at] = Time.current if new_quantity > card.quantity
+            attrs[:last_stocked_at] = Time.current if added_qty > 0
             card.update_columns(attrs)
+            if added_qty > 0
+              card.stock_entries.create!(quantity: added_qty, added_at: Time.current)
+            end
             updated += 1
           else
             unchanged += 1
           end
         else
-          Card.create!(
+          new_card = Card.create!(
             name: row_data[:name],
             edition: row_data[:edition],
             edition_name: row_data[:edition_name] || edition_names[row_data[:edition]],
@@ -153,13 +158,16 @@ class StockReconciliationService
             foil: row_data[:foil],
             quantity: row_data[:quantity],
             purchase_price: row_data[:purchase_price],
-            scryfall_id: row_data[:scryfall_id] || scryfall_ids[[row_data[:edition], row_data[:collector_number]]]
+            scryfall_id: row_data[:scryfall_id] || scryfall_ids[[row_data[:edition], row_data[:collector_number]]],
+            seller: @seller
           )
+          new_card.stock_entries.create!(quantity: row_data[:quantity], added_at: Time.current)
           created += 1
         end
       end
 
       if @mode == :full
+        # Only zero cards belonging to this seller
         cards_to_zero = existing_cards.reject { |key, _| matched_keys.include?(key) }
         cards_to_zero_with_stock = cards_to_zero.values.select { |c| c.quantity > 0 }
 

@@ -16,7 +16,8 @@ class Admin::CardsController < ApplicationController
   }.freeze
 
   def index
-    @cards = Card.all
+    @sellers = Seller.order(:name)
+    @cards = Card.includes(:seller)
     if params[:search].present?
       params[:search].strip.split(/\s+/).each do |term|
         pattern = "%#{term}%"
@@ -25,6 +26,7 @@ class Admin::CardsController < ApplicationController
     end
     @cards = @cards.where(edition: params[:edition]) if params[:edition].present?
     @cards = @cards.where(price: nil) if params[:no_price] == "1"
+    @cards = @cards.where(seller_id: params[:seller_id]) if params[:seller_id].present?
     if params[:price_source] == "needs_review"
       @cards = @cards.where(price_source: "scryfall", price_reviewed: false)
     elsif params[:price_source].present?
@@ -39,6 +41,7 @@ class Admin::CardsController < ApplicationController
   end
 
   def new
+    @sellers = Seller.all
   end
 
   def create
@@ -59,10 +62,16 @@ class Admin::CardsController < ApplicationController
       .joins(:reservation)
       .where(reservations: { status: "pending" })
       .sum(:quantity)
+    @stock_entries = @card.stock_entries.order(added_at: :desc)
   end
 
   def update
+    old_quantity = @card.quantity
     if @card.update(card_update_params)
+      new_quantity = @card.quantity
+      if new_quantity > old_quantity
+        @card.stock_entries.create!(quantity: new_quantity - old_quantity, added_at: Time.current)
+      end
       redirect_to safe_return_path, notice: t("controllers.admin.cards.updated")
     else
       @return_to = params[:return_to]
@@ -140,7 +149,7 @@ class Admin::CardsController < ApplicationController
     params.permit(
       :name, :scryfall_id, :set_code, :set_name,
       :collector_number, :condition, :language, :foil,
-      :quantity, :price, :foil_type
+      :quantity, :price, :foil_type, :seller_id
     )
   end
 

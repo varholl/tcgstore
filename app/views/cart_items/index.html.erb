@@ -28,7 +28,7 @@
       </thead>
       <tbody>
         <% @cart_items.each do |item| %>
-          <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
+          <% available = @available_quantities[item.card_id] || 0 %>
           <% unavailable = available <= 0 %>
           <tr class="<%= 'table-danger' if unavailable %>">
             <td class="d-flex align-items-center gap-2">
@@ -69,7 +69,7 @@
   <%# Mobile card layout — visible only on small screens %>
   <div class="d-md-none">
     <% @cart_items.each do |item| %>
-      <% available = item.card.quantity - (@reserved_quantities[item.card_id] || 0) %>
+      <% available = @available_quantities[item.card_id] || 0 %>
       <% unavailable = available <= 0 %>
       <div class="card mb-3<%= ' border-danger' if unavailable %>">
         <div class="card-body">

@@ -1,0 +1,15 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('admin.sellers.edit_title') %></h1>
+  <%= link_to t('admin.sellers.back'), admin_sellers_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <%= form_with model: [:admin, @seller] do |f| %>
+      <%= render "form", f: f %>
+      <%= f.submit t('admin.sellers.save'), class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
+<% end %>

@@ -10,37 +10,54 @@ class CardsController < ApplicationController
   }.freeze
 
   def index
-    @cards = Card.where("quantity > 0")
-    @cards = @cards.search_by_name(params[:search]) if params[:search].present?
-    @cards = @cards.filter_by_edition(params[:edition]) if params[:edition].present?
+    all_cards = Card.where("quantity > 0")
+    all_cards = all_cards.search_by_name(params[:search]) if params[:search].present?
+    all_cards = all_cards.filter_by_edition(params[:edition]) if params[:edition].present?
     if params[:foil] == "foil"
-      @cards = @cards.where.not(foil: [nil, ""])
+      all_cards = all_cards.where.not(foil: [nil, ""])
     elsif params[:foil] == "non_foil"
-      @cards = @cards.where(foil: [nil, ""])
+      all_cards = all_cards.where(foil: [nil, ""])
     end
 
+    # Group cards by identity (across sellers) and pick a representative per group
+    all_cards_loaded = all_cards.to_a
+    all_card_ids = all_cards_loaded.map(&:id)
+
+    reserved_by_card = ReservationItem
+      .joins(:reservation)
+      .where(reservations: { status: %w[pending prepared paid] }, card_id: all_card_ids)
+      .group(:card_id)
+      .sum(:quantity)
+
+    groups = all_cards_loaded.group_by(&:card_identity)
+
+    @available_quantities = {}
+    representatives = []
+
+    groups.each do |_identity, cards|
+      total_qty = cards.sum(&:quantity)
+      total_reserved = cards.sum { |c| reserved_by_card[c.id] || 0 }
+      available = total_qty - total_reserved
+
+      next if available <= 0
+
+      representative = cards.min_by { |c| c.last_stocked_at || Time.at(0) }
+      @available_quantities[representative.id] = available
+      representatives << representative
+    end
+
+    # Sort
     if params[:sort].present? && SORT_OPTIONS.key?(params[:sort])
       sort_key = params[:sort]
       cookies[:cards_sort] = { value: sort_key, expires: 1.year.from_now }
     else
       sort_key = SORT_OPTIONS.key?(cookies[:cards_sort]) ? cookies[:cards_sort] : "price_desc"
     end
-    @cards = @cards.order(Arel.sql(SORT_OPTIONS[sort_key][:order])).page(params[:page]).per(50)
     @current_sort = sort_key
 
-    card_ids = @cards.map(&:id)
-    @reserved_quantities = ReservationItem
-      .joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid] }, card_id: card_ids)
-      .group(:card_id)
-      .sum(:quantity)
+    representatives = sort_cards(representatives, sort_key)
 
-    # Hide cards with no available quantity (fully reserved)
-    fully_reserved_ids = @reserved_quantities.select { |card_id, reserved|
-      card = @cards.find { |c| c.id == card_id }
-      card && card.quantity <= reserved
-    }.keys
-    @cards = @cards.where.not(id: fully_reserved_ids) if fully_reserved_ids.any?
+    @cards = Kaminari.paginate_array(representatives).page(params[:page]).per(50)
 
     if params[:view].present? && %w[list grid].include?(params[:view])
       cookies[:cards_view] = { value: params[:view], expires: 1.year.from_now }
@@ -63,5 +80,20 @@ class CardsController < ApplicationController
       cookies[:dismissed_how_it_works] = { value: "1", expires: 1.year.from_now }
     end
     head :ok
+  end
+
+  private
+
+  def sort_cards(cards, sort_key)
+    case sort_key
+    when "name_asc"     then cards.sort_by { |c| c.name.to_s }
+    when "name_desc"    then cards.sort_by { |c| c.name.to_s }.reverse
+    when "price_asc"    then cards.sort_by { |c| c.price || Float::INFINITY }
+    when "price_desc"   then cards.sort_by { |c| -(c.price || 0) }
+    when "edition_asc"  then cards.sort_by { |c| [c.edition.to_s, c.name.to_s] }
+    when "edition_desc" then cards.sort_by { |c| c.edition.to_s }.reverse
+    when "newest"       then cards.sort_by { |c| c.last_stocked_at || Time.at(0) }.reverse
+    else cards.sort_by { |c| -(c.price || 0) }
+    end
   end
 end

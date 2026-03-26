@@ -45,6 +45,7 @@ Rails.application.routes.draw do
         patch :revert_to_paid
         patch :expire
         patch :update_final_price
+        patch :update_delivery
         patch :force_decrement
         patch :toggle_trade
         patch :update_item_price
@@ -56,6 +57,7 @@ Rails.application.routes.draw do
       resources :payments, only: [:create, :destroy], controller: 'reservation_payments'
     end
     resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+    resources :sellers, except: [:show]
     resources :cards, except: [:show] do
       collection do
         get :search_scryfall

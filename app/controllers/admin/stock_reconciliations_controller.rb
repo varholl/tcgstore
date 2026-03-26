@@ -3,6 +3,7 @@ class Admin::StockReconciliationsController < ApplicationController
   before_action :require_admin
 
   def new
+    @sellers = Seller.all
   end
 
   def export
@@ -22,7 +23,8 @@ class Admin::StockReconciliationsController < ApplicationController
 
     format = params[:format_type] == "manabox" ? :manabox : :moxfield
     mode = format == :manabox ? :partial : (params[:mode] == "partial" ? :partial : :full)
-    service = StockReconciliationService.new(params[:file], mode: mode, format: format)
+    seller = Seller.find(params[:seller_id])
+    service = StockReconciliationService.new(params[:file], mode: mode, format: format, seller: seller)
     @result = service.call
     @mode = mode
 

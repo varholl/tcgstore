@@ -220,6 +220,17 @@ class Admin::ReservationsController < ApplicationController
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.trade_toggled')
   end
 
+  def update_delivery
+    @reservation = Reservation.find(params[:id])
+    attrs = {
+      delivery_date: params[:delivery_date].presence,
+      delivery_location: params[:delivery_location].presence,
+      delivery_location_other: params[:delivery_location] == "otro" ? params[:delivery_location_other].presence : nil
+    }
+    @reservation.update!(attrs)
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.delivery_updated')
+  end
+
   def update_final_price
     @reservation = Reservation.find(params[:id])
     @reservation.update!(final_price: params[:final_price].presence)
