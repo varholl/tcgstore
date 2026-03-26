@@ -738,3 +738,61 @@ dl .row dd {
   font-weight: 600;
   font-size: 0.9rem;
 }
+
+/* --- Flatpickr dark theme override --- */
+html[data-theme="dark"] .flatpickr-calendar {
+  background: #1c1c1c !important;
+  border-color: #3a3a3a !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+}
+html[data-theme="dark"] .flatpickr-months .flatpickr-month,
+html[data-theme="dark"] .flatpickr-current-month .flatpickr-monthDropdown-months,
+html[data-theme="dark"] .flatpickr-weekdays,
+html[data-theme="dark"] span.flatpickr-weekday {
+  background: #252525 !important;
+  color: #e0e0e0 !important;
+}
+html[data-theme="dark"] .flatpickr-current-month input.cur-year,
+html[data-theme="dark"] .flatpickr-current-month .flatpickr-monthDropdown-months option {
+  background: #252525 !important;
+  color: #e0e0e0 !important;
+}
+html[data-theme="dark"] .flatpickr-day {
+  color: #e0e0e0 !important;
+}
+html[data-theme="dark"] .flatpickr-day:hover,
+html[data-theme="dark"] .flatpickr-day:focus {
+  background: #252525 !important;
+  border-color: #c9a84c !important;
+}
+html[data-theme="dark"] .flatpickr-day.selected,
+html[data-theme="dark"] .flatpickr-day.selected:hover {
+  background: #c9a84c !important;
+  border-color: #c9a84c !important;
+  color: #141414 !important;
+}
+html[data-theme="dark"] .flatpickr-day.today {
+  border-color: #4a8db7 !important;
+}
+html[data-theme="dark"] .flatpickr-day.today:hover {
+  background: #4a8db7 !important;
+  border-color: #4a8db7 !important;
+  color: #fff !important;
+}
+html[data-theme="dark"] .flatpickr-day.prevMonthDay,
+html[data-theme="dark"] .flatpickr-day.nextMonthDay {
+  color: #8a8a8a !important;
+}
+html[data-theme="dark"] .flatpickr-day.flatpickr-disabled,
+html[data-theme="dark"] .flatpickr-day.flatpickr-disabled:hover {
+  color: #555 !important;
+}
+html[data-theme="dark"] .flatpickr-months .flatpickr-prev-month,
+html[data-theme="dark"] .flatpickr-months .flatpickr-next-month {
+  fill: #e0e0e0 !important;
+  color: #e0e0e0 !important;
+}
+html[data-theme="dark"] .flatpickr-months .flatpickr-prev-month:hover svg,
+html[data-theme="dark"] .flatpickr-months .flatpickr-next-month:hover svg {
+  fill: #c9a84c !important;
+}
