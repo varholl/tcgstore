@@ -37,7 +37,7 @@
       <div class="w-100 text-center">
         <p class="text-muted mb-3"><%= t('devise_views.oauth_info') %></p>
         <%- resource_class.omniauth_providers.each do |provider| %>
-          <%= button_to omniauth_authorize_path(resource_name, provider), method: :post, class: "btn btn-outline-dark btn-lg w-100", data: { turbo: false } do %>
+          <%= button_to omniauth_authorize_path(resource_name, provider), method: :post, class: "btn btn-outline-secondary btn-lg w-100", data: { turbo: false } do %>
             <i class="fab fa-google me-2"></i> <%= t('devise_views.sign_in_with', provider: "Google") %>
           <% end %>
         <% end %>
