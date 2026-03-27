@@ -116,7 +116,7 @@
               <% elsif user_signed_in? %>
                 <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
               <% else %>
-                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100", data: { turbo: false } %>
               <% end %>
             </div>
             <% if card.scryfall_id.present? %>
@@ -169,7 +169,7 @@
               <% elsif user_signed_in? %>
                 <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
               <% else %>
-                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100", data: { turbo: false } %>
               <% end %>
             </div>
             <% if card.scryfall_id.present? %>
