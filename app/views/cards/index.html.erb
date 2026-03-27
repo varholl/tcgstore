@@ -38,7 +38,7 @@
   </div>
   <div class="col-12 col-md-auto">
     <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
-    <%= link_to t('cards.clear'), cards_path(view: @current_view), class: "btn btn-outline-secondary ms-1" %>
+    <%= link_to t('cards.clear'), cards_path(view: @current_view), class: "btn btn-scryfall ms-1" %>
   </div>
   <%= hidden_field_tag :view, @current_view %>
 <% end %>
@@ -86,33 +86,41 @@
           <div class="card-body p-2 d-flex flex-column">
             <div class="flex-grow-1">
               <h6 class="card-title mb-1"><%= card.name %></h6>
-              <small class="text-muted">
-                <%= card.edition_name || card.edition.upcase %> (<%= card.edition.upcase %>) #<%= card.collector_number %><br>
-                <%= card.condition %> · <%= card.language %>
+              <small class="text-muted"><%= card.edition_name || card.edition.upcase %> #<%= card.collector_number %></small>
+              <div class="d-flex align-items-center flex-wrap gap-1 mt-1">
+                <%= condition_badge(card.condition) %>
+                <small><%= language_label(card.language) %></small>
                 <% if card.foil.present? %>
-                  · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span>
+                  <span class="badge" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
                 <% end %>
-              </small>
+              </div>
             </div>
-            <div class="mt-1">
-              <% if card.price %>
-                <strong class="text-price"><%= number_to_currency(card.price) %></strong>
-              <% else %>
-                <small class="text-muted"><%= t('cards.no_price') %></small>
-              <% end %>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+              <div>
+                <% if card.price %>
+                  <strong class="text-price"><%= number_to_currency(card.price) %></strong>
+                <% else %>
+                  <small class="text-muted"><%= t('cards.no_price') %></small>
+                <% end %>
+              </div>
               <% available = @available_quantities[card.id] || 0 %>
-              <small class="text-muted ms-1">· <%= t('cards.qty') %>: <%= available %></small>
+              <small class="text-muted"><%= t('cards.qty') %>: <%= available %></small>
             </div>
           </div>
-          <div class="card-footer p-2">
-            <% if available <= 0 %>
-              <button class="btn btn-sm btn-secondary w-100" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
-            <% elsif maintenance_mode? %>
-              <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i> <%= t('cards.add_to_cart') %></button>
-            <% elsif user_signed_in? %>
-              <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
-            <% else %>
-              <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+          <div class="card-footer p-2 d-flex gap-1">
+            <div class="w-75">
+              <% if available <= 0 %>
+                <button class="btn btn-sm btn-secondary w-100" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+              <% elsif maintenance_mode? %>
+                <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i> <%= t('cards.add_to_cart') %></button>
+              <% elsif user_signed_in? %>
+                <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
+              <% else %>
+                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+              <% end %>
+            </div>
+            <% if card.scryfall_id.present? %>
+              <%= link_to "https://scryfall.com/card/#{card.edition}/#{card.collector_number}", target: "_blank", rel: "noopener", title: t('cards.view_on_scryfall'), class: "btn btn-sm btn-scryfall w-25 d-flex align-items-center justify-content-center" do %><%= scryfall_icon %><% end %>
             <% end %>
           </div>
         </div>
@@ -132,13 +140,8 @@
               <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
                 <span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span>
               <% end %>
-              <% if card.foil.present? %>
-                <i class="fa-solid fa-star" style="color: #d4a017;"></i>
-              <% end %>
               <br>
-              <small class="text-muted">
-                <%= card.edition_name || card.edition.upcase %> · <%= card.condition %> · <%= card.language %> · #<%= card.collector_number %>
-              </small>
+              <small class="text-muted"><%= card.edition_name || card.edition.upcase %> #<%= card.collector_number %></small>
             </div>
             <div class="text-end ms-2 text-nowrap">
               <% if card.price %>
@@ -150,15 +153,27 @@
               <small class="text-muted"><%= t('cards.qty') %>: <%= available %></small>
             </div>
           </div>
-          <div class="mt-2">
-            <% if available <= 0 %>
-              <button class="btn btn-sm btn-secondary w-100" disabled><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
-            <% elsif maintenance_mode? %>
-              <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i> <%= t('cards.add_to_cart') %></button>
-            <% elsif user_signed_in? %>
-              <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
-            <% else %>
-              <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+          <div class="d-flex align-items-center flex-wrap gap-1 mt-1">
+            <%= condition_badge(card.condition) %>
+            <small><%= language_label(card.language) %></small>
+            <% if card.foil.present? %>
+              <span class="badge" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
+            <% end %>
+          </div>
+          <div class="d-flex gap-1 mt-2">
+            <div class="w-75">
+              <% if available <= 0 %>
+                <button class="btn btn-sm btn-secondary w-100" disabled><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+              <% elsif maintenance_mode? %>
+                <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i> <%= t('cards.add_to_cart') %></button>
+              <% elsif user_signed_in? %>
+                <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
+              <% else %>
+                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100" %>
+              <% end %>
+            </div>
+            <% if card.scryfall_id.present? %>
+              <%= link_to "https://scryfall.com/card/#{card.edition}/#{card.collector_number}", target: "_blank", rel: "noopener", title: t('cards.view_on_scryfall'), class: "btn btn-sm btn-scryfall w-25 d-flex align-items-center justify-content-center" do %><%= scryfall_icon %><% end %>
             <% end %>
           </div>
         </div>
@@ -183,24 +198,35 @@
       <tbody>
         <% @cards.each do |card| %>
           <tr>
-            <td><%= card.name %><% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %> <span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span><% end %><% if card.foil.present? %> <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %></td>
+            <td>
+              <span class="d-inline-flex align-items-center gap-1">
+                <%= card.name %>
+                <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %><span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span><% end %>
+                <% if card.foil.present? %><i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %>
+              </span>
+            </td>
             <td><%= card.edition_name || card.edition.upcase %></td>
-            <td class="d-none d-lg-table-cell"><%= card.condition %></td>
-            <td class="d-none d-lg-table-cell"><%= card.language %></td>
+            <td class="d-none d-lg-table-cell"><%= condition_badge(card.condition) %></td>
+            <td class="d-none d-lg-table-cell"><%= language_label(card.language) %></td>
             <td class="d-none d-lg-table-cell"><%= card.collector_number %></td>
             <td><%= card.price ? number_to_currency(card.price) : "—" %></td>
             <% available = @available_quantities[card.id] || 0 %>
             <td><%= available %></td>
             <td>
-              <% if available <= 0 %>
-                <button class="btn btn-sm btn-secondary" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
-              <% elsif maintenance_mode? %>
-                <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-tools"></i></button>
-              <% elsif user_signed_in? %>
-                <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i><% end %>
-              <% else %>
-                <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary" %>
-              <% end %>
+              <div class="d-flex align-items-center gap-1">
+                <% if available <= 0 %>
+                  <button class="btn btn-sm btn-secondary" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+                <% elsif maintenance_mode? %>
+                  <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-tools"></i></button>
+                <% elsif user_signed_in? %>
+                  <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i><% end %>
+                <% else %>
+                  <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary" %>
+                <% end %>
+                <% if card.scryfall_id.present? %>
+                  <%= link_to "https://scryfall.com/card/#{card.edition}/#{card.collector_number}", target: "_blank", rel: "noopener", title: t('cards.view_on_scryfall'), class: "btn btn-sm btn-scryfall d-flex align-items-center" do %><%= scryfall_icon %><% end %>
+                <% end %>
+              </div>
             </td>
           </tr>
         <% end %>

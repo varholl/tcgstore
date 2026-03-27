@@ -12,8 +12,10 @@ class AdminCardStockAdder
 
     if existing
       existing.update(scryfall_id: @params[:scryfall_id]) if existing.scryfall_id.blank?
+      now = Time.current
       existing.increment!(:quantity, qty)
-      existing.stock_entries.create!(quantity: qty, added_at: Time.current)
+      existing.update_column(:last_stocked_at, now)
+      existing.stock_entries.create!(quantity: qty, added_at: now)
       @card = existing
       @result = :incremented
     else

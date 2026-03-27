@@ -7,45 +7,59 @@
 <div class="card mb-4">
   <div class="card-body">
     <h5 class="card-title"><%= t('admin.cards.card_info') %></h5>
-    <dl class="row mb-0">
-      <dt class="col-sm-3"><%= t('admin.cards.name') %></dt>
-      <dd class="col-sm-9"><%= @card.name %></dd>
+    <div class="row">
+      <div class="col-md-3 text-center mb-3 mb-md-0">
+        <img src="https://api.scryfall.com/cards/<%= @card.edition %>/<%= @card.collector_number %>?format=image&version=normal"
+             class="img-fluid rounded"
+             alt="<%= @card.name %>"
+             style="max-height: 300px;"
+             onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= @card.edition %>/<%= @card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display='none'};">
+      </div>
+      <div class="col-md-9">
+        <dl class="row mb-0">
+          <dt class="col-sm-3"><%= t('admin.cards.name') %></dt>
+          <dd class="col-sm-9"><%= @card.name %></dd>
 
-      <dt class="col-sm-3"><%= t('admin.cards.edition') %></dt>
-      <dd class="col-sm-9"><%= @card.edition_name %></dd>
+          <dt class="col-sm-3"><%= t('admin.cards.edition') %></dt>
+          <dd class="col-sm-9"><%= @card.edition_name %></dd>
 
-      <dt class="col-sm-3"><%= t('admin.cards.collector_number') %></dt>
-      <dd class="col-sm-9"><%= @card.collector_number %></dd>
+          <dt class="col-sm-3"><%= t('admin.cards.collector_number') %></dt>
+          <dd class="col-sm-9"><%= @card.collector_number %></dd>
 
-      <dt class="col-sm-3"><%= t('admin.cards.condition') %></dt>
-      <dd class="col-sm-9"><%= @card.condition %></dd>
+          <dt class="col-sm-3"><%= t('admin.cards.condition') %></dt>
+          <dd class="col-sm-9"><%= @card.condition %></dd>
 
-      <dt class="col-sm-3"><%= t('admin.cards.language') %></dt>
-      <dd class="col-sm-9"><%= @card.language %></dd>
+          <dt class="col-sm-3"><%= t('admin.cards.language') %></dt>
+          <dd class="col-sm-9"><%= @card.language %></dd>
 
-      <dt class="col-sm-3"><%= t('admin.cards.foil') %></dt>
-      <dd class="col-sm-9"><%= @card.foil.present? ? "Yes" : "No" %></dd>
+          <dt class="col-sm-3"><%= t('admin.cards.foil') %></dt>
+          <dd class="col-sm-9"><%= @card.foil.present? ? "Yes" : "No" %></dd>
 
-      <dt class="col-sm-3"><%= t('admin.cards.seller') %></dt>
-      <dd class="col-sm-9"><%= @card.seller.name %></dd>
+          <dt class="col-sm-3"><%= t('admin.cards.seller') %></dt>
+          <dd class="col-sm-9"><%= @card.seller.name %></dd>
 
-      <dt class="col-sm-3">Scryfall ID</dt>
-      <dd class="col-sm-9"><%= @card.scryfall_id %></dd>
-    </dl>
+          <dt class="col-sm-3">Scryfall ID</dt>
+          <dd class="col-sm-9"><%= @card.scryfall_id %></dd>
+        </dl>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="card mb-4">
-  <div class="card-header">
+  <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="mb-0"><%= t('admin.cards.stock_entries_title') %></h5>
+    <span class="badge bg-secondary"><%= t('admin.cards.total_quantity') %>: <%= @card.quantity %></span>
   </div>
   <div class="card-body p-0">
+    <% protected_reserved = @card.reservation_items.joins(:reservation).where(reservations: { status: %w[prepared paid] }).sum(:quantity) %>
     <% if @stock_entries.any? %>
       <table class="table table-striped mb-0">
         <thead class="table-dark">
           <tr>
             <th><%= t('admin.cards.stock_quantity') %></th>
             <th><%= t('admin.cards.stock_added_at') %></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -53,6 +67,17 @@
             <tr>
               <td><%= entry.quantity %></td>
               <td><%= entry.added_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
+              <td class="text-end">
+                <% can_remove = (@card.quantity - entry.quantity) >= protected_reserved %>
+                <%= button_to remove_stock_entry_admin_card_path(@card, stock_entry_id: entry.id, return_to: @return_to),
+                      method: :delete,
+                      class: "btn btn-outline-danger btn-sm",
+                      disabled: !can_remove,
+                      title: can_remove ? t('admin.cards.remove_stock') : t('admin.cards.stock_protected_hint'),
+                      data: { turbo_confirm: t('admin.cards.confirm_remove_stock', count: entry.quantity) } do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
@@ -61,69 +86,62 @@
       <p class="text-muted p-3 mb-0"><%= t('admin.cards.no_stock_entries') %></p>
     <% end %>
   </div>
+  <div class="card-footer">
+    <%= form_with url: add_stock_admin_card_path(@card), method: :post, class: "d-flex align-items-center gap-2" do %>
+      <%= hidden_field_tag :return_to, @return_to %>
+      <%= number_field_tag :stock_quantity, 1, min: 1, class: "form-control form-control-sm", style: "width: 80px;" %>
+      <button type="submit" class="btn btn-success btn-sm">
+        <i class="fas fa-plus me-1"></i><%= t('admin.cards.add_stock') %>
+      </button>
+    <% end %>
+  </div>
 </div>
 
-<%= form_with(model: @card, url: admin_card_path(@card), method: :patch) do |f| %>
-  <%= hidden_field_tag :return_to, @return_to %>
-  <% if @card.errors.any? %>
-    <div class="alert alert-danger">
-      <ul class="mb-0">
-        <% @card.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <% if @pending_reserved > 0 %>
-    <div class="alert alert-warning">
-      <i class="fas fa-exclamation-triangle me-1"></i>
-      <%= t('admin.cards.pending_reserved_warning', count: @pending_reserved, available: @card.available_quantity) %>
-    </div>
-  <% end %>
-
-  <div class="row g-3">
-    <div class="col-md-4">
-      <div class="mb-3">
-        <%= f.label :quantity, t('admin.cards.quantity'), class: "form-label" %>
-        <%= f.number_field :quantity, min: 0, class: "form-control" %>
-        <% if @pending_reserved > 0 %>
-          <div class="form-text text-warning">
-            <%= t('admin.cards.pending_reserved_hint', count: @pending_reserved) %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="mb-3">
-        <%= f.label :price, t('admin.cards.price'), class: "form-label" %>
-        <%= f.number_field :price, min: 0, step: 0.01, class: "form-control" %>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="form-check mt-4 pt-2">
-        <%= f.check_box :foil, { class: "form-check-input", checked: @card.foil.present? }, "Yes", "" %>
-        <%= f.label :foil, t('admin.cards.foil'), class: "form-check-label" %>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="mb-3">
-        <%= f.label :condition, t('admin.cards.condition'), class: "form-label" %>
-        <%= f.select :condition, %w[NM LP MP HP DMG], {}, class: "form-select" %>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="mb-3">
-        <%= f.label :language, t('admin.cards.language'), class: "form-label" %>
-        <%= f.select :language, %w[English Spanish Japanese Italian Portuguese].map { |l| [t("languages.#{l.downcase}"), l] }, {}, class: "form-select" %>
-      </div>
-    </div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t('admin.cards.edit_details') %></h5>
   </div>
+  <div class="card-body">
+    <%= form_with(model: @card, url: admin_card_path(@card), method: :patch) do |f| %>
+      <%= hidden_field_tag :return_to, @return_to %>
+      <% if @card.errors.any? %>
+        <div class="alert alert-danger">
+          <ul class="mb-0">
+            <% @card.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
 
-  <%= f.submit t('admin.cards.update_card'), class: "btn btn-primary" %>
-<% end %>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= f.label :price, t('admin.cards.price'), class: "form-label" %>
+          <%= f.number_field :price, min: 0, step: 0.01, class: "form-control" %>
+        </div>
+
+        <div class="col-md-3">
+          <%= f.label :condition, t('admin.cards.condition'), class: "form-label" %>
+          <%= f.select :condition, %w[NM LP MP HP DMG], {}, class: "form-select" %>
+        </div>
+
+        <div class="col-md-3">
+          <%= f.label :language, t('admin.cards.language'), class: "form-label" %>
+          <%= f.select :language, %w[English Spanish Japanese Italian Portuguese].map { |l| [t("languages.#{l.downcase}"), l] }, {}, class: "form-select" %>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+          <div class="form-check mb-2">
+            <%= f.check_box :foil, { class: "form-check-input", checked: @card.foil.present? }, "Yes", "" %>
+            <%= f.label :foil, t('admin.cards.foil'), class: "form-check-label" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <%= f.submit t('admin.cards.update_card'), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
 <% end %>

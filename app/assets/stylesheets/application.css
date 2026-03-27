@@ -160,6 +160,19 @@ hr {
   vertical-align: middle;
 }
 
+/* --- Scryfall button --- */
+.btn-scryfall {
+  background-color: #302b63;
+  border-color: #302b63;
+  color: #fff;
+}
+.btn-scryfall:hover,
+.btn-scryfall:focus {
+  background-color: #24205c;
+  border-color: #24205c;
+  color: #fff;
+}
+
 /* --- Buttons --- */
 .btn-primary {
   background-color: var(--vg-accent) !important;

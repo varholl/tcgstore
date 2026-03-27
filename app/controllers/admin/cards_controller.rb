@@ -1,7 +1,7 @@
 class Admin::CardsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed, :refresh_price]
+  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed, :refresh_price, :add_stock, :remove_stock_entry]
 
   SORT_OPTIONS = {
     "name_asc"      => "name ASC",
@@ -66,12 +66,7 @@ class Admin::CardsController < ApplicationController
   end
 
   def update
-    old_quantity = @card.quantity
     if @card.update(card_update_params)
-      new_quantity = @card.quantity
-      if new_quantity > old_quantity
-        @card.stock_entries.create!(quantity: new_quantity - old_quantity, added_at: Time.current)
-      end
       redirect_to safe_return_path, notice: t("controllers.admin.cards.updated")
     else
       @return_to = params[:return_to]
@@ -79,7 +74,41 @@ class Admin::CardsController < ApplicationController
         .joins(:reservation)
         .where(reservations: { status: "pending" })
         .sum(:quantity)
+      @stock_entries = @card.stock_entries.order(added_at: :desc)
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def add_stock
+    qty = params[:stock_quantity].to_i
+    if qty > 0
+      now = Time.current
+      @card.increment!(:quantity, qty)
+      @card.update_column(:last_stocked_at, now)
+      @card.stock_entries.create!(quantity: qty, added_at: now)
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to]), notice: t("controllers.admin.cards.stock_added", count: qty)
+    else
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to]), alert: t("controllers.admin.cards.stock_invalid_quantity")
+    end
+  end
+
+  def remove_stock_entry
+    entry = @card.stock_entries.find(params[:stock_entry_id])
+    protected_reserved = @card.reservation_items.joins(:reservation)
+      .where(reservations: { status: %w[prepared paid] })
+      .sum(:quantity)
+    remaining_quantity = @card.quantity - entry.quantity
+
+    if remaining_quantity < protected_reserved
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),
+        alert: t("controllers.admin.cards.stock_remove_protected", count: protected_reserved)
+    else
+      ActiveRecord::Base.transaction do
+        @card.decrement!(:quantity, entry.quantity)
+        entry.destroy!
+      end
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),
+        notice: t("controllers.admin.cards.stock_removed", count: entry.quantity)
     end
   end
 
@@ -154,7 +183,7 @@ class Admin::CardsController < ApplicationController
   end
 
   def card_update_params
-    params.require(:card).permit(:quantity, :foil, :price, :condition, :language)
+    params.require(:card).permit(:foil, :price, :condition, :language)
   end
 
   def safe_return_path

@@ -66,6 +66,8 @@ Rails.application.routes.draw do
       member do
         patch :mark_price_reviewed
         patch :refresh_price
+        post :add_stock
+        delete :remove_stock_entry
       end
     end
     resources :stock_reconciliations, only: [:new, :create] do
