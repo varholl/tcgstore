@@ -26,25 +26,52 @@
   </div>
 <% end %>
 
-<%= form_tag cards_path, method: :get, class: "row g-3 mb-4" do %>
-  <div class="col-12 col-md-4">
-    <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
+<%= form_tag cards_path, method: :get, class: "mb-4" do %>
+  <div class="row g-2 mb-2">
+    <div class="col">
+      <div class="input-group">
+        <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> <%= t('cards.search') %></button>
+      </div>
+    </div>
   </div>
-  <div class="col-12 col-md-3">
-    <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select" %>
-  </div>
-  <div class="col-12 col-md-2">
-    <%= select_tag :foil, options_for_select([[t('cards.foil_only'), "foil"], [t('cards.non_foil_only'), "non_foil"]], params[:foil]), include_blank: t('cards.all_cards'), class: "form-select" %>
-  </div>
-  <div class="col-12 col-md-auto">
-    <%= submit_tag t('cards.search'), class: "btn btn-primary" %>
-    <%= link_to t('cards.clear'), cards_path(view: @current_view), class: "btn btn-scryfall ms-1" %>
+  <div class="row g-2">
+    <div class="col-6 col-md-3">
+      <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+    </div>
+    <div class="col-6 col-md-3">
+      <%= select_tag :color, options_for_select(
+        [
+          [t('mtg_colors.W'), "W"],
+          [t('mtg_colors.U'), "U"],
+          [t('mtg_colors.B'), "B"],
+          [t('mtg_colors.R'), "R"],
+          [t('mtg_colors.G'), "G"],
+          [t('mtg_colors.multicolor'), "multicolor"],
+          [t('mtg_colors.colorless'), "colorless"]
+        ], params[:color]), include_blank: t('cards.all_colors'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+    </div>
+    <div class="col-6 col-md-3">
+      <%= select_tag :card_type, options_for_select(
+        Card.where.not(card_type: [nil, '']).distinct.order(:card_type).pluck(:card_type).map { |t_val| [t_val, t_val] },
+        params[:card_type]), include_blank: t('cards.all_types'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+    </div>
+    <div class="col-6 col-md-3">
+      <%= select_tag :foil, options_for_select([[t('cards.foil_only'), "foil"], [t('cards.non_foil_only'), "non_foil"]], params[:foil]), include_blank: t('cards.all_cards'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+    </div>
   </div>
   <%= hidden_field_tag :view, @current_view %>
 <% end %>
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
-  <p class="text-muted mb-0"><%= t('cards.cards_found', count: @cards.total_count) %></p>
+  <p class="text-muted mb-0">
+    <%= t('cards.cards_found', count: @cards.total_count) %>
+    <% if params[:search].present? || params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? %>
+      <%= link_to cards_path(view: @current_view), class: "btn btn-outline-secondary btn-sm ms-2" do %>
+        <i class="fas fa-filter-circle-xmark me-1"></i><%= t('cards.clear_all_filters') %>
+      <% end %>
+    <% end %>
+  </p>
   <div class="d-flex align-items-center gap-2 flex-wrap">
     <div class="d-flex align-items-center gap-1">
       <label class="text-muted mb-0 d-flex align-items-center" for="sort_select">

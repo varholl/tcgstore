@@ -40,6 +40,21 @@
 
           <dt class="col-sm-3">Scryfall ID</dt>
           <dd class="col-sm-9"><%= @card.scryfall_id %></dd>
+
+          <dt class="col-sm-3"><%= t('admin.cards.card_type') %></dt>
+          <dd class="col-sm-9"><%= @card.card_type.presence || "—" %><%= " — #{@card.card_subtype}" if @card.card_subtype.present? %></dd>
+
+          <dt class="col-sm-3"><%= t('admin.cards.mana_cost') %></dt>
+          <dd class="col-sm-9"><%= @card.mana_cost.presence || "—" %></dd>
+
+          <dt class="col-sm-3"><%= t('admin.cards.cmc') %></dt>
+          <dd class="col-sm-9"><%= @card.cmc.present? ? @card.cmc.to_i : "—" %></dd>
+
+          <dt class="col-sm-3"><%= t('admin.cards.colors_label') %></dt>
+          <dd class="col-sm-9"><%= color_names(@card.colors) %></dd>
+
+          <dt class="col-sm-3"><%= t('admin.cards.rarity') %></dt>
+          <dd class="col-sm-9"><%= @card.rarity.present? ? @card.rarity.capitalize : "—" %></dd>
         </dl>
       </div>
     </div>

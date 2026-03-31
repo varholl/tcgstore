@@ -7,6 +7,8 @@ class CardsController < ApplicationController
     "edition_asc" => { order: "edition ASC, name ASC" },
     "edition_desc"=> { order: "edition DESC, name ASC" },
     "newest"      => { order: "last_stocked_at DESC" },
+    "cmc_asc"     => { order: "cmc ASC NULLS LAST, name ASC" },
+    "cmc_desc"    => { order: "cmc DESC NULLS LAST, name ASC" },
   }.freeze
 
   def index
@@ -17,6 +19,18 @@ class CardsController < ApplicationController
       all_cards = all_cards.where.not(foil: [nil, ""])
     elsif params[:foil] == "non_foil"
       all_cards = all_cards.where(foil: [nil, ""])
+    end
+    if params[:color].present?
+      if params[:color] == "colorless"
+        all_cards = all_cards.where(colors: [nil, ""])
+      elsif params[:color] == "multicolor"
+        all_cards = all_cards.where("colors LIKE '%,%'")
+      else
+        all_cards = all_cards.where(colors: params[:color])
+      end
+    end
+    if params[:card_type].present?
+      all_cards = all_cards.where("card_type LIKE ?", "%#{params[:card_type]}%")
     end
 
     # Group cards by identity (across sellers) and pick a representative per group
@@ -93,6 +107,8 @@ class CardsController < ApplicationController
     when "edition_asc"  then cards.sort_by { |c| [c.edition.to_s, c.name.to_s] }
     when "edition_desc" then cards.sort_by { |c| c.edition.to_s }.reverse
     when "newest"       then cards.sort_by { |c| c.last_stocked_at || Time.at(0) }.reverse
+    when "cmc_asc"      then cards.sort_by { |c| [c.cmc || Float::INFINITY, c.name.to_s] }
+    when "cmc_desc"     then cards.sort_by { |c| [-(c.cmc || 0), c.name.to_s] }
     else cards.sort_by { |c| -(c.price || 0) }
     end
   end

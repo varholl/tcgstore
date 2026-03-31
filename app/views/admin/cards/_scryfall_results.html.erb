@@ -45,7 +45,13 @@
                         data-ck-condition-prices="<%= card[:ck_condition_prices].to_json %>"
                         data-ck-condition-prices-foil="<%= card[:ck_condition_prices_foil].to_json %>"
                         data-fallback-price="<%= card[:prices_usd] %>"
-                        data-foil-type="<%= card[:promo_types].include?('surgefoil') ? 'surge' : (card[:finishes].include?('etched') ? 'etched' : 'foil') %>">
+                        data-foil-type="<%= card[:promo_types].include?('surgefoil') ? 'surge' : (card[:finishes].include?('etched') ? 'etched' : 'foil') %>"
+                        data-colors="<%= card[:colors] %>"
+                        data-mana-cost="<%= card[:mana_cost] %>"
+                        data-cmc="<%= card[:cmc] %>"
+                        data-card-type="<%= card[:card_type] %>"
+                        data-card-subtype="<%= card[:card_subtype] %>"
+                        data-rarity="<%= card[:rarity] %>">
                   <%= t('admin.cards.select') %>
                 </button>
               </div>

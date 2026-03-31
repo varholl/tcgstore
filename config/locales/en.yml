@@ -114,6 +114,9 @@ en:
     all_cards: "★ Both"
     foil_only: "★ Foil Only"
     non_foil_only: "Non-Foil Only"
+    all_colors: "All Colors"
+    all_types: "All Types"
+    clear_all_filters: "Clear all filters"
     how_it_works_panel:
       title: "How do reservations work?"
     sort:
@@ -124,6 +127,8 @@ en:
       edition_asc: "Edition (A-Z)"
       edition_desc: "Edition (Z-A)"
       newest: "Recently Added"
+      cmc_asc: "Mana Value (Low to High)"
+      cmc_desc: "Mana Value (High to Low)"
 
   cart_items:
     title: "Your Cart"
@@ -494,6 +499,13 @@ en:
       stock_quantity: "Quantity"
       stock_added_at: "Added On"
       no_stock_entries: "No stock entries recorded."
+      fetch_metadata: "Fetch Metadata"
+      fetch_metadata_confirm: "This will fetch card metadata (colors, type, rarity, etc.) from Scryfall for all cards missing it. Continue?"
+      card_type: "Type"
+      mana_cost: "Mana Cost"
+      cmc: "CMC"
+      colors_label: "Colors"
+      rarity: "Rarity"
       total_quantity: "Total"
       add_stock: "Add Stock"
       remove_stock: "Remove"
@@ -639,6 +651,7 @@ en:
           other: "Cannot remove — %{count} units are backing prepared or paid reservations."
         prices_refreshed: "Prices refreshed: %{scryfall_ids_fetched} Scryfall IDs backfilled, %{prices_updated} prices updated, %{prices_not_found} not found on Card Kingdom."
         prices_refresh_started: "Price refresh started in the background. It may take a few minutes to complete."
+        metadata_fetch_started: "Metadata fetch started in the background. It may take a few minutes to complete."
         price_reviewed: "Card price marked as reviewed."
         price_refreshed_ck: "Price updated to $%{price} (Card Kingdom)."
         price_refreshed_scryfall: "Price updated to $%{price} (Scryfall)."
@@ -722,6 +735,16 @@ en:
       condition: "Condition"
       foil: "Foil"
       price: "Price"
+
+  mtg_colors:
+    W: "White"
+    U: "Blue"
+    B: "Black"
+    R: "Red"
+    G: "Green"
+    multicolor: "Multicolor"
+    land: "Land"
+    colorless: "Colorless"
 
   languages:
     english: "English"

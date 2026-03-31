@@ -241,4 +241,61 @@ namespace :cards do
 
     puts "\nDone! Updated #{updated} foil types. #{errors} errors."
   end
+
+  desc "Fetch card metadata (colors, mana_cost, cmc, type, subtype, rarity) from Scryfall"
+  task fetch_metadata: :environment do
+    require 'net/http'
+    require 'json'
+
+    cards = Card.where(card_type: [nil, ''])
+    total = cards.count
+
+    if total == 0
+      puts "All cards already have metadata."
+      next
+    end
+
+    puts "Fetching metadata for #{total} cards in batches of 75..."
+    updated = 0
+    errors = 0
+    processed = 0
+
+    cards.to_a.each_slice(75) do |batch|
+      begin
+        uri = URI("https://api.scryfall.com/cards/collection")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        request = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
+        request.body = { identifiers: batch.map { |c| { set: c.edition, collector_number: c.collector_number } } }.to_json
+
+        response = http.request(request)
+
+        if response.is_a?(Net::HTTPSuccess)
+          data = JSON.parse(response.body)
+          scryfall_cards = data["data"] || []
+
+          scryfall_cards.each do |sc|
+            metadata = ScryfallMetadataExtractor.extract(sc)
+            matching = batch.select { |c| c.edition == sc["set"] && c.collector_number == sc["collector_number"] }
+            matching.each do |card|
+              card.update_columns(metadata)
+              updated += 1
+            end
+          end
+        else
+          errors += batch.size
+          puts "\nHTTP #{response.code} for batch"
+        end
+      rescue => e
+        errors += batch.size
+        puts "\nError for batch: #{e.message}"
+      end
+
+      processed += batch.size
+      print "\rProcessed #{processed}/#{total} (#{updated} updated, #{errors} errors)..."
+      sleep 0.1
+    end
+
+    puts "\nDone! Updated #{updated} cards with metadata. #{errors} errors."
+  end
 end

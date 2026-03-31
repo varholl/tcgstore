@@ -126,6 +126,11 @@ class Admin::CardsController < ApplicationController
     redirect_to admin_cards_path, notice: t("controllers.admin.cards.prices_refresh_started")
   end
 
+  def fetch_metadata
+    CardMetadataFetchJob.perform_later
+    redirect_to admin_cards_path, notice: t("controllers.admin.cards.metadata_fetch_started")
+  end
+
   def mark_price_reviewed
     @card.update_column(:price_reviewed, true)
     redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_reviewed")
@@ -178,7 +183,8 @@ class Admin::CardsController < ApplicationController
     params.permit(
       :name, :scryfall_id, :set_code, :set_name,
       :collector_number, :condition, :language, :foil,
-      :quantity, :price, :foil_type, :seller_id
+      :quantity, :price, :foil_type, :seller_id,
+      :colors, :mana_cost, :cmc, :card_type, :card_subtype, :rarity
     )
   end
 

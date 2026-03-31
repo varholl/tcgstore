@@ -12,6 +12,7 @@ class AdminCardStockAdder
 
     if existing
       existing.update(scryfall_id: @params[:scryfall_id]) if existing.scryfall_id.blank?
+      backfill_metadata(existing)
       now = Time.current
       existing.increment!(:quantity, qty)
       existing.update_column(:last_stocked_at, now)
@@ -31,7 +32,13 @@ class AdminCardStockAdder
         foil_type: @params[:foil].present? ? @params[:foil_type] : nil,
         quantity: qty,
         price: @params[:price],
-        seller_id: @params[:seller_id]
+        seller_id: @params[:seller_id],
+        colors: @params[:colors],
+        mana_cost: @params[:mana_cost],
+        cmc: @params[:cmc],
+        card_type: @params[:card_type],
+        card_subtype: @params[:card_subtype],
+        rarity: @params[:rarity]
       )
 
       if @card.save
@@ -60,6 +67,14 @@ class AdminCardStockAdder
 
     # Fall back to edition (set code) + collector number
     scope.find_by(edition: @params[:set_code], collector_number: @params[:collector_number])
+  end
+
+  def backfill_metadata(card)
+    metadata_fields = %i[colors mana_cost cmc card_type card_subtype rarity]
+    updates = metadata_fields.each_with_object({}) do |field, h|
+      h[field] = @params[field] if @params[field].present? && card.send(field).blank?
+    end
+    card.update_columns(updates) if updates.any?
   end
 
   def foil_condition

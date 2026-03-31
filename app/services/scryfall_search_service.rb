@@ -29,7 +29,7 @@ class ScryfallSearchService
         prices_usd_foil: card.dig("prices", "usd_foil"),
         finishes: card["finishes"] || [],
         promo_types: card["promo_types"] || []
-      }
+      }.merge(ScryfallMetadataExtractor.extract(card))
     end
   end
 end

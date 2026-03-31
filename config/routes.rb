@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       collection do
         get :search_scryfall
         post :refresh_prices
+        post :fetch_metadata
       end
       member do
         patch :mark_price_reviewed

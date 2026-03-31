@@ -15,6 +15,45 @@ module ApplicationHelper
     tag.span(condition, class: "badge bg-#{color}")
   end
 
+  def color_names(colors_string)
+    return I18n.t("mtg_colors.colorless") if colors_string.blank?
+    colors_string.split(",").map { |c| I18n.t("mtg_colors.#{c.strip}", default: c.strip) }.join(", ")
+  end
+
+  COLOR_ORDER = %w[W U B R G].freeze
+
+  def color_category(card)
+    return :land if card.card_type.to_s.match?(/\bland\b/i)
+    return :colorless if card.colors.blank?
+    codes = card.colors.split(",").map(&:strip)
+    return :multicolor if codes.size > 1
+    codes.first.to_sym
+  end
+
+  def color_category_label(category)
+    case category
+    when :W then I18n.t("mtg_colors.W")
+    when :U then I18n.t("mtg_colors.U")
+    when :B then I18n.t("mtg_colors.B")
+    when :R then I18n.t("mtg_colors.R")
+    when :G then I18n.t("mtg_colors.G")
+    when :multicolor then I18n.t("mtg_colors.multicolor")
+    when :land then I18n.t("mtg_colors.land")
+    when :colorless then I18n.t("mtg_colors.colorless")
+    end
+  end
+
+  COLOR_CATEGORY_ORDER = [:W, :U, :B, :R, :G, :multicolor, :colorless, :land].freeze
+
+  def group_items_by_color_and_type(items)
+    grouped = items.group_by { |item| color_category(item.card) }
+    COLOR_CATEGORY_ORDER.filter_map do |cat|
+      next unless grouped[cat]
+      sorted = grouped[cat].sort_by { |item| [item.card.card_type.to_s, item.card.name] }
+      [cat, sorted]
+    end
+  end
+
   LANGUAGE_FLAGS = {
     "English" => "\u{1F1FA}\u{1F1F8}",
     "Spanish" => "\u{1F1EA}\u{1F1F8}",

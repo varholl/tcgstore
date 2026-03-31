@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_26_160000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_30_235729) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -30,6 +30,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_26_160000) do
     t.string "foil_type"
     t.datetime "last_stocked_at"
     t.integer "seller_id", null: false
+    t.string "colors"
+    t.string "mana_cost"
+    t.decimal "cmc", precision: 5, scale: 1
+    t.string "card_type"
+    t.string "card_subtype"
+    t.string "rarity"
     t.index ["edition"], name: "index_cards_on_edition"
     t.index ["name"], name: "index_cards_on_name"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"

@@ -5,6 +5,7 @@ export default class extends Controller {
     "searchInput", "searchResults", "searchSpinner",
     "stockForm", "selectedCardInfo",
     "nameField", "scryfallIdField", "setCodeField", "setNameField", "collectorNumberField", "priceField", "foilTypeField",
+    "colorsField", "manaCostField", "cmcField", "cardTypeField", "cardSubtypeField", "rarityField",
     "conditionSelect", "foilCheckbox"
   ]
 
@@ -40,6 +41,12 @@ export default class extends Controller {
     this.setNameFieldTarget.value = btn.dataset.setName
     this.collectorNumberFieldTarget.value = btn.dataset.collectorNumber
     this.foilTypeFieldTarget.value = btn.dataset.foilType
+    this.colorsFieldTarget.value = btn.dataset.colors || ""
+    this.manaCostFieldTarget.value = btn.dataset.manaCost || ""
+    this.cmcFieldTarget.value = btn.dataset.cmc || ""
+    this.cardTypeFieldTarget.value = btn.dataset.cardType || ""
+    this.cardSubtypeFieldTarget.value = btn.dataset.cardSubtype || ""
+    this.rarityFieldTarget.value = btn.dataset.rarity || ""
 
     // Store condition prices for dynamic updates
     this._conditionPrices = JSON.parse(btn.dataset.ckConditionPrices || "{}")

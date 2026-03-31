@@ -114,6 +114,9 @@ es:
     all_cards: "★ Ambas"
     foil_only: "★ Solo Foil"
     non_foil_only: "Solo No-Foil"
+    all_colors: "Todos los Colores"
+    all_types: "Todos los Tipos"
+    clear_all_filters: "Limpiar todos los filtros"
     how_it_works_panel:
       title: "¿Cómo funcionan las reservas?"
     sort:
@@ -124,6 +127,8 @@ es:
       edition_asc: "Edición (A-Z)"
       edition_desc: "Edición (Z-A)"
       newest: "Agregadas Recientemente"
+      cmc_asc: "Valor de Maná (Menor a Mayor)"
+      cmc_desc: "Valor de Maná (Mayor a Menor)"
 
   cart_items:
     title: "Tu Carrito"
@@ -519,6 +524,13 @@ es:
       stock_quantity: "Cantidad"
       stock_added_at: "Fecha de Ingreso"
       no_stock_entries: "No hay registros de stock."
+      fetch_metadata: "Obtener Metadata"
+      fetch_metadata_confirm: "Esto obtendrá metadata de cartas (colores, tipo, rareza, etc.) de Scryfall para todas las cartas que no la tengan. ¿Continuar?"
+      card_type: "Tipo"
+      mana_cost: "Costo de Maná"
+      cmc: "CMC"
+      colors_label: "Colores"
+      rarity: "Rareza"
       total_quantity: "Total"
       add_stock: "Agregar Stock"
       remove_stock: "Eliminar"
@@ -671,6 +683,7 @@ es:
           other: "No se puede eliminar — %{count} unidades respaldan reservas preparadas o pagadas."
         prices_refreshed: "Precios actualizados: %{scryfall_ids_fetched} IDs de Scryfall completados, %{prices_updated} precios actualizados, %{prices_not_found} no encontrados en Card Kingdom."
         prices_refresh_started: "La actualización de precios se inició en segundo plano. Puede tardar unos minutos en completarse."
+        metadata_fetch_started: "La obtención de metadata se inició en segundo plano. Puede tardar unos minutos en completarse."
         price_reviewed: "Precio de carta marcado como revisado."
         price_refreshed_ck: "Precio actualizado a $%{price} (Card Kingdom)."
         price_refreshed_scryfall: "Precio actualizado a $%{price} (Scryfall)."
@@ -754,6 +767,16 @@ es:
       condition: "Condición"
       foil: "Foil"
       price: "Precio"
+
+  mtg_colors:
+    W: "Blanco"
+    U: "Azul"
+    B: "Negro"
+    R: "Rojo"
+    G: "Verde"
+    multicolor: "Multicolor"
+    land: "Tierra"
+    colorless: "Incoloro"
 
   languages:
     english: "Inglés"
