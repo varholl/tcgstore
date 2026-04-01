@@ -430,6 +430,10 @@ en:
       card_list_hint: "Paste the card list below — one card per line, same format as trade evaluation lists."
       card_list_placeholder: "2 Lightning Bolt #141 3\nArid Mesa #234 15\n..."
       create_new: "New Reservation"
+      search_by_card_name: "Search by card name..."
+      search: "Search"
+      clear_search: "Clear"
+      copy_email: "Copy email"
       public_notes: "Public Notes"
       no_public_notes: "No public notes yet."
       public_note_placeholder: "Reply to the customer..."
@@ -539,6 +543,7 @@ en:
       needs_price_review: "Needs Price Review"
       mark_reviewed: "Mark as reviewed"
       refresh_price: "Refresh price"
+      active_reservations_title: "Active Reservations"
 
   profiles:
     title: "Edit Profile"

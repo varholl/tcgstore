@@ -3,7 +3,7 @@ class Admin::ReservationsController < ApplicationController
   before_action :require_admin
 
   def index
-    @reservations = Reservation.includes(:user, :reservation_items).order(created_at: :desc)
+    @reservations = Reservation.includes(:user, reservation_items: :card).order(created_at: :desc)
     if params[:status] == "all"
       # show all
     elsif params[:status] == "pending_receipt"
@@ -12,6 +12,13 @@ class Admin::ReservationsController < ApplicationController
       @reservations = @reservations.where(status: params[:status])
     else
       @reservations = @reservations.where(status: :pending)
+    end
+    if params[:card_name].present?
+      terms = params[:card_name].strip.split(/\s+/)
+      card_scope = Card.all
+      terms.each { |term| card_scope = card_scope.where("cards.name LIKE ?", "%#{term}%") }
+      reservation_ids = ReservationItem.joins(:card).merge(card_scope).select(:reservation_id)
+      @reservations = @reservations.where(id: reservation_ids)
     end
     @reservations = @reservations.page(params[:page]).per(20)
   end

@@ -445,6 +445,10 @@ es:
       card_list_hint: "Pegá la lista de cartas abajo — una carta por línea, mismo formato que las listas de evaluación de trades."
       card_list_placeholder: "2 Lightning Bolt #141 3\nArid Mesa #234 15\n..."
       create_new: "Nueva Reserva"
+      search_by_card_name: "Buscar por nombre de carta..."
+      search: "Buscar"
+      clear_search: "Limpiar"
+      copy_email: "Copiar email"
       payments_title: "Pagos"
       payment_date: "Fecha"
       payment_amount: "Monto"
@@ -564,6 +568,7 @@ es:
       needs_price_review: "Requiere Revisión de Precio"
       mark_reviewed: "Marcar como revisado"
       refresh_price: "Actualizar precio"
+      active_reservations_title: "Reservas Activas"
 
   profiles:
     title: "Editar Perfil"

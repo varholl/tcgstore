@@ -13,7 +13,19 @@
       <% end %>
     </h5>
     <p><strong><%= t('admin.reservations.name') %></strong> <%= @reservation.display_name %></p>
-    <p><strong><%= t('admin.reservations.email_label') %></strong> <%= @reservation.display_email %></p>
+    <p>
+      <strong><%= t('admin.reservations.email_label') %></strong>
+      <% if @reservation.user.present? %>
+        <%= link_to @reservation.display_email, admin_user_path(@reservation.user) %>
+      <% else %>
+        <%= @reservation.display_email %>
+      <% end %>
+      <% if @reservation.display_email.present? %>
+        <button type="button" class="btn btn-sm btn-outline-secondary ms-1 copy-email-btn" data-email="<%= @reservation.display_email %>" title="<%= t('admin.reservations.copy_email') %>">
+          <i class="fas fa-copy"></i>
+        </button>
+      <% end %>
+    </p>
     <p><strong><%= t('admin.reservations.phone_label') %></strong> <%= @reservation.display_phone || t('admin.reservations.na') %></p>
 
     <hr>
@@ -477,4 +489,16 @@
     </div>
   </div>
 <% end %>
+
+<script>
+  document.querySelectorAll('.copy-email-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      navigator.clipboard.writeText(this.dataset.email).then(function() {
+        var icon = btn.querySelector('i');
+        icon.className = 'fas fa-check';
+        setTimeout(function() { icon.className = 'fas fa-copy'; }, 1500);
+      });
+    });
+  });
+</script>
 <% end %>
