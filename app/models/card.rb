@@ -11,7 +11,7 @@ class Card < ApplicationRecord
   scope :search_by_name, ->(query) {
     if query.present?
       terms = query.strip.split(/\s+/)
-      terms.inject(all) { |scope, term| scope.where("name LIKE ?", "%#{term}%") }
+      terms.inject(all) { |scope, term| scope.where("cards.name LIKE ?", "%#{term}%") }
     end
   }
   scope :filter_by_edition, ->(edition) { where(edition: edition) if edition.present? }
@@ -25,10 +25,15 @@ class Card < ApplicationRecord
                condition: condition, language: language, foil: foil)
   end
 
+  def active_sibling_cards
+    sibling_cards.joins(:seller).merge(Seller.active)
+  end
+
   def grouped_available_quantity
-    total_qty = sibling_cards.sum(:quantity)
+    active_siblings = active_sibling_cards
+    total_qty = active_siblings.sum(:quantity)
     total_reserved = ReservationItem.joins(:reservation)
-      .where(card_id: sibling_cards.select(:id))
+      .where(card_id: active_siblings.select(:id))
       .where(reservations: { status: %w[pending prepared paid] })
       .sum(:quantity)
     total_qty - total_reserved
@@ -43,6 +48,8 @@ class Card < ApplicationRecord
   end
 
   def available_quantity
+    return 0 if seller.suspended?
+
     reserved = reservation_items.joins(:reservation)
       .where(reservations: { status: %w[pending prepared paid] })
       .sum(:quantity)

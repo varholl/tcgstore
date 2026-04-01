@@ -61,7 +61,7 @@ class ReservationCreator
 
   def distribute_across_sellers(card, total_quantity)
     # Get all sibling cards (same identity, different sellers) with available stock
-    siblings = card.sibling_cards.where("quantity > 0").index_by(&:id)
+    siblings = card.active_sibling_cards.where("quantity > 0").index_by(&:id)
     return if siblings.empty?
 
     # Pre-compute reserved quantities per card

@@ -5,4 +5,6 @@ class Seller < ApplicationRecord
   validates :name, presence: true
 
   scope :default, -> { find_by(default: true) }
+  scope :active, -> { where(suspended: false) }
+  scope :suspended, -> { where(suspended: true) }
 end

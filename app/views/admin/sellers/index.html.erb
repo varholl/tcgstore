@@ -13,6 +13,7 @@
           <th><%= t('admin.sellers.email') %></th>
           <th><%= t('admin.sellers.cards_count') %></th>
           <th><%= t('admin.sellers.linked_user') %></th>
+          <th><%= t('admin.sellers.status') %></th>
           <th><%= t('admin.sellers.default') %></th>
           <th></th>
         </tr>
@@ -24,6 +25,13 @@
             <td data-label="<%= t('admin.sellers.email') %>"><%= seller.email || "—" %></td>
             <td data-label="<%= t('admin.sellers.cards_count') %>"><%= seller.cards.where("quantity > 0").count %></td>
             <td data-label="<%= t('admin.sellers.linked_user') %>"><%= seller.user&.name || seller.user&.email || "—" %></td>
+            <td data-label="<%= t('admin.sellers.status') %>">
+              <% if seller.suspended? %>
+                <span class="badge bg-warning text-dark"><%= t('admin.sellers.suspended') %></span>
+              <% else %>
+                <span class="badge bg-success"><%= t('admin.sellers.active') %></span>
+              <% end %>
+            </td>
             <td data-label="<%= t('admin.sellers.default') %>">
               <% if seller.default? %>
                 <span class="badge bg-success"><%= t('admin.sellers.yes') %></span>
@@ -32,6 +40,9 @@
             <td data-label="">
               <div class="d-flex gap-1">
                 <%= link_to edit_admin_seller_path(seller), class: "btn btn-sm btn-outline-secondary", title: t('admin.sellers.edit') do %><i class="fas fa-pencil"></i><% end %>
+                <%= button_to toggle_suspended_admin_seller_path(seller), method: :patch, class: "btn btn-sm btn-outline-warning", title: seller.suspended? ? t('admin.sellers.unsuspend') : t('admin.sellers.suspend'), form_class: "d-inline" do %>
+                  <i class="fas fa-<%= seller.suspended? ? 'play' : 'pause' %>"></i>
+                <% end %>
                 <% unless seller.default? %>
                   <%= button_to admin_seller_path(seller), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.sellers.delete'), form_class: "d-inline", data: { turbo_confirm: t('admin.sellers.delete_confirm') } do %><i class="fas fa-trash"></i><% end %>
                 <% end %>

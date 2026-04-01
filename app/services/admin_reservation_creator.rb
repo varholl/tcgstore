@@ -52,7 +52,7 @@ class AdminReservationCreator
   private
 
   def distribute_across_sellers(card, total_quantity)
-    siblings = card.sibling_cards.where("quantity > 0").index_by(&:id)
+    siblings = card.active_sibling_cards.where("quantity > 0").index_by(&:id)
     return if siblings.empty?
 
     reserved_per_card = ReservationItem.joins(:reservation)

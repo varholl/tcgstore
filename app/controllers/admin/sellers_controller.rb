@@ -1,7 +1,7 @@
 class Admin::SellersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_seller, only: [:edit, :update, :destroy]
+  before_action :set_seller, only: [:edit, :update, :destroy, :toggle_suspended]
 
   def index
     @sellers = Seller.order(:name)
@@ -30,6 +30,12 @@ class Admin::SellersController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def toggle_suspended
+    @seller.update!(suspended: !@seller.suspended?)
+    notice = @seller.suspended? ? t("controllers.admin.sellers.suspended") : t("controllers.admin.sellers.unsuspended")
+    redirect_to admin_sellers_path, notice: notice
   end
 
   def destroy

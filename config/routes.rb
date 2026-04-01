@@ -57,7 +57,11 @@ Rails.application.routes.draw do
       resources :payments, only: [:create, :destroy], controller: 'reservation_payments'
     end
     resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-    resources :sellers, except: [:show]
+    resources :sellers, except: [:show] do
+      member do
+        patch :toggle_suspended
+      end
+    end
     resources :cards, except: [:show] do
       collection do
         get :search_scryfall

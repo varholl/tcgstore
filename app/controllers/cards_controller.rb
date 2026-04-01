@@ -12,7 +12,7 @@ class CardsController < ApplicationController
   }.freeze
 
   def index
-    all_cards = Card.where("quantity > 0")
+    all_cards = Card.joins(:seller).merge(Seller.active).where("cards.quantity > 0")
     all_cards = all_cards.search_by_name(params[:search]) if params[:search].present?
     all_cards = all_cards.filter_by_edition(params[:edition]) if params[:edition].present?
     if params[:foil] == "foil"

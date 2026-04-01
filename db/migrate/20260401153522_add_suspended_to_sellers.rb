@@ -1,0 +1,5 @@
+class AddSuspendedToSellers < ActiveRecord::Migration[8.0]
+  def change
+    add_column :sellers, :suspended, :boolean, default: false, null: false
+  end
+end

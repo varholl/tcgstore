@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_30_235729) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_01_153522) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -110,6 +110,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_30_235729) do
     t.boolean "default", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "suspended", default: false, null: false
     t.index ["user_id"], name: "index_sellers_on_user_id"
   end
 
