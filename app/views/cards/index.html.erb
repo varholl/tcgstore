@@ -18,10 +18,18 @@
 <% end %>
 
 <% new_arrivals_count = Card.where("quantity > 0").where("last_stocked_at >= ?", 7.days.ago).select(:edition, :collector_number, :condition, :language, :foil).distinct.count %>
-<% if new_arrivals_count > 0 %>
-  <div class="mb-3">
-    <%= link_to cards_path(sort: "newest", view: @current_view), class: "btn btn-outline-success" do %>
-      <i class="fas fa-sparkles"></i> <%= t('cards.new_arrivals', count: new_arrivals_count) %>
+<% preorder_editions = Card.joins(:seller).merge(Seller.active).where("quantity > 0").where("release_date > ?", Date.current).group(:edition).order(Arel.sql("MIN(release_date) ASC")).pluck(:edition, Arel.sql("COALESCE(MAX(edition_name), UPPER(edition))"), Arel.sql("MIN(release_date)")) %>
+<% if new_arrivals_count > 0 || preorder_editions.any? %>
+  <div class="mb-3 d-flex flex-wrap gap-2">
+    <% if new_arrivals_count > 0 %>
+      <%= link_to cards_path(sort: "newest", view: @current_view), class: "btn btn-outline-success" do %>
+        <i class="fas fa-sparkles"></i> <%= t('cards.new_arrivals', count: new_arrivals_count) %>
+      <% end %>
+    <% end %>
+    <% preorder_editions.each do |edition_code, edition_name, release_date| %>
+      <%= link_to cards_path(preorder: "1", edition: edition_code, view: @current_view), class: "btn btn-outline-preorder" do %>
+        <i class="fas fa-clock"></i> <%= t('cards.preorder_set', set: edition_name, date: Date.parse(release_date.to_s).strftime("%d/%m/%Y")) %>
+      <% end %>
     <% end %>
   </div>
 <% end %>
@@ -61,12 +69,15 @@
     </div>
   </div>
   <%= hidden_field_tag :view, @current_view %>
+  <% if params[:preorder].present? %>
+    <%= hidden_field_tag :preorder, params[:preorder] %>
+  <% end %>
 <% end %>
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
   <p class="text-muted mb-0">
     <%= t('cards.cards_found', count: @cards.total_count) %>
-    <% if params[:search].present? || params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? %>
+    <% if params[:search].present? || params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? || params[:preorder].present? %>
       <%= link_to cards_path(view: @current_view), class: "btn btn-outline-secondary btn-sm ms-2" do %>
         <i class="fas fa-filter-circle-xmark me-1"></i><%= t('cards.clear_all_filters') %>
       <% end %>

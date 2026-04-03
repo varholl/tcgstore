@@ -104,6 +104,7 @@ en:
     new_badge: "New"
     preorder_badge: "Pre-Order"
     preorder_release: "Available %{date}"
+    preorder_set: "%{set} — Pre-order (available %{date})"
     new_arrivals:
       one: "1 new arrival this week"
       other: "%{count} new arrivals this week"
