@@ -55,6 +55,18 @@
 
           <dt class="col-sm-3"><%= t('admin.cards.rarity') %></dt>
           <dd class="col-sm-9"><%= @card.rarity.present? ? @card.rarity.capitalize : "—" %></dd>
+
+          <dt class="col-sm-3"><%= t('admin.cards.release_date') %></dt>
+          <dd class="col-sm-9">
+            <% if @card.release_date.present? %>
+              <%= @card.release_date.strftime("%d/%m/%Y") %>
+              <% if @card.preorder? %>
+                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+              <% end %>
+            <% else %>
+              —
+            <% end %>
+          </dd>
         </dl>
       </div>
     </div>
@@ -67,7 +79,7 @@
     <span class="badge bg-secondary"><%= t('admin.cards.total_quantity') %>: <%= @card.quantity %></span>
   </div>
   <div class="card-body p-0">
-    <% protected_reserved = @card.reservation_items.joins(:reservation).where(reservations: { status: %w[prepared paid] }).sum(:quantity) %>
+    <% protected_reserved = @card.reservation_items.joins(:reservation).where(reservations: { status: %w[prepared paid shipped] }).sum(:quantity) %>
     <% if @stock_entries.any? %>
       <table class="table table-striped mb-0">
         <thead class="table-dark">
@@ -136,7 +148,7 @@
             <td><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.display_name %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "fulfilled" => "success" } %>
+              <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td class="text-end">
@@ -190,6 +202,12 @@
             <%= f.check_box :foil, { class: "form-check-input", checked: @card.foil.present? }, "Yes", "" %>
             <%= f.label :foil, t('admin.cards.foil'), class: "form-check-label" %>
           </div>
+        </div>
+
+        <div class="col-md-3">
+          <%= f.label :release_date, t('admin.cards.release_date'), class: "form-label" %>
+          <%= f.text_field :release_date, value: @card.release_date&.strftime("%Y-%m-%d"), class: "form-control", data: { controller: "flatpickr" } %>
+          <small class="text-muted"><%= t('admin.cards.release_date_hint') %></small>
         </div>
       </div>
 

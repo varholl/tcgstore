@@ -34,9 +34,13 @@ class Card < ApplicationRecord
     total_qty = active_siblings.sum(:quantity)
     total_reserved = ReservationItem.joins(:reservation)
       .where(card_id: active_siblings.select(:id))
-      .where(reservations: { status: %w[pending prepared paid] })
+      .where(reservations: { status: %w[pending prepared paid shipped] })
       .sum(:quantity)
     total_qty - total_reserved
+  end
+
+  def preorder?
+    release_date.present? && release_date > Date.current
   end
 
   def foil_display
@@ -51,7 +55,7 @@ class Card < ApplicationRecord
     return 0 if seller.suspended?
 
     reserved = reservation_items.joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid] })
+      .where(reservations: { status: %w[pending prepared paid shipped] })
       .sum(:quantity)
     quantity - reserved
   end

@@ -164,6 +164,50 @@ hr {
   vertical-align: middle;
 }
 
+/* --- Pre-order badge (ribbon on card image) --- */
+.preorder-badge {
+  position: absolute;
+  top: 18px;
+  right: -35px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5, #4338ca);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 35px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
+  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.3s ease;
+}
+.card:hover .preorder-badge {
+  opacity: 0;
+}
+
+.preorder-release-date {
+  color: #818cf8;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.preorder-badge-inline {
+  display: inline-block;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
 /* --- Scryfall button --- */
 .btn-scryfall {
   background-color: #302b63;
@@ -780,20 +824,20 @@ html[data-theme="dark"] .flatpickr-day {
 html[data-theme="dark"] .flatpickr-day:hover,
 html[data-theme="dark"] .flatpickr-day:focus {
   background: #252525 !important;
-  border-color: #c9a84c !important;
+  border-color: #6366f1 !important;
 }
 html[data-theme="dark"] .flatpickr-day.selected,
 html[data-theme="dark"] .flatpickr-day.selected:hover {
-  background: #c9a84c !important;
-  border-color: #c9a84c !important;
-  color: #141414 !important;
+  background: #6366f1 !important;
+  border-color: #6366f1 !important;
+  color: #fff !important;
 }
 html[data-theme="dark"] .flatpickr-day.today {
-  border-color: #4a8db7 !important;
+  border-color: #6366f1 !important;
 }
 html[data-theme="dark"] .flatpickr-day.today:hover {
-  background: #4a8db7 !important;
-  border-color: #4a8db7 !important;
+  background: #6366f1 !important;
+  border-color: #6366f1 !important;
   color: #fff !important;
 }
 html[data-theme="dark"] .flatpickr-day.prevMonthDay,
@@ -811,5 +855,38 @@ html[data-theme="dark"] .flatpickr-months .flatpickr-next-month {
 }
 html[data-theme="dark"] .flatpickr-months .flatpickr-prev-month:hover svg,
 html[data-theme="dark"] .flatpickr-months .flatpickr-next-month:hover svg {
-  fill: #c9a84c !important;
+  fill: #6366f1 !important;
+}
+
+/* --- Flatpickr light theme override --- */
+.flatpickr-calendar {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #ddd !important;
+  font-family: inherit !important;
+}
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-weekdays,
+span.flatpickr-weekday {
+  background: #f8f9fa !important;
+  font-weight: 600 !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  color: #fff !important;
+}
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  background: #e8e6ff !important;
+  border-color: #4f46e5 !important;
+}
+.flatpickr-day.today {
+  border-color: #4f46e5 !important;
+}
+.flatpickr-day.today:hover {
+  background: #4f46e5 !important;
+  color: #fff !important;
 }

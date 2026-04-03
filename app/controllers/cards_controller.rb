@@ -32,6 +32,9 @@ class CardsController < ApplicationController
     if params[:card_type].present?
       all_cards = all_cards.where("card_type LIKE ?", "%#{params[:card_type]}%")
     end
+    if params[:preorder] == "1"
+      all_cards = all_cards.where("release_date > ?", Date.current)
+    end
 
     # Group cards by identity (across sellers) and pick a representative per group
     all_cards_loaded = all_cards.to_a
@@ -39,7 +42,7 @@ class CardsController < ApplicationController
 
     reserved_by_card = ReservationItem
       .joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid] }, card_id: all_card_ids)
+      .where(reservations: { status: %w[pending prepared paid shipped] }, card_id: all_card_ids)
       .group(:card_id)
       .sum(:quantity)
 

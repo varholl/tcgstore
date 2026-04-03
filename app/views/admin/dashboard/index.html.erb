@@ -15,6 +15,11 @@
             <small class="text-muted">(<%= @income_paid_count %> <%= t('admin.dashboard.reservations_count') %>)</small>
           </li>
           <li class="mt-1">
+            <span class="badge bg-dark me-1"><%= t('statuses.shipped') %></span>
+            <%= number_to_currency(@income_shipped) %>
+            <small class="text-muted">(<%= @income_shipped_count %> <%= t('admin.dashboard.reservations_count') %>)</small>
+          </li>
+          <li class="mt-1">
             <span class="badge bg-success me-1"><%= t('statuses.fulfilled') %></span>
             <%= number_to_currency(@income_fulfilled) %>
             <small class="text-muted">(<%= @income_fulfilled_count %> <%= t('admin.dashboard.reservations_count') %>)</small>

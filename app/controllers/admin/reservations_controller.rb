@@ -157,10 +157,35 @@ class Admin::ReservationsController < ApplicationController
     end
   end
 
-  def fulfill
+  def ship
     @reservation = Reservation.find(params[:id])
 
     if @reservation.paid?
+      @reservation.update!(
+        status: :shipped,
+        tracking_number: params[:tracking_number].presence,
+        tracking_url: params[:tracking_url].presence
+      )
+      ReservationMailer.shipped(@reservation).deliver_later
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.shipped')
+    else
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.ship_error')
+    end
+  end
+
+  def update_tracking
+    @reservation = Reservation.find(params[:id])
+    @reservation.update!(
+      tracking_number: params[:tracking_number].presence,
+      tracking_url: params[:tracking_url].presence
+    )
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.tracking_updated')
+  end
+
+  def fulfill
+    @reservation = Reservation.find(params[:id])
+
+    if @reservation.shipped?
       ActiveRecord::Base.transaction do
         @reservation.update!(status: :fulfilled)
         @reservation.reservation_items.includes(:card).each do |item|
@@ -177,9 +202,9 @@ class Admin::ReservationsController < ApplicationController
   def revert_to_paid
     @reservation = Reservation.find(params[:id])
 
-    if @reservation.fulfilled?
+    if @reservation.fulfilled? || @reservation.shipped?
       ActiveRecord::Base.transaction do
-        if params[:restore_quantities] == "1"
+        if @reservation.fulfilled? && params[:restore_quantities] == "1"
           @reservation.reservation_items.includes(:card).each do |item|
             item.card.increment!(:quantity, item.quantity)
           end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_01_153522) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_03_025201) do
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -36,6 +36,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_01_153522) do
     t.string "card_type"
     t.string "card_subtype"
     t.string "rarity"
+    t.date "release_date"
     t.index ["edition"], name: "index_cards_on_edition"
     t.index ["name"], name: "index_cards_on_name"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"
@@ -99,6 +100,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_01_153522) do
     t.date "delivery_date"
     t.string "delivery_location"
     t.string "delivery_location_other"
+    t.string "tracking_number"
+    t.string "tracking_url"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end

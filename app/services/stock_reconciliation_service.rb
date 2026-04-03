@@ -34,11 +34,12 @@ class StockReconciliationService
   Result = Struct.new(:success, :cards_created, :cards_updated, :cards_zeroed,
                       :cards_unchanged, :reservation_conflicts, :errors, keyword_init: true)
 
-  def initialize(csv_file, mode:, format: :moxfield, seller:)
+  def initialize(csv_file, mode:, format: :moxfield, seller:, release_date: nil)
     @csv_file = csv_file
     @mode = mode.to_sym
     @format = format.to_sym
     @seller = seller
+    @release_date = release_date.present? ? Date.parse(release_date.to_s) : nil
   end
 
   def call
@@ -135,10 +136,12 @@ class StockReconciliationService
         if card
           new_quantity = @mode == :full ? row_data[:quantity] : card.quantity + row_data[:quantity]
 
-          if card.quantity != new_quantity || card.purchase_price != row_data[:purchase_price]
+          should_update_release = @release_date.present? && card.release_date != @release_date
+          if card.quantity != new_quantity || card.purchase_price != row_data[:purchase_price] || should_update_release
             added_qty = new_quantity - card.quantity
             attrs = { quantity: new_quantity, purchase_price: row_data[:purchase_price] }
             attrs[:last_stocked_at] = Time.current if added_qty > 0
+            attrs[:release_date] = @release_date if @release_date.present?
             card.update_columns(attrs)
             if added_qty > 0
               card.stock_entries.create!(quantity: added_qty, added_at: Time.current)
@@ -159,7 +162,8 @@ class StockReconciliationService
             quantity: row_data[:quantity],
             purchase_price: row_data[:purchase_price],
             scryfall_id: row_data[:scryfall_id] || scryfall_ids[[row_data[:edition], row_data[:collector_number]]],
-            seller: @seller
+            seller: @seller,
+            release_date: @release_date
           )
           new_card.stock_entries.create!(quantity: row_data[:quantity], added_at: Time.current)
           created += 1

@@ -41,6 +41,8 @@ Rails.application.routes.draw do
       member do
         patch :prepare
         patch :pay
+        patch :ship
+        patch :update_tracking
         patch :fulfill
         patch :revert_to_paid
         patch :expire

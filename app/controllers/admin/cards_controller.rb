@@ -65,7 +65,7 @@ class Admin::CardsController < ApplicationController
     @stock_entries = @card.stock_entries.order(added_at: :desc)
     @active_reservations = Reservation.joins(:reservation_items)
       .where(reservation_items: { card_id: @card.id })
-      .where(status: %w[pending prepared paid fulfilled])
+      .where(status: %w[pending prepared paid shipped fulfilled])
       .distinct
       .order(created_at: :desc)
   end
@@ -82,7 +82,7 @@ class Admin::CardsController < ApplicationController
       @stock_entries = @card.stock_entries.order(added_at: :desc)
       @active_reservations = Reservation.joins(:reservation_items)
         .where(reservation_items: { card_id: @card.id })
-        .where(status: %w[pending prepared paid fulfilled])
+        .where(status: %w[pending prepared paid shipped fulfilled])
         .distinct
         .order(created_at: :desc)
       render :edit, status: :unprocessable_entity
@@ -194,12 +194,12 @@ class Admin::CardsController < ApplicationController
       :name, :scryfall_id, :set_code, :set_name,
       :collector_number, :condition, :language, :foil,
       :quantity, :price, :foil_type, :seller_id,
-      :colors, :mana_cost, :cmc, :card_type, :card_subtype, :rarity
+      :colors, :mana_cost, :cmc, :card_type, :card_subtype, :rarity, :release_date
     )
   end
 
   def card_update_params
-    params.require(:card).permit(:foil, :price, :condition, :language)
+    params.require(:card).permit(:foil, :price, :condition, :language, :release_date)
   end
 
   def safe_return_path

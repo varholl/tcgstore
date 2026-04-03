@@ -54,6 +54,21 @@
         </div>
       </div>
 
+      <div class="mb-3">
+        <div class="form-check">
+          <%= check_box_tag :preorder, "1", false, class: "form-check-input", id: "preorder_check",
+              data: { stock_reconciliation_form_target: "preorderCheckbox", action: "stock-reconciliation-form#togglePreorder" } %>
+          <label class="form-check-label" for="preorder_check">
+            <strong><%= t('admin.stock_reconciliations.preorder_label') %></strong>
+          </label>
+          <div class="form-text"><%= t('admin.stock_reconciliations.preorder_hint') %></div>
+        </div>
+        <div class="mt-2" data-stock-reconciliation-form-target="preorderSection" style="display: none;">
+          <label class="form-label"><%= t('admin.cards.release_date') %></label>
+          <input type="text" name="release_date" class="form-control" style="max-width: 250px;" data-controller="flatpickr">
+        </div>
+      </div>
+
       <%= submit_tag t('admin.stock_reconciliations.submit'), class: "btn btn-primary" %>
     <% end %>
   </div>

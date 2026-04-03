@@ -30,7 +30,7 @@
 
     <hr>
 
-    <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+    <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
     <p><strong><%= t('admin.reservations.status_label') %></strong> <span class="badge bg-<%= status_colors[@reservation.status] %>"><%= t("statuses.#{@reservation.status}") %></span></p>
     <p><strong><%= t('admin.reservations.date_label') %></strong> <%= @reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></p>
     <% if @reservation.message.present? %>
@@ -83,6 +83,26 @@
         </div>
       </div>
     <% end %>
+
+    <% if @reservation.shipped? || @reservation.fulfilled? || @reservation.tracking_number.present? %>
+      <hr>
+      <h5><%= t('admin.reservations.tracking_title') %></h5>
+      <%= form_tag update_tracking_admin_reservation_path(@reservation), method: :patch do %>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label"><%= t('admin.reservations.tracking_number_label') %></label>
+            <input type="text" name="tracking_number" value="<%= @reservation.tracking_number %>" class="form-control form-control-sm" placeholder="<%= t('admin.reservations.tracking_number_placeholder') %>">
+          </div>
+          <div class="col-md-5">
+            <label class="form-label"><%= t('admin.reservations.tracking_url_label') %></label>
+            <input type="url" name="tracking_url" value="<%= @reservation.tracking_url %>" class="form-control form-control-sm" placeholder="<%= t('admin.reservations.tracking_url_placeholder') %>">
+          </div>
+          <div class="col-md-3">
+            <%= submit_tag t('admin.reservations.tracking_save'), class: "btn btn-sm btn-outline-primary" %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
   </div>
 </div>
 
@@ -109,7 +129,7 @@
     <h5 class="mt-3 mb-2"><%= color_category_label(category) %></h5>
     <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 mb-3">
       <% items.each do |item| %>
-        <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid?) && item.card.quantity < item.quantity %>
+        <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
         <div class="col">
           <div class="card h-100<%= ' foil-card' if item.card.foil.present? %><%= ' border-danger' if stock_short %>">
             <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
@@ -119,6 +139,10 @@
                  onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
             <div class="card-body p-2">
               <h6 class="card-title mb-1"><%= item.card.name %></h6>
+              <% if item.card.preorder? %>
+                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+                <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: item.card.release_date.strftime("%d/%m/%Y")) %></small>
+              <% end %>
               <small class="text-muted">
                 <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
                 <%= item.card.condition %> · <%= item.card.language %>
@@ -176,10 +200,13 @@
           <td colspan="<%= col_count %>" class="fw-bold text-white" style="background-color: #6c757d;"><%= color_category_label(category) %></td>
         </tr>
         <% items.each do |item| %>
-          <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid?) && item.card.quantity < item.quantity %>
+          <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
           <tr class="<%= 'table-danger' if stock_short %>">
             <td data-label="<%= t('admin.reservations.card_name') %>">
               <%= item.card.name %>
+              <% if item.card.preorder? %>
+                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+              <% end %>
               <% if stock_short %>
                 <span class="badge bg-danger" title="<%= t('admin.reservations.stock_warning_detail', in_stock: item.card.quantity, reserved: item.quantity) %>">
                   <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.low_stock') %>
@@ -199,7 +226,7 @@
             </td>
             <td data-label="<%= t('admin.reservations.price') %>">
               <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %>
-              <% if @reservation.pending? || @reservation.prepared? || @reservation.paid? %>
+              <% if @reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped? %>
                 <button type="button" class="btn btn-sm btn-link p-0 ms-1" data-bs-toggle="modal" data-bs-target="#editPriceModal<%= item.id %>" title="<%= t('admin.reservations.edit_price') %>">
                   <i class="fas fa-pencil-alt"></i>
                 </button>
@@ -452,7 +479,64 @@
   </div>
 <% elsif @reservation.paid? %>
   <div class="mt-3 d-flex gap-2">
+    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#shipModal">
+      <%= t('admin.reservations.ship') %>
+    </button>
+  </div>
+
+  <div class="modal fade" id="shipModal" tabindex="-1" aria-labelledby="shipModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_tag ship_admin_reservation_path(@reservation), method: :patch do %>
+          <div class="modal-header">
+            <h5 class="modal-title" id="shipModalLabel"><%= t('admin.reservations.ship') %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="tracking_number" class="form-label"><%= t('admin.reservations.tracking_number_label') %></label>
+              <input type="text" name="tracking_number" id="tracking_number" class="form-control" placeholder="<%= t('admin.reservations.tracking_number_placeholder') %>">
+            </div>
+            <div class="mb-3">
+              <label for="tracking_url" class="form-label"><%= t('admin.reservations.tracking_url_label') %></label>
+              <input type="url" name="tracking_url" id="tracking_url" class="form-control" placeholder="<%= t('admin.reservations.tracking_url_placeholder') %>">
+            </div>
+            <p class="text-muted"><%= t('admin.reservations.tracking_optional_hint') %></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('admin.reservations.cancel_modal') %></button>
+            <%= submit_tag t('admin.reservations.confirm_ship'), class: "btn btn-dark" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% elsif @reservation.shipped? %>
+  <div class="mt-3 d-flex gap-2">
     <%= button_to t('admin.reservations.fulfill'), fulfill_admin_reservation_path(@reservation), method: :patch, class: "btn btn-success" %>
+    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#revertToPaidModal">
+      <%= t('admin.reservations.revert_to_paid') %>
+    </button>
+  </div>
+
+  <div class="modal fade" id="revertToPaidModal" tabindex="-1" aria-labelledby="revertToPaidModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_tag revert_to_paid_admin_reservation_path(@reservation), method: :patch do %>
+          <div class="modal-header">
+            <h5 class="modal-title" id="revertToPaidModalLabel"><%= t('admin.reservations.revert_to_paid') %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p><%= t('admin.reservations.revert_to_paid_confirm') %></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('admin.reservations.cancel_modal') %></button>
+            <%= submit_tag t('admin.reservations.confirm_revert'), class: "btn btn-warning" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 <% elsif @reservation.fulfilled? %>
   <div class="mt-3 d-flex gap-2">

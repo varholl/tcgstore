@@ -38,7 +38,8 @@ class AdminCardStockAdder
         cmc: @params[:cmc],
         card_type: @params[:card_type],
         card_subtype: @params[:card_subtype],
-        rarity: @params[:rarity]
+        rarity: @params[:rarity],
+        release_date: @params[:release_date]
       )
 
       if @card.save

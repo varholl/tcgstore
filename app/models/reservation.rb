@@ -6,7 +6,7 @@ class Reservation < ApplicationRecord
   has_many :reservation_notes, dependent: :destroy
   has_many :reservation_payments, dependent: :destroy
 
-  enum :status, { pending: "pending", prepared: "prepared", paid: "paid", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
+  enum :status, { pending: "pending", prepared: "prepared", paid: "paid", shipped: "shipped", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
 
   def total_price
     final_price.presence || reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }

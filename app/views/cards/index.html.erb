@@ -102,7 +102,9 @@
     <% @cards.each do |card| %>
       <div class="col">
         <div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="position: relative; overflow: hidden;">
-          <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
+          <% if card.preorder? %>
+            <span class="preorder-badge"><%= t('cards.preorder_badge') %></span>
+          <% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
             <span class="new-arrival-badge"><%= t('cards.new_badge') %></span>
           <% end %>
           <img src="https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=normal"
@@ -113,6 +115,9 @@
           <div class="card-body p-2 d-flex flex-column">
             <div class="flex-grow-1">
               <h6 class="card-title mb-1"><%= card.name %></h6>
+              <% if card.preorder? %>
+                <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: card.release_date.strftime("%d/%m/%Y")) %></small>
+              <% end %>
               <small class="text-muted"><%= card.edition_name || card.edition.upcase %> #<%= card.collector_number %></small>
               <div class="d-flex align-items-center flex-wrap gap-1 mt-1">
                 <%= condition_badge(card.condition) %>
@@ -164,7 +169,9 @@
           <div class="d-flex justify-content-between align-items-start">
             <div>
               <strong><%= card.name %></strong>
-              <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
+              <% if card.preorder? %>
+                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+              <% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
                 <span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span>
               <% end %>
               <br>
@@ -228,7 +235,7 @@
             <td>
               <span class="d-inline-flex align-items-center gap-1">
                 <%= card.name %>
-                <% if card.last_stocked_at && card.last_stocked_at >= 7.days.ago %><span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span><% end %>
+                <% if card.preorder? %><span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span><% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %><span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span><% end %>
                 <% if card.foil.present? %><i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %>
               </span>
             </td>
