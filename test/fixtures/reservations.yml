@@ -1,0 +1,24 @@
+pending_reservation:
+  user: alice
+  status: "pending"
+
+prepared_reservation:
+  user: alice
+  status: "prepared"
+
+paid_reservation:
+  user: alice
+  status: "paid"
+
+fulfilled_reservation:
+  user: alice
+  status: "fulfilled"
+
+cancelled_reservation:
+  user: alice
+  status: "cancelled"
+
+guest_reservation:
+  status: "pending"
+  guest_name: "Walk-in Customer"
+  guest_contact: "guest@example.com"

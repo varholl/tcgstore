@@ -1,0 +1,11 @@
+pending_bolt:
+  reservation: pending_reservation
+  card: lightning_bolt
+  quantity: 2
+  unit_price: 5.00
+
+prepared_bolt:
+  reservation: prepared_reservation
+  card: lightning_bolt
+  quantity: 1
+  unit_price: 5.00

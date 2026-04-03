@@ -1,0 +1,9 @@
+default_seller:
+  name: "Default Seller"
+  default: true
+  suspended: false
+
+suspended_seller:
+  name: "Suspended Seller"
+  default: false
+  suspended: true

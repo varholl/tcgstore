@@ -1,0 +1,70 @@
+lightning_bolt:
+  name: "Lightning Bolt"
+  edition: "lea"
+  edition_name: "Limited Edition Alpha"
+  collector_number: "161"
+  condition: "NM"
+  language: "English"
+  foil: ""
+  quantity: 4
+  price: 5.00
+  seller: default_seller
+
+lightning_bolt_other_seller:
+  name: "Lightning Bolt"
+  edition: "lea"
+  edition_name: "Limited Edition Alpha"
+  collector_number: "161"
+  condition: "NM"
+  language: "English"
+  foil: ""
+  quantity: 2
+  price: 5.50
+  seller: suspended_seller
+
+counterspell:
+  name: "Counterspell"
+  edition: "ice"
+  edition_name: "Ice Age"
+  collector_number: "64"
+  condition: "LP"
+  language: "English"
+  foil: ""
+  quantity: 2
+  price: 3.00
+  seller: default_seller
+
+preorder_card:
+  name: "Future Card"
+  edition: "fdn"
+  edition_name: "Foundations"
+  collector_number: "1"
+  condition: "NM"
+  language: "English"
+  quantity: 10
+  price: 15.00
+  seller: default_seller
+  release_date: <%= 30.days.from_now.to_date %>
+
+past_release_card:
+  name: "Released Card"
+  edition: "otj"
+  edition_name: "Outlaws of Thunder Junction"
+  collector_number: "50"
+  condition: "NM"
+  language: "English"
+  quantity: 5
+  price: 8.00
+  seller: default_seller
+  release_date: <%= 7.days.ago.to_date %>
+
+zero_stock_card:
+  name: "Empty Card"
+  edition: "lea"
+  edition_name: "Limited Edition Alpha"
+  collector_number: "200"
+  condition: "NM"
+  language: "English"
+  quantity: 0
+  price: 1.00
+  seller: default_seller

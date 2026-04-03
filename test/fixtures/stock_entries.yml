@@ -1,0 +1,19 @@
+bolt_entry_old:
+  card: lightning_bolt
+  quantity: 2
+  added_at: <%= 10.days.ago %>
+
+bolt_entry_new:
+  card: lightning_bolt
+  quantity: 2
+  added_at: <%= 2.days.ago %>
+
+counterspell_entry:
+  card: counterspell
+  quantity: 2
+  added_at: <%= 5.days.ago %>
+
+preorder_entry:
+  card: preorder_card
+  quantity: 10
+  added_at: <%= 1.day.ago %>
