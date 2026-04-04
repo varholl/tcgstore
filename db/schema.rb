@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_03_025201) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_03_193615) do
+  create_table "addresses", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "address"
+    t.string "address_number"
+    t.string "zipcode"
+    t.string "city"
+    t.string "province"
+    t.string "between_streets"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_addresses_on_user_id"
+  end
+
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.string "edition"
@@ -102,6 +115,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_03_025201) do
     t.string "delivery_location_other"
     t.string "tracking_number"
     t.string "tracking_url"
+    t.string "shipping_method"
+    t.string "pickup_location"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end
@@ -154,12 +169,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_03_025201) do
     t.string "uid"
     t.boolean "dismissed_how_it_works", default: false, null: false
     t.string "theme", default: "dark"
+    t.string "dni"
+    t.string "address"
+    t.string "address_number"
+    t.string "zipcode"
+    t.string "city"
+    t.string "province"
+    t.string "between_streets"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "addresses", "users"
   add_foreign_key "cards", "sellers"
   add_foreign_key "cart_items", "cards"
   add_foreign_key "cart_items", "users"

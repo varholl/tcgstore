@@ -11,6 +11,15 @@
     <% if @reservation.message.present? %>
       <p><strong><%= t('reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>
+    <% if @reservation.shipping_method.present? %>
+      <p>
+        <strong><%= t('reservations.shipping_label') %></strong>
+        <i class="<%= t("reservations.shipping.icons.#{@reservation.shipping_method}") %> me-1"></i><%= t("reservations.shipping.methods.#{@reservation.shipping_method}") %>
+        <% if @reservation.shipping_method == "store_pickup" && @reservation.pickup_location.present? %>
+          — <%= t("cart_items.shipping.locations.#{@reservation.pickup_location}") %>
+        <% end %>
+      </p>
+    <% end %>
   </div>
 </div>
 
@@ -197,6 +206,113 @@
     </tfoot>
   </table>
 </div>
+<% end %>
+
+<%# --- Shipping info section (non-store-pickup, prepared) --- %>
+<% if @reservation.shipping_method.present? && @reservation.shipping_method != "store_pickup" %>
+  <% addr = current_user.addresses.first || current_user.addresses.build %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i><%= t('reservations.shipping_info.title') %></h5>
+    </div>
+    <div class="card-body">
+      <% if @reservation.prepared? %>
+        <%= form_tag update_shipping_info_reservation_path(@reservation), method: :patch do %>
+          <% user_errors = current_user.errors %>
+          <% addr_errors = addr.errors %>
+          <h6 class="mb-3"><i class="fas fa-user me-1"></i><%= t('reservations.shipping_info.personal_title') %></h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-12">
+              <label class="form-label"><%= t('reservations.shipping_info.full_name') %></label>
+              <input type="text" name="user[name]" value="<%= current_user.name %>" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"><%= t('reservations.shipping_info.phone') %></label>
+              <input type="text" name="user[phone_number]" value="<%= current_user.phone_number %>" class="form-control <%= 'is-invalid' if user_errors[:phone_number].any? %>" placeholder="<%= t('reservations.shipping_info.phone_placeholder') %>">
+              <% if user_errors[:phone_number].any? %>
+                <div class="invalid-feedback"><%= user_errors.full_messages_for(:phone_number).join(", ") %></div>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"><%= t('reservations.shipping_info.dni') %></label>
+              <input type="text" name="user[dni]" value="<%= current_user.dni %>" class="form-control <%= 'is-invalid' if user_errors[:dni].any? %>" placeholder="<%= t('reservations.shipping_info.dni_placeholder') %>">
+              <% if user_errors[:dni].any? %>
+                <div class="invalid-feedback"><%= user_errors.full_messages_for(:dni).join(", ") %></div>
+              <% end %>
+            </div>
+          </div>
+
+          <h6 class="mb-3"><i class="fas fa-home me-1"></i><%= t('reservations.shipping_info.address_title') %></h6>
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label"><%= t('reservations.shipping_info.address') %></label>
+              <input type="text" name="address[address]" value="<%= addr.address %>" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.address_number') %></label>
+              <input type="text" name="address[address_number]" value="<%= addr.address_number %>" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.zipcode') %></label>
+              <input type="text" name="address[zipcode]" value="<%= addr.zipcode %>" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.city') %></label>
+              <input type="text" name="address[city]" value="<%= addr.city %>" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.province') %></label>
+              <% bike_delivery = @reservation.shipping_method == "bike_delivery" %>
+              <% selected_province = bike_delivery ? "caba" : addr.province %>
+              <select name="address[province]" class="form-select" <%= 'disabled' if bike_delivery %>>
+                <option value=""><%= t('reservations.shipping_info.select_province') %></option>
+                <% %w[buenos_aires caba catamarca chaco chubut cordoba corrientes entre_rios formosa jujuy la_pampa la_rioja mendoza misiones neuquen rio_negro salta san_juan san_luis santa_cruz santa_fe santiago_del_estero tierra_del_fuego tucuman].each do |prov| %>
+                  <option value="<%= prov %>" <%= 'selected' if selected_province == prov %>><%= t("reservations.shipping_info.provinces.#{prov}") %></option>
+                <% end %>
+              </select>
+              <% if bike_delivery %>
+                <input type="hidden" name="address[province]" value="caba">
+              <% end %>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label"><%= t('reservations.shipping_info.between_streets') %></label>
+              <input type="text" name="address[between_streets]" value="<%= addr.between_streets %>" class="form-control" placeholder="<%= t('reservations.shipping_info.between_streets_placeholder') %>">
+            </div>
+          </div>
+          <div class="mt-3">
+            <%= submit_tag t('reservations.shipping_info.save'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      <% else %>
+        <dl class="row mb-0">
+          <% if current_user.name.present? %>
+            <dt class="col-sm-4"><%= t('reservations.shipping_info.full_name') %></dt>
+            <dd class="col-sm-8"><%= current_user.name %></dd>
+          <% end %>
+          <% if current_user.phone_number.present? %>
+            <dt class="col-sm-4"><%= t('reservations.shipping_info.phone') %></dt>
+            <dd class="col-sm-8"><%= current_user.phone_number %></dd>
+          <% end %>
+          <% if current_user.dni.present? %>
+            <dt class="col-sm-4"><%= t('reservations.shipping_info.dni') %></dt>
+            <dd class="col-sm-8"><%= current_user.dni %></dd>
+          <% end %>
+          <% if addr.address.present? %>
+            <dt class="col-sm-4"><%= t('reservations.shipping_info.address') %></dt>
+            <dd class="col-sm-8"><%= [addr.address, addr.address_number].compact_blank.join(" ") %></dd>
+          <% end %>
+          <% if addr.city.present? || addr.province.present? %>
+            <dt class="col-sm-4"><%= t('reservations.shipping_info.city') %> / <%= t('reservations.shipping_info.province') %></dt>
+            <dd class="col-sm-8"><%= [addr.city, addr.province.present? ? t("reservations.shipping_info.provinces.#{addr.province}", default: addr.province) : nil, addr.zipcode].compact_blank.join(", ") %></dd>
+          <% end %>
+          <% if addr.between_streets.present? %>
+            <dt class="col-sm-4"><%= t('reservations.shipping_info.between_streets') %></dt>
+            <dd class="col-sm-8"><%= addr.between_streets %></dd>
+          <% end %>
+        </dl>
+      <% end %>
+    </div>
+  </div>
 <% end %>
 
 <%# --- Payment info section --- %>

@@ -150,13 +150,104 @@
       <%= @maintenance_message.presence || t('maintenance.default_message') %>
     </div>
   <% else %>
-    <%= form_tag reservations_path, method: :post, class: "mt-3" do %>
+    <%= form_tag reservations_path, method: :post, class: "mt-3", data: { controller: "shipping-method" } do %>
+      <div class="mb-4">
+        <label class="form-label fw-bold"><i class="fas fa-truck me-1"></i><%= t('cart_items.shipping.title') %></label>
+
+        <div class="row g-2">
+          <div class="col-6 col-md-3">
+            <input type="radio" name="shipping_method" value="store_pickup" id="ship_store" class="btn-check"
+                   data-action="shipping-method#toggle" <%= 'checked' if params[:shipping_method] == 'store_pickup' %>>
+            <label class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3" for="ship_store">
+              <i class="fas fa-handshake fa-lg mb-2"></i>
+              <small><%= t('cart_items.shipping.store_pickup') %></small>
+            </label>
+          </div>
+          <div class="col-6 col-md-3">
+            <input type="radio" name="shipping_method" value="bike_delivery" id="ship_bike" class="btn-check"
+                   data-action="shipping-method#toggle" <%= 'checked' if params[:shipping_method] == 'bike_delivery' %>>
+            <label class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3" for="ship_bike">
+              <i class="fas fa-motorcycle fa-lg mb-2"></i>
+              <small><%= t('cart_items.shipping.bike_delivery') %></small>
+            </label>
+          </div>
+          <div class="col-6 col-md-3">
+            <input type="radio" name="shipping_method" value="andreani" id="ship_andreani" class="btn-check"
+                   data-action="shipping-method#toggle" <%= 'checked' if params[:shipping_method] == 'andreani' %>>
+            <label class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3" for="ship_andreani">
+              <i class="fas fa-box fa-lg mb-2"></i>
+              <small><%= t('cart_items.shipping.andreani') %></small>
+            </label>
+          </div>
+          <div class="col-6 col-md-3">
+            <input type="radio" name="shipping_method" value="correo_argentino" id="ship_correo" class="btn-check"
+                   data-action="shipping-method#toggle" <%= 'checked' if params[:shipping_method] == 'correo_argentino' %>>
+            <label class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3" for="ship_correo">
+              <i class="fas fa-envelope fa-lg mb-2"></i>
+              <small><%= t('cart_items.shipping.correo_argentino') %></small>
+            </label>
+          </div>
+        </div>
+
+        <%# Store pickup options %>
+        <div class="mt-3" data-shipping-method-target="storePickupOptions" style="<%= 'display: none;' unless params[:shipping_method] == 'store_pickup' %>">
+          <label class="form-label"><%= t('cart_items.shipping.pickup_location') %></label>
+          <p class="text-muted small mb-2"><%= t('cart_items.shipping.pickup_hint_html') %></p>
+          <% location_maps = { "batikueva" => "https://maps.app.goo.gl/tKwH5AAR88zrksRa9", "magic_palace" => "https://maps.app.goo.gl/5zBt5T6Sii3GEaCC9" } %>
+          <% location_websites = { "batikueva" => "https://www.labatikuevastore.com/", "magic_palace" => "https://magicpalacetcg.com.ar/" } %>
+          <div class="d-flex flex-wrap gap-4">
+            <% Reservation::PICKUP_LOCATIONS.each do |loc| %>
+              <div>
+                <input type="radio" name="pickup_location" value="<%= loc %>" id="pickup_<%= loc %>" class="btn-check"
+                       <%= 'checked' if params[:pickup_location] == loc || (params[:pickup_location].blank? && loc == Reservation::PICKUP_LOCATIONS.first) %>>
+                <label class="btn btn-outline-secondary" for="pickup_<%= loc %>">
+                  <i class="fas fa-map-marker-alt me-1"></i><%= t("cart_items.shipping.locations.#{loc}") %>
+                </label>
+                <div class="mt-1 d-flex gap-2">
+                  <% if location_websites[loc] %>
+                    <a href="<%= location_websites[loc] %>" target="_blank" rel="noopener noreferrer" class="small text-decoration-none">
+                      <i class="fas fa-globe me-1"></i><%= t('cart_items.shipping.view_website') %>
+                    </a>
+                  <% end %>
+                  <% if location_maps[loc] %>
+                    <a href="<%= location_maps[loc] %>" target="_blank" rel="noopener noreferrer" class="small text-decoration-none">
+                      <i class="fas fa-map-marker-alt me-1"></i><%= t('cart_items.shipping.view_map') %>
+                    </a>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Bike delivery options (placeholder for future) %>
+        <div class="mt-3" data-shipping-method-target="bikeDeliveryOptions" style="display: none;">
+          <div class="alert alert-info mb-0">
+            <i class="fas fa-info-circle me-1"></i> <%= t('cart_items.shipping.bike_caba_note') %>
+          </div>
+        </div>
+
+        <%# Andreani options (placeholder for future) %>
+        <div class="mt-3" data-shipping-method-target="andreaniOptions" style="display: none;">
+          <div class="alert alert-info mb-0">
+            <i class="fas fa-info-circle me-1"></i> <%= t('cart_items.shipping.andreani_note') %>
+          </div>
+        </div>
+
+        <%# Correo Argentino options (placeholder for future) %>
+        <div class="mt-3" data-shipping-method-target="correoOptions" style="display: none;">
+          <div class="alert alert-info mb-0">
+            <i class="fas fa-info-circle me-1"></i> <%= t('cart_items.shipping.correo_note') %>
+          </div>
+        </div>
+      </div>
+
       <div class="mb-3">
         <%= label_tag :message, t('cart_items.message_label'), class: "form-label" %>
         <%= text_area_tag :message, params[:message], class: "form-control", rows: 3, maxlength: 1000, placeholder: t('cart_items.message_placeholder') %>
       </div>
       <p class="text-muted small"><%= t('cart_items.disclaimer') %></p>
-      <%= submit_tag t('cart_items.submit_reservation'), class: "btn btn-primary btn-lg" %>
+      <%= submit_tag t('cart_items.submit_reservation'), class: "btn btn-primary btn-lg", disabled: params[:shipping_method].blank?, data: { shipping_method_target: "submitButton" } %>
     <% end %>
   <% end %>
 <% else %>

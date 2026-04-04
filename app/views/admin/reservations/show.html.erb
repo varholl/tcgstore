@@ -39,6 +39,81 @@
     <% if @reservation.payment_method.present? %>
       <p><strong><%= t('admin.reservations.payment_method_label') %></strong> <%= t("admin.reservations.payment_methods.#{@reservation.payment_method}") %></p>
     <% end %>
+    <div class="mb-3">
+      <strong><%= t('admin.reservations.shipping_method_label') %></strong>
+      <%= form_tag update_shipping_method_admin_reservation_path(@reservation), method: :patch, class: "d-inline-flex align-items-center gap-2 ms-2" do %>
+        <select name="shipping_method" class="form-select form-select-sm" style="width: auto;">
+          <option value=""><%= t('admin.reservations.no_shipping_method') %></option>
+          <% Reservation::SHIPPING_METHODS.each do |method| %>
+            <option value="<%= method %>" <%= 'selected' if @reservation.shipping_method == method %>><%= t("reservations.shipping.methods.#{method}") %></option>
+          <% end %>
+        </select>
+        <% if @reservation.shipping_method == "store_pickup" %>
+          <select name="pickup_location" class="form-select form-select-sm" style="width: auto;">
+            <% Reservation::PICKUP_LOCATIONS.each do |loc| %>
+              <option value="<%= loc %>" <%= 'selected' if @reservation.pickup_location == loc %>><%= t("cart_items.shipping.locations.#{loc}") %></option>
+            <% end %>
+          </select>
+        <% end %>
+        <%= submit_tag t('admin.reservations.delivery_save'), class: "btn btn-sm btn-outline-primary" %>
+      <% end %>
+    </div>
+
+    <% if @reservation.shipping_method.present? && @reservation.shipping_method != "store_pickup" %>
+      <% user = @reservation.user %>
+      <% addr = user.addresses.first || user.addresses.build %>
+      <div class="mb-3">
+        <h6><i class="fas fa-map-marker-alt me-1"></i><%= t('admin.reservations.shipping_address_title') %></h6>
+        <%= form_tag update_shipping_address_admin_reservation_path(@reservation), method: :patch do %>
+          <div class="row g-2 small">
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.full_name') %></label>
+              <input type="text" name="user[name]" value="<%= user.name %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.phone') %></label>
+              <input type="text" name="user[phone_number]" value="<%= user.phone_number %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.dni') %></label>
+              <input type="text" name="user[dni]" value="<%= user.dni %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"><%= t('reservations.shipping_info.address') %></label>
+              <input type="text" name="address[address]" value="<%= addr.address %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label"><%= t('reservations.shipping_info.address_number') %></label>
+              <input type="text" name="address[address_number]" value="<%= addr.address_number %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label"><%= t('reservations.shipping_info.zipcode') %></label>
+              <input type="text" name="address[zipcode]" value="<%= addr.zipcode %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label"><%= t('reservations.shipping_info.city') %></label>
+              <input type="text" name="address[city]" value="<%= addr.city %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.province') %></label>
+              <select name="address[province]" class="form-select form-select-sm">
+                <option value=""><%= t('reservations.shipping_info.select_province') %></option>
+                <% %w[buenos_aires caba catamarca chaco chubut cordoba corrientes entre_rios formosa jujuy la_pampa la_rioja mendoza misiones neuquen rio_negro salta san_juan san_luis santa_cruz santa_fe santiago_del_estero tierra_del_fuego tucuman].each do |prov| %>
+                  <option value="<%= prov %>" <%= 'selected' if addr.province == prov %>><%= t("reservations.shipping_info.provinces.#{prov}") %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label"><%= t('reservations.shipping_info.between_streets') %></label>
+              <input type="text" name="address[between_streets]" value="<%= addr.between_streets %>" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <%= submit_tag t('admin.reservations.delivery_save'), class: "btn btn-sm btn-outline-primary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
     <p>
       <strong><%= t('admin.reservations.trade_label') %></strong>
       <% if @reservation.trade? %>
@@ -56,31 +131,16 @@
         <span class="badge bg-warning text-dark"><i class="fas fa-receipt me-1"></i><%= t('admin.reservations.receipt_sent_at', time: @reservation.receipt_sent_at.in_time_zone.strftime('%d/%m/%Y %H:%M')) %></span>
       </p>
     <% end %>
-    <hr>
-
-    <h5><%= t('admin.reservations.delivery_title') %></h5>
-    <%= form_tag update_delivery_admin_reservation_path(@reservation), method: :patch, data: { controller: "delivery-form" } do %>
-      <div class="row g-3 align-items-end">
-        <div class="col-md-3">
-          <label class="form-label"><%= t('admin.reservations.delivery_date_label') %></label>
-          <input type="text" name="delivery_date" value="<%= @reservation.delivery_date %>" class="form-control form-control-sm" data-controller="flatpickr">
+    <% if @reservation.shipping_method.present? %>
+      <hr>
+      <div class="d-flex align-items-center gap-3">
+        <div>
+          <strong><%= t('admin.reservations.delivery_date_label') %></strong>
         </div>
-        <div class="col-md-3">
-          <label class="form-label"><%= t('admin.reservations.delivery_location_label') %></label>
-          <select name="delivery_location" class="form-select form-select-sm" data-delivery-form-target="locationSelect" data-action="delivery-form#toggleOther">
-            <option value=""><%= t('admin.reservations.delivery_location_blank') %></option>
-            <% Reservation::DELIVERY_LOCATIONS.each do |loc| %>
-              <option value="<%= loc %>" <%= 'selected' if @reservation.delivery_location == loc %>><%= t("admin.reservations.delivery_locations.#{loc}") %></option>
-            <% end %>
-          </select>
-        </div>
-        <div class="col-md-4" data-delivery-form-target="otherField" style="<%= 'display:none' unless @reservation.delivery_location == 'otro' %>">
-          <label class="form-label"><%= t('admin.reservations.delivery_location_other_label') %></label>
-          <input type="text" name="delivery_location_other" value="<%= @reservation.delivery_location_other %>" class="form-control form-control-sm" placeholder="<%= t('admin.reservations.delivery_location_other_placeholder') %>">
-        </div>
-        <div class="col-md-2">
+        <%= form_tag update_delivery_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-2" do %>
+          <input type="text" name="delivery_date" value="<%= @reservation.delivery_date %>" class="form-control form-control-sm" data-controller="flatpickr" style="width: 160px;">
           <%= submit_tag t('admin.reservations.delivery_save'), class: "btn btn-sm btn-outline-primary" %>
-        </div>
+        <% end %>
       </div>
     <% end %>
 

@@ -25,7 +25,20 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    creator = ReservationCreator.new(current_user, message: params[:message])
+    unless Reservation::SHIPPING_METHODS.include?(params[:shipping_method])
+      @cart_items = current_user.cart_items.includes(:card)
+      @available_quantities = @cart_items.each_with_object({}) { |ci, h| h[ci.card_id] = ci.card.available_quantity }
+      flash.now[:alert] = t('controllers.reservations.shipping_required')
+      render "cart_items/index"
+      return
+    end
+
+    creator = ReservationCreator.new(
+      current_user,
+      message: params[:message],
+      shipping_method: params[:shipping_method],
+      pickup_location: params[:pickup_location]
+    )
 
     if creator.call
       redirect_to reservation_path(creator.reservation), notice: t('controllers.reservations.created')
@@ -149,9 +162,52 @@ class ReservationsController < ApplicationController
     redirect_to reservation_path(@reservation), notice: t('controllers.reservations.receipt_sent')
   end
 
+  def update_shipping_info
+    @reservation = current_user.reservations.find(params[:id])
+
+    unless @reservation.prepared?
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
+      return
+    end
+
+    user_ok = current_user.update(personal_info_params)
+    address = current_user.addresses.first || current_user.addresses.build
+    addr_ok = address.update(address_params)
+
+    if user_ok && addr_ok
+      redirect_to reservation_path(@reservation), notice: t('controllers.reservations.shipping_info_saved')
+    else
+      @reservation = current_user.reservations.includes(reservation_items: { card: :seller }).find(params[:id])
+      unless admin_or_seller?
+        @grouped_items = @reservation.reservation_items.group_by { |i| i.card.card_identity }.map do |_identity, items|
+          representative = items.first
+          ::OpenStruct.new(
+            card: representative.card,
+            quantity: items.sum(&:quantity),
+            unit_price: representative.unit_price,
+            id: representative.id
+          )
+        end
+      end
+      errors = current_user.errors.full_messages + address.errors.full_messages
+      flash.now[:alert] = errors.join(", ")
+      render :show, status: :unprocessable_entity
+    end
+  end
+
   def search_cards
     @reservation = current_user.reservations.find(params[:id])
     @cards = Card.search_by_name(params[:query]).limit(20)
     render partial: "search_results", locals: { cards: @cards, reservation: @reservation }
+  end
+
+  private
+
+  def personal_info_params
+    params.require(:user).permit(:name, :phone_number, :dni)
+  end
+
+  def address_params
+    params.require(:address).permit(:address, :address_number, :zipcode, :city, :province, :between_streets)
   end
 end

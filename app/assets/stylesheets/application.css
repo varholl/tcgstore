@@ -246,13 +246,26 @@ hr {
 }
 
 .btn-outline-primary {
-  color: var(--vg-accent-light) !important;
-  border-color: var(--vg-accent) !important;
+  color: var(--vg-accent-light);
+  border-color: var(--vg-accent);
 }
 
-.btn-outline-primary:hover {
-  background-color: var(--vg-accent) !important;
+.btn-outline-primary:hover,
+.btn-check:checked + .btn-outline-primary,
+.btn-outline-primary:active,
+.btn-outline-primary.active,
+.btn-check:active + .btn-outline-primary {
+  background-color: #1a3a5c !important;
   border-color: var(--vg-accent) !important;
+  color: #fff !important;
+}
+
+[data-theme="light"] .btn-check:checked + .btn-outline-primary,
+[data-theme="light"] .btn-outline-primary:active,
+[data-theme="light"] .btn-outline-primary.active,
+[data-theme="light"] .btn-check:active + .btn-outline-primary,
+[data-theme="light"] .btn-outline-primary:hover {
+  background-color: var(--vg-accent) !important;
   color: #fff !important;
 }
 
@@ -261,10 +274,14 @@ hr {
   border-color: var(--vg-border) !important;
 }
 
-.btn-outline-secondary:hover {
-  background-color: var(--vg-bg-surface) !important;
-  border-color: var(--vg-text-muted) !important;
-  color: var(--vg-text) !important;
+.btn-outline-secondary:hover,
+.btn-check:checked + .btn-outline-secondary,
+.btn-outline-secondary:active,
+.btn-outline-secondary.active,
+.btn-check:active + .btn-outline-secondary {
+  background-color: var(--vg-accent) !important;
+  border-color: var(--vg-accent) !important;
+  color: #fff !important;
 }
 
 .btn-outline-light {

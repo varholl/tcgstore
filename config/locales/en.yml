@@ -1,4 +1,13 @@
 en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            phone_number:
+              invalid_phone: "must be a valid phone number (digits only, 6 to 13 digits)"
+            dni:
+              invalid_dni: "must be a valid DNI (digits only, 8 to 11 digits)"
   number:
     currency:
       format:
@@ -157,6 +166,22 @@ en:
     empty_cart_message: "to add some!"
     preorder_notice: "This cart contains pre-order items."
     preorder_notice_detail: "Your order will not be shipped until all pre-order items are available (estimated %{date})."
+    shipping:
+      title: "Shipping Method"
+      store_pickup: "In-Person Pickup"
+      bike_delivery: "Bike/Car (CABA)"
+      andreani: "Andreani"
+      correo_argentino: "Correo Argentino"
+      pickup_location: "Pickup Location"
+      locations:
+        batikueva: "La Batikueva"
+        magic_palace: "Magic Palace"
+      pickup_hint_html: "Let's meet at one of these points! The stores <strong>do not handle the delivery</strong>, the pickup is in person with me."
+      view_website: "Website"
+      view_map: "Map"
+      bike_caba_note: "Delivery by bike or car is available only within CABA. We'll coordinate the details after your reservation is confirmed."
+      andreani_note: "We'll send your order via Andreani. Shipping details will be provided once your reservation is confirmed."
+      correo_note: "We'll send your order via Correo Argentino. Shipping details will be provided once your reservation is confirmed."
     empty_cart_button: "Empty Cart"
     empty_cart_confirm: "Are you sure you want to remove all items from your cart?"
 
@@ -215,6 +240,18 @@ en:
     cancel_confirm: "Are you sure you want to cancel this reservation?"
     remove_item: "Remove"
     remove_item_confirm: "Remove %{name} from this reservation?"
+    shipping_label: "Shipping:"
+    shipping:
+      methods:
+        store_pickup: "In-Person Pickup"
+        bike_delivery: "Bike/Car (CABA)"
+        andreani: "Andreani"
+        correo_argentino: "Correo Argentino"
+      icons:
+        store_pickup: "fas fa-handshake"
+        bike_delivery: "fas fa-motorcycle"
+        andreani: "fas fa-box"
+        correo_argentino: "fas fa-envelope"
     preorder_notice: "This reservation contains pre-order items."
     preorder_notice_detail: "Your order will not be shipped until all pre-order items are available (estimated %{date})."
     add_cards: "Add Cards"
@@ -222,6 +259,49 @@ en:
     add: "Add"
     available: "Available"
     no_cards_found: "No cards found."
+    shipping_info:
+      title: "Shipping Information"
+      personal_title: "Personal Information"
+      full_name: "Full Name"
+      address_title: "Delivery Address"
+      phone: "Phone Number"
+      phone_placeholder: "e.g. 1155551234"
+      dni: "DNI"
+      dni_placeholder: "e.g. 12345678"
+      address: "Address"
+      address_number: "Number"
+      zipcode: "Zipcode"
+      city: "City"
+      province: "Province"
+      between_streets: "Between Streets"
+      between_streets_placeholder: "e.g. between Av. Corrientes and Av. Córdoba"
+      select_province: "Select a province..."
+      provinces:
+        buenos_aires: "Buenos Aires"
+        caba: "CABA"
+        catamarca: "Catamarca"
+        chaco: "Chaco"
+        chubut: "Chubut"
+        cordoba: "Córdoba"
+        corrientes: "Corrientes"
+        entre_rios: "Entre Ríos"
+        formosa: "Formosa"
+        jujuy: "Jujuy"
+        la_pampa: "La Pampa"
+        la_rioja: "La Rioja"
+        mendoza: "Mendoza"
+        misiones: "Misiones"
+        neuquen: "Neuquén"
+        rio_negro: "Río Negro"
+        salta: "Salta"
+        san_juan: "San Juan"
+        san_luis: "San Luis"
+        santa_cruz: "Santa Cruz"
+        santa_fe: "Santa Fe"
+        santiago_del_estero: "Santiago del Estero"
+        tierra_del_fuego: "Tierra del Fuego"
+        tucuman: "Tucumán"
+      save: "Save Shipping Information"
     payment:
       title: "Payment"
       choose_method: "Choose your payment method"
@@ -354,6 +434,8 @@ en:
       name_label: "Name:"
       email_label: "Email:"
       phone_label: "Phone:"
+      dni_label: "DNI:"
+      address_title: "Address"
       na: "N/A"
       joined_label: "Joined:"
       reservations_title: "Reservations"
@@ -397,6 +479,10 @@ en:
       date_label: "Date:"
       message_label: "Message:"
       payment_method_label: "Payment Method:"
+      shipping_method_label: "Shipping Method:"
+      no_shipping_method: "— None —"
+      shipping_address_title: "Shipping Address"
+      no_shipping_address: "The user has not filled in their shipping address yet."
       payment_methods:
         cash: "Cash"
         transfer: "Bank Transfer"
@@ -629,6 +715,9 @@ en:
       invalid_payment_method: "Invalid payment method."
       receipt_sent: "Transfer receipt sent successfully. We'll verify it shortly."
       receipt_missing: "Please select a file to upload."
+      shipping_required: "Please select a shipping method."
+      shipping_info_saved: "Shipping information saved."
+      shipping_info_error: "Could not save shipping information."
     reservation_notes:
       created: "Note added."
       receipt_invalid_type: "Invalid file type. Please upload a JPEG, PNG, WebP, or PDF file."
@@ -657,6 +746,8 @@ en:
         created: "Reservation created successfully."
         import_created: "Reservation created: %{matched} matched, %{unmatched} unmatched."
         import_no_matches: "No cards could be matched from the list. Please check the format and try again."
+        shipping_method_updated: "Shipping method updated."
+        shipping_address_updated: "Shipping address updated."
         delivery_updated: "Delivery info updated."
         final_price_updated: "Final price updated."
         item_price_updated: "Item price updated."

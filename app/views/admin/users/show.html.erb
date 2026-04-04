@@ -10,7 +10,18 @@
     <p><strong><%= t('admin.users.name_label') %></strong> <%= @user.name %></p>
     <p><strong><%= t('admin.users.email_label') %></strong> <%= @user.email %></p>
     <p><strong><%= t('admin.users.phone_label') %></strong> <%= @user.phone_number || t('admin.users.na') %></p>
+    <p><strong><%= t('admin.users.dni_label') %></strong> <%= @user.dni || t('admin.users.na') %></p>
     <p><strong><%= t('admin.users.joined_label') %></strong> <%= @user.created_at.in_time_zone.strftime("%d/%m/%Y") %></p>
+    <% addr = @user.addresses.first %>
+    <% if addr&.address.present? %>
+      <hr>
+      <h6><%= t('admin.users.address_title') %></h6>
+      <p><%= [addr.address, addr.address_number].compact_blank.join(" ") %></p>
+      <p><%= [addr.city, addr.province.present? ? t("reservations.shipping_info.provinces.#{addr.province}", default: addr.province) : nil, addr.zipcode].compact_blank.join(", ") %></p>
+      <% if addr.between_streets.present? %>
+        <p><small class="text-muted"><%= t('reservations.shipping_info.between_streets') %>: <%= addr.between_streets %></small></p>
+      <% end %>
+    <% end %>
   </div>
 </div>
 

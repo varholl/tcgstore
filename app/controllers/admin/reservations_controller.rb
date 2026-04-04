@@ -252,6 +252,24 @@ class Admin::ReservationsController < ApplicationController
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.trade_toggled')
   end
 
+  def update_shipping_method
+    @reservation = Reservation.find(params[:id])
+    @reservation.update!(
+      shipping_method: params[:shipping_method].presence,
+      pickup_location: params[:shipping_method] == "store_pickup" ? params[:pickup_location].presence : nil
+    )
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.shipping_method_updated')
+  end
+
+  def update_shipping_address
+    @reservation = Reservation.find(params[:id])
+    user = @reservation.user
+    user.update(params.require(:user).permit(:name, :phone_number, :dni))
+    address = user.addresses.first || user.addresses.build
+    address.update(params.require(:address).permit(:address, :address_number, :zipcode, :city, :province, :between_streets))
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.shipping_address_updated')
+  end
+
   def update_delivery
     @reservation = Reservation.find(params[:id])
     attrs = {

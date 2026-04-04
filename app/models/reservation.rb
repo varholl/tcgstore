@@ -1,5 +1,7 @@
 class Reservation < ApplicationRecord
   DELIVERY_LOCATIONS = %w[batikueva magic_palace correo moto otro].freeze
+  SHIPPING_METHODS = %w[store_pickup bike_delivery andreani correo_argentino].freeze
+  PICKUP_LOCATIONS = %w[batikueva magic_palace].freeze
 
   belongs_to :user, optional: true
   has_many :reservation_items, dependent: :destroy

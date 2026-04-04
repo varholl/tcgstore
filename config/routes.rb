@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       delete :remove_item
       post :add_item
       get :search_cards
+      patch :update_shipping_info
     end
     resources :notes, only: [:create], controller: 'reservation_notes'
   end
@@ -48,6 +49,8 @@ Rails.application.routes.draw do
         patch :expire
         patch :update_final_price
         patch :update_delivery
+        patch :update_shipping_method
+        patch :update_shipping_address
         patch :force_decrement
         patch :toggle_trade
         patch :update_item_price

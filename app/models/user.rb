@@ -16,6 +16,11 @@ class User < ApplicationRecord
     super && provider.blank?
   end
 
+  validates :phone_number, format: { with: /\A\d{6,13}\z/, message: :invalid_phone }, allow_blank: true
+  validates :dni, format: { with: /\A\d{8,11}\z/, message: :invalid_dni }, allow_blank: true
+
+  has_many :addresses, dependent: :destroy
+
   has_one :seller
   has_many :cart_items, dependent: :destroy
   has_many :cards, through: :cart_items
