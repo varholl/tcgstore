@@ -160,6 +160,11 @@ class Admin::ReservationsController < ApplicationController
   def ship
     @reservation = Reservation.find(params[:id])
 
+    if @reservation.shipping_method.blank?
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.shipping_method_required')
+      return
+    end
+
     if @reservation.paid?
       @reservation.update!(
         status: :shipped,
@@ -185,7 +190,13 @@ class Admin::ReservationsController < ApplicationController
   def fulfill
     @reservation = Reservation.find(params[:id])
 
-    if @reservation.shipped?
+    if @reservation.shipping_method.blank?
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.shipping_method_required')
+      return
+    end
+
+    can_fulfill = @reservation.shipped? || (@reservation.paid? && @reservation.shipping_method == "store_pickup")
+    if can_fulfill
       ActiveRecord::Base.transaction do
         @reservation.update!(status: :fulfilled)
         @reservation.reservation_items.includes(:card).each do |item|
