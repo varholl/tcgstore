@@ -1,6 +1,9 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  # Allow ngrok tunnels in development
+  config.hosts << /.*\.ngrok-free\.app/
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }

@@ -117,6 +117,7 @@ en:
     new_arrivals:
       one: "1 new arrival this week"
       other: "%{count} new arrivals this week"
+    new_short: "new"
     out_of_stock: "Out of Stock"
     view_on_scryfall: "View on Scryfall"
     add_to_cart: "Add to Cart"

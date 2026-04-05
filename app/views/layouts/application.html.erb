@@ -17,7 +17,7 @@
   </head>
 
   <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg <%= current_theme == 'dark' ? 'navbar-dark' : 'navbar-light' %> mb-4">
+    <nav class="navbar navbar-expand-lg <%= current_theme == 'dark' ? 'navbar-dark' : 'navbar-light' %> mb-4 sticky-top">
       <div class="container align-items-center">
         <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
           <%= image_tag "logo.png", alt: t('nav.brand'), height: 80 %>
@@ -108,6 +108,7 @@
           </ul>
         </div>
       </div>
+      <%= yield :mobile_search %>
     </nav>
 
     <% if maintenance_mode? %>

@@ -117,6 +117,7 @@ es:
     new_arrivals:
       one: "1 novedad esta semana"
       other: "%{count} novedades esta semana"
+    new_short: "nuevas"
     out_of_stock: "Sin Stock"
     view_on_scryfall: "Ver en Scryfall"
     add_to_cart: "Agregar al Carrito"

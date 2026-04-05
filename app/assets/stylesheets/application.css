@@ -450,6 +450,47 @@ hr {
   filter: var(--vg-btn-close-filter);
 }
 
+/* --- Prevent iOS zoom on input focus --- */
+@media (max-width: 991.98px) {
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* --- Mobile header search (inside sticky navbar) --- */
+.mobile-header-search {
+  background: var(--vg-navbar-bg);
+  border-top: 1px solid var(--vg-border);
+  width: 100%;
+  flex-basis: 100%;
+}
+
+.mobile-header-search .form-control,
+.mobile-header-search .form-select {
+  font-size: 0.8rem;
+}
+
+/* Compact navbar on mobile */
+@media (max-width: 991.98px) {
+  .navbar.sticky-top {
+    margin-bottom: 0 !important;
+  }
+
+  .navbar.sticky-top + .container,
+  .navbar.sticky-top + .maintenance-banner + .container {
+    padding-top: 1rem;
+  }
+
+  .navbar .navbar-brand img {
+    height: 45px !important;
+  }
+}
+
 /* --- Navbar icon separator on mobile --- */
 .navbar-icons-separator {
   border-top: 1px solid rgba(74, 141, 183, 0.3);
