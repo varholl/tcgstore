@@ -242,6 +242,9 @@ es:
     remove_item: "Quitar"
     remove_item_confirm: "¿Quitar %{name} de esta reserva?"
     shipping_label: "Envío:"
+    choose_shipping_method: "Elegir Método de Envío"
+    change_shipping_method: "Cambiar"
+    no_shipping_method_notice: "Todavía no elegiste un método de envío. Por favor seleccioná uno."
     shipping:
       methods:
         store_pickup: "Retiro en Persona"
@@ -744,6 +747,7 @@ es:
       receipt_sent: "Comprobante de transferencia enviado. Lo verificaremos a la brevedad."
       receipt_missing: "Por favor seleccioná un archivo para subir."
       shipping_required: "Por favor seleccioná un método de envío."
+      shipping_method_updated: "Método de envío actualizado."
       shipping_info_saved: "Información de envío guardada."
       shipping_info_error: "No se pudo guardar la información de envío."
     reservation_notes:

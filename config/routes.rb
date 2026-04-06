@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       post :add_item
       get :search_cards
       patch :update_shipping_info
+      patch :update_shipping_method
     end
     resources :notes, only: [:create], controller: 'reservation_notes'
   end

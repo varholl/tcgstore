@@ -11,6 +11,7 @@
     <% if @reservation.message.present? %>
       <p><strong><%= t('reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>
+    <% can_change_shipping = @reservation.pending? || @reservation.prepared? || @reservation.paid? %>
     <% if @reservation.shipping_method.present? %>
       <p>
         <strong><%= t('reservations.shipping_label') %></strong>
@@ -18,7 +19,45 @@
         <% if @reservation.shipping_method == "store_pickup" && @reservation.pickup_location.present? %>
           — <%= t("cart_items.shipping.locations.#{@reservation.pickup_location}") %>
         <% end %>
+        <% if can_change_shipping %>
+          <a href="#shippingMethodForm" data-bs-toggle="collapse" class="btn btn-sm btn-outline-secondary ms-2">
+            <i class="fas fa-pen me-1"></i><%= t('reservations.change_shipping_method') %>
+          </a>
+        <% end %>
       </p>
+    <% elsif can_change_shipping %>
+      <div class="alert alert-warning mb-3">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <%= t('reservations.no_shipping_method_notice') %>
+      </div>
+    <% end %>
+
+    <% if can_change_shipping %>
+      <div class="<%= @reservation.shipping_method.present? ? 'collapse' : '' %>" id="shippingMethodForm">
+        <%= form_tag update_shipping_method_reservation_path(@reservation), method: :patch do %>
+          <div class="row g-2 align-items-end">
+            <div class="col-auto">
+              <label class="form-label mb-1"><%= t('reservations.choose_shipping_method') %></label>
+              <select name="shipping_method" class="form-select form-select-sm" id="user_shipping_method_select" onchange="document.getElementById('user_pickup_location_group').style.display = this.value === 'store_pickup' ? '' : 'none'">
+                <% Reservation::SHIPPING_METHODS.each do |method| %>
+                  <option value="<%= method %>" <%= 'selected' if @reservation.shipping_method == method %>><%= t("reservations.shipping.methods.#{method}") %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col-auto" id="user_pickup_location_group" style="<%= @reservation.shipping_method != 'store_pickup' ? 'display: none;' : '' %>">
+              <label class="form-label mb-1"><%= t('cart_items.shipping.pickup_location') %></label>
+              <select name="pickup_location" class="form-select form-select-sm">
+                <% Reservation::PICKUP_LOCATIONS.each do |loc| %>
+                  <option value="<%= loc %>" <%= 'selected' if @reservation.pickup_location == loc %>><%= t("cart_items.shipping.locations.#{loc}") %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-check me-1"></i><%= t('reservations.shipping_info.save') %></button>
+            </div>
+          </div>
+        <% end %>
+      </div>
     <% end %>
   </div>
 </div>
@@ -216,7 +255,7 @@
       <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i><%= t('reservations.shipping_info.title') %></h5>
     </div>
     <div class="card-body">
-      <% if @reservation.prepared? %>
+      <% if @reservation.pending? || @reservation.prepared? || @reservation.paid? %>
         <%= form_tag update_shipping_info_reservation_path(@reservation), method: :patch do %>
           <% user_errors = current_user.errors %>
           <% addr_errors = addr.errors %>

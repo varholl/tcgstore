@@ -162,10 +162,35 @@ class ReservationsController < ApplicationController
     redirect_to reservation_path(@reservation), notice: t('controllers.reservations.receipt_sent')
   end
 
+  def update_shipping_method
+    @reservation = current_user.reservations.find(params[:id])
+
+    unless @reservation.pending? || @reservation.prepared? || @reservation.paid?
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
+      return
+    end
+
+    shipping_method = params[:shipping_method]
+    unless Reservation::SHIPPING_METHODS.include?(shipping_method)
+      redirect_to reservation_path(@reservation), alert: t('controllers.reservations.shipping_required')
+      return
+    end
+
+    attrs = { shipping_method: shipping_method }
+    if shipping_method == "store_pickup"
+      attrs[:pickup_location] = params[:pickup_location] if Reservation::PICKUP_LOCATIONS.include?(params[:pickup_location])
+    else
+      attrs[:pickup_location] = nil
+    end
+
+    @reservation.update!(attrs)
+    redirect_to reservation_path(@reservation), notice: t('controllers.reservations.shipping_method_updated')
+  end
+
   def update_shipping_info
     @reservation = current_user.reservations.find(params[:id])
 
-    unless @reservation.prepared?
+    unless @reservation.pending? || @reservation.prepared? || @reservation.paid?
       redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
       return
     end

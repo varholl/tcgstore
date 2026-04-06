@@ -242,6 +242,9 @@ en:
     remove_item: "Remove"
     remove_item_confirm: "Remove %{name} from this reservation?"
     shipping_label: "Shipping:"
+    choose_shipping_method: "Choose Shipping Method"
+    change_shipping_method: "Change"
+    no_shipping_method_notice: "You haven't selected a shipping method yet. Please choose one."
     shipping:
       methods:
         store_pickup: "In-Person Pickup"
@@ -719,6 +722,7 @@ en:
       receipt_sent: "Transfer receipt sent successfully. We'll verify it shortly."
       receipt_missing: "Please select a file to upload."
       shipping_required: "Please select a shipping method."
+      shipping_method_updated: "Shipping method updated."
       shipping_info_saved: "Shipping information saved."
       shipping_info_error: "Could not save shipping information."
     reservation_notes:
