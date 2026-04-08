@@ -8,6 +8,8 @@ es:
               invalid_phone: "debe ser un número de teléfono válido (solo dígitos, entre 6 y 13 dígitos)"
             dni:
               invalid_dni: "debe ser un DNI válido (solo dígitos, entre 8 y 11 dígitos)"
+            password_confirmation:
+              confirmation: "no coincide con la contraseña"
   number:
     currency:
       format:

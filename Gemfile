@@ -43,3 +43,4 @@ gem "solid_queue"
 gem "mission_control-jobs"
 
 gem "rack-attack"
+gem "rails-i18n", "~> 8.0"
