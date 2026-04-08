@@ -41,3 +41,5 @@ gem "dockerfile-rails", ">= 1.7", :group => :development
 
 gem "solid_queue"
 gem "mission_control-jobs"
+
+gem "rack-attack"

@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
 
+  namespace :api, defaults: { format: :json } do
+    resources :cards, only: [:index]
+  end
+
   resources :cards, only: [:index] do
     collection do
       post :dismiss_how_it_works

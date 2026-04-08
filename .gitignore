@@ -40,3 +40,5 @@ yarn-debug.log*
 .yarn-integrity
 .idea/tcgstore.iml.idea/
 .idea
+
+/config/credentials/production.key
