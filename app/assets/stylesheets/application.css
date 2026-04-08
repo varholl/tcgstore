@@ -959,3 +959,44 @@ span.flatpickr-weekday {
   background: #4f46e5 !important;
   color: #fff !important;
 }
+
+/* --- Mobile floating cart button --- */
+.mobile-cart-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1080;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  font-size: 1.25rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.mobile-cart-fab:hover,
+.mobile-cart-fab:focus {
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+.mobile-cart-fab #mobile_cart_badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+.mobile-cart-fab #mobile_cart_badge .badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.55em;
+  border: 2px solid #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-cart-fab { transition: none; }
+  .mobile-cart-fab:hover,
+  .mobile-cart-fab:focus { transform: none; }
+}

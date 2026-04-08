@@ -33,7 +33,11 @@ class CartItemsController < ApplicationController
     if @cart_item.save
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("cart_badge", cart_badge_html)
+          html = render_to_string(partial: "cart_items/badge", formats: [:html])
+          render turbo_stream: [
+            turbo_stream.update("cart_badge", html),
+            turbo_stream.update("mobile_cart_badge", html)
+          ]
         end
         format.html { redirect_back fallback_location: cards_path, notice: t('controllers.cart_items.added', name: @card.name) }
       end
@@ -88,10 +92,4 @@ class CartItemsController < ApplicationController
     redirect_to cart_items_path, notice: t('controllers.cart_items.cleared')
   end
 
-  private
-
-  def cart_badge_html
-    count = current_user.cart_items.sum(:quantity)
-    count > 0 ? "<span class=\"badge bg-primary rounded-pill\">#{count}</span>" : ""
-  end
 end
