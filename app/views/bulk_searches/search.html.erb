@@ -1,10 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1><%= t('wishlists.results_title') %></h1>
-  <%= link_to t('wishlists.back'), wishlists_path, class: "btn btn-outline-secondary" %>
+  <h1><%= t('bulk_searches.results_title') %></h1>
+  <%= link_to t('bulk_searches.back'), bulk_searches_path, class: "btn btn-outline-secondary" %>
 </div>
 
 <div class="alert alert-info mb-4">
-  <%= t('wishlists.summary', found: @found_count, not_found: @not_found_count, total: @results.size) %>
+  <%= t('bulk_searches.summary', found: @found_count, not_found: @not_found_count, total: @results.size) %>
 </div>
 
 <% found_results = @results.select { |r| r[:cards].any? } %>
@@ -13,7 +13,7 @@
 <%# --- Found cards section --- %>
 <% if found_results.any? %>
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3><%= t('wishlists.found_title') %> (<%= found_results.size %>)</h3>
+    <h3><%= t('bulk_searches.found_title') %> (<%= found_results.size %>)</h3>
     <% if user_signed_in? && !maintenance_mode? %>
       <% all_card_ids = found_results.flat_map { |r| r[:cards].map(&:id) } %>
       <%= form_tag bulk_add_cart_items_path, method: :post do %>
@@ -21,7 +21,7 @@
           <input type="hidden" name="card_ids[]" value="<%= id %>">
         <% end %>
         <button type="submit" class="btn btn-success">
-          <i class="fa-solid fa-cart-plus me-1"></i><%= t('wishlists.add_all') %>
+          <i class="fa-solid fa-cart-plus me-1"></i><%= t('bulk_searches.add_all') %>
         </button>
       <% end %>
     <% end %>
@@ -33,7 +33,7 @@
         <h5 class="mb-0">
           <%= result[:name] %>
           <small class="text-muted ms-2">x<%= result[:qty] %></small>
-          <span class="badge bg-success ms-2"><%= t('wishlists.available') %></span>
+          <span class="badge bg-success ms-2"><%= t('bulk_searches.available') %></span>
         </h5>
       </div>
       <div class="card-body">
@@ -90,7 +90,7 @@
 
 <%# --- Not found cards section --- %>
 <% if not_found_results.any? %>
-  <h3 class="mt-4 mb-3"><%= t('wishlists.not_found_title') %> (<%= not_found_results.size %>)</h3>
+  <h3 class="mt-4 mb-3"><%= t('bulk_searches.not_found_title') %> (<%= not_found_results.size %>)</h3>
 
   <div class="card">
     <ul class="list-group list-group-flush">

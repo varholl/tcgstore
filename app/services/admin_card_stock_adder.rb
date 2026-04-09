@@ -44,6 +44,9 @@ class AdminCardStockAdder
 
       if @card.save
         @card.stock_entries.create!(quantity: qty, added_at: Time.current)
+        # Try to fetch a Card Kingdom price (falls back to Scryfall) instead of
+        # whatever the form prefilled (TCGplayer-derived).
+        SingleCardPriceService.new(@card).call
         @result = :added
       else
         @result = false

@@ -12,6 +12,7 @@ class CardsController < ApplicationController
   }.freeze
 
   def index
+    params[:search] = params[:q] if params[:search].blank? && params[:q].present?
     all_cards = Card.joins(:seller).merge(Seller.active).where("cards.quantity > 0")
     all_cards = all_cards.search_by_name(params[:search]) if params[:search].present?
     all_cards = all_cards.filter_by_edition(params[:edition]) if params[:edition].present?
@@ -88,6 +89,45 @@ class CardsController < ApplicationController
                          else
                            cookies[:dismissed_how_it_works].blank?
                          end
+  end
+
+  def show
+    card_id = params[:id].presence
+    @card = Card.where(id: card_id).first if card_id.present?
+
+    if @card.nil?
+      render :not_found, status: :not_found
+      return
+    end
+
+    @card_available = @card.available_quantity
+
+    # All other listings with the same name (any printing/finish/condition) except the current card
+    listings = Card.where(name: @card.name)
+      .where.not(id: @card.id)
+      .joins(:seller).merge(Seller.active)
+      .where("cards.quantity > 0")
+      .to_a
+
+    reserved_by_card = ReservationItem
+      .joins(:reservation)
+      .where(reservations: { status: %w[pending prepared paid shipped] }, card_id: listings.map(&:id))
+      .group(:card_id)
+      .sum(:quantity)
+
+    @available_quantities = {}
+    @listings = []
+    listings.group_by(&:card_identity).each do |_identity, group|
+      total_qty = group.sum(&:quantity)
+      total_reserved = group.sum { |c| reserved_by_card[c.id] || 0 }
+      available = total_qty - total_reserved
+      next if available <= 0
+
+      representative = group.min_by { |c| c.price || Float::INFINITY }
+      @available_quantities[representative.id] = available
+      @listings << representative
+    end
+    @listings.sort_by! { |c| c.price || Float::INFINITY }
   end
 
   def dismiss_how_it_works

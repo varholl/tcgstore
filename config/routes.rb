@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       post :dismiss_how_it_works
     end
   end
+  get '/card', to: 'cards#show', as: :card_lookup
+  get '/card/:id', to: 'cards#show', as: :card
   resources :cart_items, only: [:index, :create, :update, :destroy] do
     collection do
       delete :destroy_all
@@ -92,7 +94,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :wishlists, only: [:index] do
+  resources :bulk_searches, only: [:index] do
     collection do
       get :search
     end

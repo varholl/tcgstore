@@ -1,5 +1,5 @@
-class WishlistMatcherService
-  WishlistEntry = Struct.new(:name, :qty, keyword_init: true)
+class BulkSearchMatcherService
+  BulkSearchEntry = Struct.new(:name, :qty, keyword_init: true)
 
   def self.parse(text)
     entries = []
@@ -27,12 +27,12 @@ class WishlistMatcherService
 
       next if name.length < 2
 
-      entries << WishlistEntry.new(name: name, qty: qty)
+      entries << BulkSearchEntry.new(name: name, qty: qty)
     end
 
     # Deduplicate by name, summing quantities
     entries.group_by { |e| e.name.downcase }.map do |_key, group|
-      WishlistEntry.new(name: group.first.name, qty: group.sum(&:qty))
+      BulkSearchEntry.new(name: group.first.name, qty: group.sum(&:qty))
     end
   end
 
