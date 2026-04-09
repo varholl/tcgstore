@@ -33,11 +33,15 @@ class ReservationsController < ApplicationController
       return
     end
 
+    attr = current_attribution || {}
     creator = ReservationCreator.new(
       current_user,
       message: params[:message],
       shipping_method: params[:shipping_method],
-      pickup_location: params[:pickup_location]
+      pickup_location: params[:pickup_location],
+      source: attr[:source],
+      campaign: attr[:campaign],
+      referrer: attr[:referrer]
     )
 
     if creator.call

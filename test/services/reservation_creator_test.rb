@@ -10,6 +10,23 @@ class ReservationCreatorTest < ActiveSupport::TestCase
     assert_not creator.call
   end
 
+  test "stores attribution fields on the reservation" do
+    @user.cart_items.create!(card: cards(:counterspell), quantity: 1)
+
+    creator = ReservationCreator.new(
+      @user,
+      source: "moxfield",
+      campaign: "spring_promo",
+      referrer: "https://moxfield.com/decks/abc"
+    )
+    assert creator.call
+
+    reservation = creator.reservation
+    assert_equal "moxfield", reservation.source
+    assert_equal "spring_promo", reservation.campaign
+    assert_equal "https://moxfield.com/decks/abc", reservation.referrer
+  end
+
   test "creates reservation from cart items" do
     @user.cart_items.create!(card: cards(:counterspell), quantity: 1)
 

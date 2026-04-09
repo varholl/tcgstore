@@ -1,11 +1,14 @@
 class ReservationCreator
   attr_reader :user, :message, :reservation, :unavailable_items
 
-  def initialize(user, message: nil, shipping_method: nil, pickup_location: nil)
+  def initialize(user, message: nil, shipping_method: nil, pickup_location: nil, source: nil, campaign: nil, referrer: nil)
     @user = user
     @message = message
     @shipping_method = shipping_method
     @pickup_location = pickup_location
+    @source = source
+    @campaign = campaign
+    @referrer = referrer
     @unavailable_items = []
   end
 
@@ -40,7 +43,10 @@ class ReservationCreator
         status: :pending,
         message: message,
         shipping_method: @shipping_method,
-        pickup_location: @pickup_location
+        pickup_location: @pickup_location,
+        source: @source,
+        campaign: @campaign,
+        referrer: @referrer
       )
 
       cart_items.each do |cart_item|

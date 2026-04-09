@@ -1,10 +1,15 @@
 class ApplicationController < ActionController::Base
+  ATTRIBUTION_COOKIE = :attribution
+  ATTRIBUTION_TTL = 30.days
+
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale
   before_action :set_theme
   before_action :set_blue_rate
   before_action :set_maintenance_mode
-  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?, :admin_or_seller?
+  before_action :capture_attribution
+  before_action :backfill_user_attribution
+  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?, :admin_or_seller?, :current_attribution
 
   def set_language
     locale = params[:locale].to_s
@@ -78,6 +83,65 @@ class ApplicationController < ActionController::Base
     return if user_signed_in? && current_user.admin?
 
     redirect_back fallback_location: root_path, alert: @maintenance_message.presence || t('maintenance.default_message')
+  end
+
+  # First-touch attribution: stored in a 30-day cookie. Once set, only
+  # overwritten if the user arrives with new utm params.
+  def capture_attribution
+    incoming_source = params[:utm_source].presence
+    incoming_campaign = params[:utm_campaign].presence
+    incoming_referrer = external_referrer
+
+    return if incoming_source.blank? && incoming_referrer.blank?
+
+    existing = current_attribution
+    # Don't overwrite an existing first-touch unless the user explicitly
+    # arrives with a new utm_source.
+    return if existing.present? && incoming_source.blank?
+
+    cookies[ATTRIBUTION_COOKIE] = {
+      value: {
+        source: incoming_source,
+        campaign: incoming_campaign,
+        referrer: incoming_referrer,
+        captured_at: Time.current.iso8601
+      }.compact.to_json,
+      expires: ATTRIBUTION_TTL.from_now
+    }
+  end
+
+  def current_attribution
+    raw = cookies[ATTRIBUTION_COOKIE]
+    return nil if raw.blank?
+
+    JSON.parse(raw).symbolize_keys
+  rescue JSON::ParserError
+    nil
+  end
+
+  def external_referrer
+    ref = request.referer
+    return nil if ref.blank?
+
+    ref_host = URI.parse(ref).host rescue nil
+    return nil if ref_host.blank? || ref_host == request.host
+
+    ref
+  end
+
+  def backfill_user_attribution
+    return unless user_signed_in?
+    return if current_user.acquisition_source.present? || current_user.acquisition_referrer.present?
+
+    attr = current_attribution
+    return if attr.blank?
+
+    current_user.update_columns(
+      acquisition_source: attr[:source],
+      acquisition_campaign: attr[:campaign],
+      acquisition_referrer: attr[:referrer],
+      acquired_at: Time.current
+    )
   end
 
   def configure_permitted_parameters

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_03_193615) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_09_000001) do
   create_table "addresses", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "address"
@@ -50,6 +50,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_03_193615) do
     t.string "card_subtype"
     t.string "rarity"
     t.date "release_date"
+    t.boolean "showcase", default: false, null: false
     t.index ["edition"], name: "index_cards_on_edition"
     t.index ["name"], name: "index_cards_on_name"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"
@@ -117,6 +118,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_03_193615) do
     t.string "tracking_url"
     t.string "shipping_method"
     t.string "pickup_location"
+    t.string "source"
+    t.string "campaign"
+    t.string "referrer"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end
@@ -176,6 +180,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_03_193615) do
     t.string "city"
     t.string "province"
     t.string "between_streets"
+    t.string "acquisition_source"
+    t.string "acquisition_campaign"
+    t.string "acquisition_referrer"
+    t.datetime "acquired_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
