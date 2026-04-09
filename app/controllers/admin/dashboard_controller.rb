@@ -32,6 +32,23 @@ class Admin::DashboardController < ApplicationController
     active_trades = trade.where(status: %w[pending prepared paid shipped fulfilled])
     @trade_total = active_trades.sum { |r| r.total_price }
     @trade_count = active_trades.count
+
+    # Attribution (last 30 days)
+    since = 30.days.ago
+    @attribution_users_by_source = User
+      .where("acquired_at >= ?", since)
+      .where.not(acquisition_source: [nil, ""])
+      .group(:acquisition_source)
+      .order(Arel.sql("COUNT(*) DESC"))
+      .count
+    @attribution_reservations_by_source = Reservation
+      .where("created_at >= ?", since)
+      .where.not(source: [nil, ""])
+      .group(:source)
+      .order(Arel.sql("COUNT(*) DESC"))
+      .count
+    @attribution_total_users = @attribution_users_by_source.values.sum
+    @attribution_total_reservations = @attribution_reservations_by_source.values.sum
   end
 
   private

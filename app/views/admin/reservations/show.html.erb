@@ -36,6 +36,22 @@
     <% if @reservation.message.present? %>
       <p><strong><%= t('admin.reservations.message_label') %></strong> <%= @reservation.message %></p>
     <% end %>
+    <% user_source = @reservation.user&.acquisition_source %>
+    <% user_campaign = @reservation.user&.acquisition_campaign %>
+    <% if @reservation.source.present? || @reservation.campaign.present? || @reservation.referrer.present? || user_source.present? %>
+      <div class="alert alert-light border py-2 px-3 mb-3" style="background-color: var(--vg-bg-surface); border-color: var(--vg-border) !important;">
+        <div class="small text-muted mb-1"><i class="fas fa-route me-1"></i><%= t('admin.reservations.attribution.title') %></div>
+        <% if @reservation.source.present? %>
+          <div><strong><%= t('admin.reservations.attribution.this_order') %>:</strong> <%= @reservation.source %><% if @reservation.campaign.present? %> · <span class="text-muted"><%= @reservation.campaign %></span><% end %></div>
+        <% end %>
+        <% if @reservation.referrer.present? %>
+          <div class="text-truncate" style="max-width: 100%;"><strong><%= t('admin.reservations.attribution.referrer') %>:</strong> <a href="<%= @reservation.referrer %>" target="_blank" rel="noopener"><%= @reservation.referrer %></a></div>
+        <% end %>
+        <% if user_source.present? %>
+          <div><strong><%= t('admin.reservations.attribution.first_touch') %>:</strong> <%= user_source %><% if user_campaign.present? %> · <span class="text-muted"><%= user_campaign %></span><% end %></div>
+        <% end %>
+      </div>
+    <% end %>
     <% if @reservation.payment_method.present? %>
       <p><strong><%= t('admin.reservations.payment_method_label') %></strong> <%= t("admin.reservations.payment_methods.#{@reservation.payment_method}") %></p>
     <% end %>

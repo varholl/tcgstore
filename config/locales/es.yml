@@ -376,6 +376,15 @@ es:
       pending: "Pendiente de cobro"
       trades: "Trades"
       reservations_count: "reservas"
+      attribution:
+        users_title: "Usuarios captados por origen"
+        reservations_title: "Reservas por origen"
+        last_30_days: "Últimos 30 días"
+        source: "Origen"
+        users: "Usuarios"
+        reservations: "Reservas"
+        share: "Participación"
+        no_data: "Aún no hay datos de origen."
     stock_reconciliations:
       title: "Reconciliación de Stock"
       seller_label: "Vendedor"
@@ -485,6 +494,11 @@ es:
       form_phone: "Número de Teléfono"
       submit: "Actualizar Usuario"
     reservations:
+      attribution:
+        title: "Origen del tráfico"
+        this_order: "Esta orden"
+        referrer: "Referido"
+        first_touch: "Primer contacto"
       title: "Admin - Reservas"
       all: "Todas"
       date: "Fecha"

@@ -62,4 +62,67 @@
     </div>
   </div>
 </div>
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><i class="fas fa-user-plus me-2"></i><%= t('admin.dashboard.attribution.users_title') %></h5>
+        <p class="text-muted small mb-2"><%= t('admin.dashboard.attribution.last_30_days') %></p>
+        <% if @attribution_users_by_source.any? %>
+          <table class="table table-sm mb-0">
+            <thead>
+              <tr>
+                <th><%= t('admin.dashboard.attribution.source') %></th>
+                <th class="text-end"><%= t('admin.dashboard.attribution.users') %></th>
+                <th class="text-end"><%= t('admin.dashboard.attribution.share') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @attribution_users_by_source.each do |source, count| %>
+                <tr>
+                  <td><%= source %></td>
+                  <td class="text-end"><%= count %></td>
+                  <td class="text-end text-muted"><%= number_to_percentage((count.to_f / @attribution_total_users) * 100, precision: 0) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="text-muted mb-0"><%= t('admin.dashboard.attribution.no_data') %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><i class="fas fa-cash-register me-2"></i><%= t('admin.dashboard.attribution.reservations_title') %></h5>
+        <p class="text-muted small mb-2"><%= t('admin.dashboard.attribution.last_30_days') %></p>
+        <% if @attribution_reservations_by_source.any? %>
+          <table class="table table-sm mb-0">
+            <thead>
+              <tr>
+                <th><%= t('admin.dashboard.attribution.source') %></th>
+                <th class="text-end"><%= t('admin.dashboard.attribution.reservations') %></th>
+                <th class="text-end"><%= t('admin.dashboard.attribution.share') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @attribution_reservations_by_source.each do |source, count| %>
+                <tr>
+                  <td><%= source %></td>
+                  <td class="text-end"><%= count %></td>
+                  <td class="text-end text-muted"><%= number_to_percentage((count.to_f / @attribution_total_reservations) * 100, precision: 0) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="text-muted mb-0"><%= t('admin.dashboard.attribution.no_data') %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
 <% end %>

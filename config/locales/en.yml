@@ -367,6 +367,16 @@ en:
       cards: "Cards"
       stock: "Stock"
       settings: "Settings"
+    dashboard:
+      attribution:
+        users_title: "Users acquired by source"
+        reservations_title: "Reservations by source"
+        last_30_days: "Last 30 days"
+        source: "Source"
+        users: "Users"
+        reservations: "Reservations"
+        share: "Share"
+        no_data: "No attribution data yet."
     stock_reconciliations:
       title: "Stock Reconciliation"
       seller_label: "Seller"
@@ -476,6 +486,11 @@ en:
       form_phone: "Phone Number"
       submit: "Update User"
     reservations:
+      attribution:
+        title: "Traffic origin"
+        this_order: "This order"
+        referrer: "Referrer"
+        first_touch: "First touch"
       title: "Admin - Reservations"
       all: "All"
       date: "Date"
