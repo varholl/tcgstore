@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
   get '/card', to: 'cards#show', as: :card_lookup
   get '/card/:id', to: 'cards#show', as: :card
+  get '/search', to: redirect { |_p, req| "/cards?#{req.query_string}" }
   resources :cart_items, only: [:index, :create, :update, :destroy] do
     collection do
       delete :destroy_all
