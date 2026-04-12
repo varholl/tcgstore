@@ -33,6 +33,15 @@
     <% end %>
   </li>
   <li class="nav-item">
+    <% price_changed_count = Reservation.with_price_changes.count %>
+    <%= link_to admin_reservations_path(status: "price_changed", card_name: params[:card_name].presence), class: "nav-link #{active_status == 'price_changed' ? 'active' : ''}" do %>
+      <%= t('admin.reservations.price_changed') %>
+      <% if price_changed_count > 0 %>
+        <span class="badge bg-danger"><%= price_changed_count %></span>
+      <% end %>
+    <% end %>
+  </li>
+  <li class="nav-item">
     <%= link_to t('admin.reservations.all'), admin_reservations_path(status: "all", card_name: params[:card_name].presence), class: "nav-link #{active_status == 'all' ? 'active' : ''}" %>
   </li>
 </ul>

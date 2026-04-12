@@ -619,6 +619,7 @@ es:
       remove_item_confirm: "¿Quitar %{name} de esta reserva?"
       add_cards: "Agregar Cartas"
       pending_receipt: "Comprobante Pendiente"
+      price_changed: "Precios Cambiados"
       receipt_label: "Comprobante:"
       receipt_sent_at: "Comprobante enviado %{time}"
       delivery_title: "Entrega"

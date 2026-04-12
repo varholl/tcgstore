@@ -8,6 +8,8 @@ class Admin::ReservationsController < ApplicationController
       # show all
     elsif params[:status] == "pending_receipt"
       @reservations = @reservations.where(status: :prepared).where.not(receipt_sent_at: nil)
+    elsif params[:status] == "price_changed"
+      @reservations = @reservations.with_price_changes
     elsif params[:status].present? && Reservation.statuses.key?(params[:status])
       @reservations = @reservations.where(status: params[:status])
     else

@@ -10,6 +10,16 @@ class Reservation < ApplicationRecord
 
   enum :status, { pending: "pending", prepared: "prepared", paid: "paid", shipped: "shipped", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
 
+  scope :with_price_changes, -> {
+    where(status: [:pending, :prepared])
+      .where(
+        id: ReservationItem.joins(:card)
+          .where.not(unit_price: nil)
+          .where("reservation_items.unit_price != cards.price")
+          .select(:reservation_id)
+      )
+  }
+
   def total_price
     final_price.presence || reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }
   end
