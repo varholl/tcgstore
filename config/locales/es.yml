@@ -620,6 +620,8 @@ es:
       add_cards: "Agregar Cartas"
       pending_receipt: "Comprobante Pendiente"
       price_changed: "Precios Cambiados"
+      price_changed_badge: "Precio Cambió"
+      price_changed_hint: "El precio actual de esta carta es diferente al precio reservado"
       receipt_label: "Comprobante:"
       receipt_sent_at: "Comprobante enviado %{time}"
       delivery_title: "Entrega"

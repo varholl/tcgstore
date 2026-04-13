@@ -594,6 +594,8 @@ en:
       add_cards: "Add Cards"
       pending_receipt: "Pending Receipt"
       price_changed: "Price Changed"
+      price_changed_badge: "Price Changed"
+      price_changed_hint: "The current price of this card differs from the reserved price"
       receipt_label: "Receipt:"
       receipt_sent_at: "Receipt sent %{time}"
       delivery_title: "Delivery"
