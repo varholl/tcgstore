@@ -1,0 +1,116 @@
+<div class="mb-3">
+  <%= link_to cards_path, class: "btn btn-outline-secondary btn-sm" do %>
+    <i class="fas fa-arrow-left me-1"></i><%= t('cards.show.back_to_cards') %>
+  <% end %>
+</div>
+
+<%
+  title_block = capture do %>
+    <h1 class="mb-1">
+      <%= @card.name %>
+      <% if @card.foil.present? %>
+        <span class="badge ms-2" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= @card.foil_display %></span>
+      <% end %>
+    </h1>
+    <p class="text-muted mb-3">
+      <%= @card.edition_name || @card.edition.to_s.upcase %> · #<%= @card.collector_number %>
+      <% if @card.rarity.present? %> · <span class="text-capitalize"><%= @card.rarity %></span><% end %>
+    </p>
+  <% end %>
+
+<%
+  info_block = capture do %>
+    <dl class="row mb-3">
+      <% if @card.mana_cost.present? %>
+        <dt class="col-5 col-md-4 col-lg-3"><%= t('cards.show.mana_cost') %></dt>
+        <dd class="col-7 col-md-8 col-lg-9 mb-1"><code><%= @card.mana_cost %></code><% if @card.cmc.present? %> <small class="text-muted">(CMC <%= @card.cmc.to_i == @card.cmc ? @card.cmc.to_i : @card.cmc %>)</small><% end %></dd>
+      <% end %>
+      <% if @card.card_type.present? %>
+        <dt class="col-5 col-md-4 col-lg-3"><%= t('cards.show.type') %></dt>
+        <dd class="col-7 col-md-8 col-lg-9 mb-1"><%= @card.card_type %><% if @card.card_subtype.present? %> — <%= @card.card_subtype %><% end %></dd>
+      <% end %>
+      <% if @card.colors.present? %>
+        <dt class="col-5 col-md-4 col-lg-3"><%= t('cards.show.colors') %></dt>
+        <dd class="col-7 col-md-8 col-lg-9 mb-1"><%= @card.colors %></dd>
+      <% end %>
+      <% if @card.release_date.present? %>
+        <dt class="col-5 col-md-4 col-lg-3"><%= t('cards.show.release_date') %></dt>
+        <dd class="col-7 col-md-8 col-lg-9 mb-1">
+          <%= @card.release_date.strftime("%d/%m/%Y") %>
+          <% if @card.preorder? %><span class="preorder-badge-inline ms-1"><%= t('cards.preorder_badge') %></span><% end %>
+        </dd>
+      <% end %>
+    </dl>
+  <% end %>
+
+<%
+  actions_block = capture do %>
+    <div class="d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-2 mb-3">
+      <% if @card_available > 0 %>
+        <div class="text-center text-md-start">
+          <strong class="text-price fs-4"><%= @card.price ? number_to_currency(@card.price) : "—" %></strong>
+          <div class="text-muted small"><%= t('cards.show.available_quantity') %>: <%= @card_available %></div>
+        </div>
+        <% if maintenance_mode? %>
+          <button class="btn btn-secondary" disabled title="<%= t('cards.add_to_cart') %>"><i class="fas fa-tools"></i><span class="d-none d-md-inline ms-1"><%= t('cards.add_to_cart') %></span></button>
+        <% elsif user_signed_in? %>
+          <%= button_to cart_items_path(card_id: @card.id), method: :post, class: "btn btn-primary d-inline-flex align-items-center justify-content-center gap-2", title: t('cards.add_to_cart') do %>
+            <i class="fa-solid fa-cart-plus"></i><span class="d-none d-md-inline"><%= t('cards.add_to_cart') %></span>
+          <% end %>
+        <% else %>
+          <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      <% else %>
+        <button class="btn btn-secondary" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i><span class="d-none d-md-inline ms-1"><%= t('cards.out_of_stock') %></span></button>
+      <% end %>
+
+      <% if @card.scryfall_id.present? %>
+        <%= link_to "https://scryfall.com/card/#{@card.edition}/#{@card.collector_number}", target: "_blank", rel: "noopener", title: t('cards.view_on_scryfall'), class: "btn btn-scryfall d-inline-flex align-items-center gap-2" do %>
+          <%= scryfall_icon %><span class="d-none d-md-inline"><%= t('cards.view_on_scryfall') %></span>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+<%# Mobile layout: everything centered, stacked %>
+<div class="d-md-none text-center">
+  <%= title_block %>
+  <div class="mb-3">
+    <img src="https://api.scryfall.com/cards/<%= @card.edition %>/<%= @card.collector_number %>?format=image&version=normal"
+         class="img-fluid rounded shadow"
+         alt="<%= @card.name %>"
+         style="max-height: 320px; width: auto;"
+         onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= @card.edition %>/<%= @card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display='none'};">
+  </div>
+  <%= actions_block %>
+</div>
+
+<%# Desktop layout: image left, info right %>
+<div class="d-none d-md-flex flex-row gap-4">
+  <div class="flex-shrink-0">
+    <img src="https://api.scryfall.com/cards/<%= @card.edition %>/<%= @card.collector_number %>?format=image&version=normal"
+         class="img-fluid rounded shadow"
+         alt="<%= @card.name %>"
+         style="max-height: 420px; width: auto;"
+         onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= @card.edition %>/<%= @card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display='none'};">
+  </div>
+  <div class="flex-grow-1">
+    <%= title_block %>
+    <%= info_block %>
+    <%= actions_block %>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<% if @listings.any? %>
+  <h3 class="mb-3"><%= t('cards.show.other_listings') %></h3>
+  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
+    <% @listings.each do |listing| %>
+      <div class="col">
+        <%= render "card", card: listing, available: (@available_quantities[listing.id] || 0) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+

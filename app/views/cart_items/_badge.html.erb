@@ -1,0 +1,4 @@
+<% count = current_user.cart_items.sum(:quantity) %>
+<% if count > 0 %>
+  <span class="badge bg-primary rounded-pill"><%= count %></span>
+<% end %>

@@ -1,0 +1,63 @@
+<div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="position: relative; overflow: hidden;">
+  <% if card.preorder? %>
+    <span class="preorder-badge"><%= t('cards.preorder_badge') %></span>
+  <% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
+    <span class="new-arrival-badge"><%= t('cards.new_badge') %></span>
+  <% end %>
+  <%= link_to card_path(card.id), data: { turbo_frame: "_top" } do %>
+    <img src="https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=normal"
+         class="card-img-top"
+         alt="<%= card.name %>"
+         loading="lazy"
+         onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= card.edition %>/<%= card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
+  <% end %>
+  <div class="card-body p-2 d-flex flex-column">
+    <div class="flex-grow-1">
+      <h6 class="card-title mb-1"><%= link_to card.name, card_path(card.id), class: "text-decoration-none", data: { turbo_frame: "_top" } %></h6>
+      <% if card.preorder? %>
+        <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: card.release_date.strftime("%d/%m/%Y")) %></small>
+      <% end %>
+      <small class="text-muted"><%= card.edition_name || card.edition.upcase %> #<%= card.collector_number %></small>
+      <div class="d-flex align-items-center flex-wrap gap-1 mt-1">
+        <%= condition_badge(card.condition) %>
+        <small><%= language_label(card.language) %></small>
+        <% if card.foil.present? %>
+          <span class="badge" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
+        <% end %>
+      </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-between mt-2">
+      <div>
+        <% if card.price %>
+          <strong class="text-price"><%= number_to_currency(card.price) %></strong>
+        <% else %>
+          <small class="text-muted"><%= t('cards.no_price') %></small>
+        <% end %>
+      </div>
+      <small class="text-muted"><%= t('cards.qty') %>: <%= available %></small>
+    </div>
+  </div>
+  <div class="card-footer p-2 d-flex flex-column gap-1">
+    <div class="d-flex gap-1">
+      <div class="w-75">
+        <% if available <= 0 %>
+          <button class="btn btn-sm btn-secondary w-100" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+        <% elsif maintenance_mode? %>
+          <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i> <%= t('cards.add_to_cart') %></button>
+        <% elsif user_signed_in? %>
+          <%= button_to cart_items_path(card_id: card.id), method: :post, class: "btn btn-sm btn-primary w-100", title: t('cards.add_to_cart') do %><i class="fa-solid fa-cart-plus"></i> <%= t('cards.add_to_cart') %><% end %>
+        <% else %>
+          <%= link_to t('cards.sign_in_to_buy'), new_user_session_path, class: "btn btn-sm btn-outline-primary w-100", data: { turbo: false } %>
+        <% end %>
+      </div>
+      <% if card.scryfall_id.present? %>
+        <%= link_to "https://scryfall.com/card/#{card.edition}/#{card.collector_number}", target: "_blank", rel: "noopener", title: t('cards.view_on_scryfall'), class: "btn btn-sm btn-scryfall w-25 d-flex align-items-center justify-content-center" do %><%= scryfall_icon %><% end %>
+      <% end %>
+    </div>
+    <% if user_signed_in? && current_user.admin? && available > 0 %>
+      <%= button_to admin_dashboard_walk_in_path(card_id: card.id, quantity: 1), method: :post, class: "btn btn-sm btn-success w-100", data: { turbo_frame: "_top" } do %>
+        <i class="fas fa-cash-register me-1"></i><%= t('cards.walk_in_sell') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
