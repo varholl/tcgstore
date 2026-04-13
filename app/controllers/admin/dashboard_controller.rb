@@ -51,6 +51,28 @@ class Admin::DashboardController < ApplicationController
     @attribution_total_reservations = @attribution_reservations_by_source.values.sum
   end
 
+  def search_cards
+    @cards = Card.search_by_name(params[:query]).limit(20)
+    render partial: "walk_in_search_results", locals: { cards: @cards }
+  end
+
+  def walk_in
+    card = Card.find(params[:card_id])
+    quantity = [params[:quantity].to_i, 1].max
+
+    creator = AdminReservationCreator.new(
+      guest_name: t("admin.dashboard.walk_in.default_guest_name"),
+      guest_contact: t("admin.dashboard.walk_in.default_guest_contact"),
+      items: [{ card_id: card.id, quantity: quantity }]
+    )
+
+    if creator.call
+      redirect_to admin_reservation_path(creator.reservation), notice: t("admin.dashboard.walk_in.created")
+    else
+      redirect_to admin_dashboard_path, alert: t("admin.dashboard.walk_in.unavailable")
+    end
+  end
+
   private
 
   def require_admin

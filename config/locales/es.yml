@@ -138,6 +138,7 @@ es:
       not_found_message: "No pudimos encontrar la carta que buscás. Puede haber sido eliminada o el enlace es incorrecto."
     add_to_cart: "Agregar al Carrito"
     sign_in_to_buy: "Iniciá sesión para comprar"
+    walk_in_sell: "Venta Rápida"
     foil: "Foil / No-Foil"
     foil_badge: "Foil"
     all_cards: "★ Ambas"
@@ -376,6 +377,15 @@ es:
       pending: "Pendiente de cobro"
       trades: "Trades"
       reservations_count: "reservas"
+      walk_in:
+        title: "Venta Rápida"
+        search_placeholder: "Buscar carta por nombre..."
+        search: "Buscar"
+        sell: "Vender"
+        created: "Reserva walk-in creada. Podés agregar más cartas."
+        unavailable: "La carta no tiene stock disponible."
+        default_guest_name: "Walk-in"
+        default_guest_contact: "—"
       attribution:
         users_title: "Usuarios captados por origen"
         reservations_title: "Reservas por origen"

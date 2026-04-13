@@ -1,6 +1,17 @@
 <%= render layout: 'layouts/admin_sidebar' do %>
 <h1 class="mb-4"><%= t('admin.dashboard.title') %></h1>
 
+<div class="card mb-4 border-success" data-controller="walk-in-search" data-search-url="<%= admin_dashboard_search_cards_path %>" data-walk-in-url="<%= admin_dashboard_walk_in_path %>">
+  <div class="card-body">
+    <h5 class="card-title text-success"><i class="fas fa-cash-register me-2"></i><%= t('admin.dashboard.walk_in.title') %></h5>
+    <form data-action="submit->walk-in-search#search" class="d-flex gap-2 mb-3">
+      <input type="text" data-walk-in-search-target="searchInput" class="form-control" placeholder="<%= t('admin.dashboard.walk_in.search_placeholder') %>">
+      <button type="submit" class="btn btn-success"><i class="fas fa-search me-1"></i><%= t('admin.dashboard.walk_in.search') %></button>
+    </form>
+    <div data-walk-in-search-target="searchResults"></div>
+  </div>
+</div>
+
 <div class="row g-4 mb-4">
   <!-- Income -->
   <div class="col-md-4">

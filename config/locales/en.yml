@@ -136,6 +136,7 @@ en:
       not_found_message: "We couldn't find the card you were looking for. It may have been removed or the link is incorrect."
     add_to_cart: "Add to Cart"
     sign_in_to_buy: "Sign in to buy"
+    walk_in_sell: "Quick Sale"
     foil: "Foil / Non-Foil"
     foil_badge: "Foil"
     all_cards: "★ Both"
@@ -368,6 +369,15 @@ en:
       stock: "Stock"
       settings: "Settings"
     dashboard:
+      walk_in:
+        title: "Quick Sale"
+        search_placeholder: "Search card by name..."
+        search: "Search"
+        sell: "Sell"
+        created: "Walk-in reservation created. You can add more cards."
+        unavailable: "Card is not available in stock."
+        default_guest_name: "Walk-in"
+        default_guest_contact: "—"
       attribution:
         users_title: "Users acquired by source"
         reservations_title: "Reservations by source"

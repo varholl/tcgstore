@@ -40,6 +40,8 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "dashboard", to: "dashboard#index", as: :dashboard
+    get "dashboard/search_cards", to: "dashboard#search_cards", as: :dashboard_search_cards
+    post "dashboard/walk_in", to: "dashboard#walk_in", as: :dashboard_walk_in
     resource :site_settings, only: [:edit, :update]
     resources :reservations, only: [:index, :show, :new, :create] do
       collection do
