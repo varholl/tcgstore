@@ -46,6 +46,25 @@
   </li>
 </ul>
 
+<% if %w[prepared paid].include?(active_status) %>
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <% base_params = { status: params[:status], card_name: params[:card_name].presence } %>
+    <%= link_to t('admin.reservations.shipping_filter.all'), admin_reservations_path(base_params), class: "btn btn-sm #{params[:shipping].blank? ? 'btn-dark' : 'btn-outline-dark'}" %>
+    <%= link_to admin_reservations_path(base_params.merge(shipping: "caba")), class: "btn btn-sm #{params[:shipping] == 'caba' ? 'btn-dark' : 'btn-outline-dark'}" do %>
+      <i class="fas fa-motorcycle me-1"></i><%= t('admin.reservations.shipping_filter.caba') %>
+    <% end %>
+    <%= link_to admin_reservations_path(base_params.merge(shipping: "correo")), class: "btn btn-sm #{params[:shipping] == 'correo' ? 'btn-dark' : 'btn-outline-dark'}" do %>
+      <i class="fas fa-box me-1"></i><%= t('admin.reservations.shipping_filter.correo') %>
+    <% end %>
+    <%= link_to admin_reservations_path(base_params.merge(shipping: "pickup")), class: "btn btn-sm #{params[:shipping] == 'pickup' ? 'btn-dark' : 'btn-outline-dark'}" do %>
+      <i class="fas fa-handshake me-1"></i><%= t('admin.reservations.shipping_filter.pickup') %>
+    <% end %>
+    <%= link_to admin_reservations_path(base_params.merge(shipping: "none")), class: "btn btn-sm #{params[:shipping] == 'none' ? 'btn-dark' : 'btn-outline-dark'}" do %>
+      <i class="fas fa-question-circle me-1"></i><%= t('admin.reservations.shipping_filter.none') %>
+    <% end %>
+  </div>
+<% end %>
+
 <% if @reservations.any? %>
   <div class="table-responsive">
     <table class="table table-striped table-hover admin-mobile-table">

@@ -15,6 +15,18 @@ class Admin::ReservationsController < ApplicationController
     else
       @reservations = @reservations.where(status: :pending)
     end
+    if params[:shipping].present?
+      case params[:shipping]
+      when "caba"
+        @reservations = @reservations.where(shipping_method: "bike_delivery")
+      when "correo"
+        @reservations = @reservations.where(shipping_method: %w[andreani correo_argentino])
+      when "pickup"
+        @reservations = @reservations.where(shipping_method: "store_pickup")
+      when "none"
+        @reservations = @reservations.where(shipping_method: [nil, ""])
+      end
+    end
     if params[:card_name].present?
       terms = params[:card_name].strip.split(/\s+/)
       card_scope = Card.all

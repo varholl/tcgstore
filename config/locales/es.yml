@@ -630,6 +630,12 @@ es:
       add_cards: "Agregar Cartas"
       pending_receipt: "Comprobante Pendiente"
       price_changed: "Precios Cambiados"
+      shipping_filter:
+        all: "Todos"
+        caba: "CABA"
+        correo: "Andreani / Correo"
+        pickup: "En Persona"
+        none: "Sin Método"
       price_changed_badge: "Precio Cambió"
       price_changed_hint: "El precio actual de esta carta es diferente al precio reservado"
       receipt_label: "Comprobante:"
