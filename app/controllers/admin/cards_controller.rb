@@ -3,16 +3,20 @@ class Admin::CardsController < ApplicationController
   before_action :require_admin
   before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed, :refresh_price, :add_stock, :remove_stock_entry]
 
+  LANGUAGES = %w[English Spanish Japanese Italian Portuguese].freeze
+
   SORT_OPTIONS = {
-    "name_asc"      => "name ASC",
-    "name_desc"     => "name DESC",
-    "price_asc"     => "price ASC NULLS LAST",
-    "price_desc"    => "price DESC NULLS LAST",
-    "edition_asc"   => "edition_name ASC, name ASC",
-    "edition_desc"  => "edition_name DESC, name ASC",
-    "quantity_asc"  => "quantity ASC",
-    "quantity_desc" => "quantity DESC",
-    "updated_desc"  => "updated_at DESC",
+    "name_asc"       => "name ASC",
+    "name_desc"      => "name DESC",
+    "price_asc"      => "price ASC NULLS LAST",
+    "price_desc"     => "price DESC NULLS LAST",
+    "edition_asc"    => "edition_name ASC, name ASC",
+    "edition_desc"   => "edition_name DESC, name ASC",
+    "collector_asc"  => "CAST(collector_number AS INTEGER) ASC, collector_number ASC",
+    "collector_desc" => "CAST(collector_number AS INTEGER) DESC, collector_number DESC",
+    "quantity_asc"   => "quantity ASC",
+    "quantity_desc"  => "quantity DESC",
+    "updated_desc"   => "updated_at DESC",
   }.freeze
 
   def index
@@ -141,6 +145,24 @@ class Admin::CardsController < ApplicationController
     redirect_to admin_cards_path, notice: t("controllers.admin.cards.metadata_fetch_started")
   end
 
+  def bulk_update_language
+    ids = Array(params[:card_ids]).reject(&:blank?)
+    language = params[:language].to_s
+
+    if ids.empty?
+      redirect_back fallback_location: admin_cards_path, alert: t("controllers.admin.cards.bulk_no_selection")
+      return
+    end
+
+    unless LANGUAGES.include?(language)
+      redirect_back fallback_location: admin_cards_path, alert: t("controllers.admin.cards.bulk_invalid_language")
+      return
+    end
+
+    count = Card.where(id: ids).update_all(language: language)
+    redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.bulk_language_updated", count: count, language: t("languages.#{language.downcase}"))
+  end
+
   def mark_price_reviewed
     @card.update_column(:price_reviewed, true)
     redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_reviewed")
@@ -152,6 +174,8 @@ class Admin::CardsController < ApplicationController
     case result[:source]
     when "card_kingdom"
       redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_refreshed_ck", price: result[:price])
+    when "tcgplayer"
+      redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_refreshed_tcgplayer", price: result[:price])
     when "scryfall"
       redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_refreshed_scryfall", price: result[:price])
     else

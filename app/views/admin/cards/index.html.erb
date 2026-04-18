@@ -23,7 +23,7 @@
       <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('admin.cards.all_editions'), class: "form-select" %>
     </div>
     <div class="col-md-2">
-      <%= select_tag :price_source, options_for_select([[t('admin.cards.needs_price_review'), "needs_review"], [t('admin.cards.price_source_scryfall'), "scryfall"], [t('admin.cards.price_source_card_kingdom'), "card_kingdom"]], params[:price_source]), include_blank: t('admin.cards.all_price_sources'), class: "form-select" %>
+      <%= select_tag :price_source, options_for_select([[t('admin.cards.needs_price_review'), "needs_review"], [t('admin.cards.price_source_scryfall'), "scryfall"], [t('admin.cards.price_source_card_kingdom'), "card_kingdom"], [t('admin.cards.price_source_tcgplayer'), "tcgplayer"]], params[:price_source]), include_blank: t('admin.cards.all_price_sources'), class: "form-select" %>
     </div>
     <div class="col-md-2">
       <%= select_tag :seller_id, options_from_collection_for_select(@sellers, :id, :name, params[:seller_id]), include_blank: t('admin.cards.all_sellers'), class: "form-select" %>
@@ -54,84 +54,123 @@
 </div>
 
 <% if @cards.any? %>
-  <%# Mobile compact list %>
-  <div class="d-md-none">
-    <% @cards.each do |card| %>
-      <div class="admin-card-row">
-        <div class="admin-card-row-title">
-          <%= card.name %> · <%= card.edition.upcase %> #<%= card.collector_number %>
-          <% if card.foil.present? %><i class="fa-solid fa-star" style="color: #d4a017;"></i><% end %>
-        </div>
-        <div class="admin-card-row-details">
-          <span><%= card.seller.name %></span>
-          <span><%= card.condition %> · <%= card.language %></span>
-          <span>x<%= card.quantity %></span>
-          <span class="text-price">
-            <%= card.price ? number_to_currency(card.price) : "—" %>
-            <% if card.price_source == "scryfall" && !card.price_reviewed? %>
-              <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle"></i></span>
-            <% end %>
-          </span>
-          <span class="admin-card-row-actions">
-            <% if card.price_source == "scryfall" && !card.price_reviewed? %>
-              <%= button_to mark_price_reviewed_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success p-0 px-1", title: t('admin.cards.mark_reviewed') do %><i class="fas fa-check"></i><% end %>
-            <% end %>
-            <%= button_to refresh_price_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success", title: t('admin.cards.refresh_price') do %><i class="fas fa-sync"></i><% end %>
-            <%= link_to edit_admin_card_path(card), class: "btn btn-sm btn-outline-secondary", title: t('admin.cards.edit') do %><i class="fas fa-pencil"></i><% end %>
-            <%= button_to admin_card_path(card), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.cards.delete'), form: { data: { turbo_confirm: t('admin.cards.delete_confirm') } } do %><i class="fas fa-trash"></i><% end %>
-          </span>
-        </div>
-      </div>
-    <% end %>
-  </div>
+  <div data-controller="bulk-select">
+    <div data-bulk-select-target="bar" class="alert alert-info d-none d-flex align-items-center gap-2 mb-3 sticky-top">
+      <span><strong data-bulk-select-target="count">0</strong> <%= t('admin.cards.bulk_selected') %></span>
+      <%= form_with url: bulk_update_language_admin_cards_path, method: :patch, local: true, class: "d-flex align-items-center gap-2 ms-auto mb-0" do %>
+        <span data-bulk-select-target="idsContainer"></span>
+        <%= select_tag :language,
+              options_for_select(Admin::CardsController::LANGUAGES.map { |l| [t("languages.#{l.downcase}"), l] }),
+              class: "form-select form-select-sm", style: "width: auto;" %>
+        <button type="submit" class="btn btn-sm btn-primary"
+                data-bulk-select-target="submit"
+                data-turbo-confirm="<%= t('admin.cards.bulk_language_confirm') %>">
+          <%= t('admin.cards.bulk_apply_language') %>
+        </button>
+      <% end %>
+    </div>
 
-  <%# Desktop table %>
-  <div class="d-none d-md-block table-responsive">
-    <table class="table table-striped table-hover">
-      <thead class="table-dark">
-        <tr>
-          <th><%= t('admin.cards.name') %></th>
-          <th><%= t('admin.cards.edition') %></th>
-          <th><%= t('admin.cards.collector_number') %></th>
-          <th><%= t('admin.cards.condition') %></th>
-          <th><%= t('admin.cards.language') %></th>
-          <th><%= t('admin.cards.foil') %></th>
-          <th><%= t('admin.cards.seller') %></th>
-          <th><%= t('admin.cards.quantity') %></th>
-          <th><%= t('admin.cards.price') %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @cards.each do |card| %>
-          <tr>
-            <td><%= card.name %></td>
-            <td><%= card.edition_name %></td>
-            <td><%= card.collector_number %></td>
-            <td><%= card.condition %></td>
-            <td><%= card.language %></td>
-            <td><% if card.foil.present? %><span class="badge bg-info"><%= card.foil_display %></span><% end %></td>
-            <td><%= card.seller.name %></td>
-            <td><%= card.quantity %></td>
-            <td>
+    <%# Mobile compact list %>
+    <div class="d-md-none">
+      <% @cards.each do |card| %>
+        <div class="admin-card-row">
+          <div class="admin-card-row-title">
+            <input type="checkbox" class="form-check-input me-2"
+                   value="<%= card.id %>"
+                   data-bulk-select-target="checkbox"
+                   data-action="change->bulk-select#refresh">
+            <%= card.name %> · <%= card.edition.upcase %> #<%= card.collector_number %>
+            <% if card.foil.present? %><i class="fa-solid fa-star" style="color: #d4a017;"></i><% end %>
+          </div>
+          <div class="admin-card-row-details">
+            <span><%= card.seller.name %></span>
+            <span><%= card.condition %> · <%= card.language %></span>
+            <span>x<%= card.quantity %></span>
+            <span class="text-price">
               <%= card.price ? number_to_currency(card.price) : "—" %>
+              <% if card.price_source.present? %>
+                <%= render "price_source_badge", source: card.price_source %>
+              <% end %>
               <% if card.price_source == "scryfall" && !card.price_reviewed? %>
-                <span class="badge bg-warning text-dark" title="<%= t('admin.cards.price_from_scryfall') %>"><i class="fas fa-exclamation-triangle"></i></span>
+                <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle"></i></span>
+              <% end %>
+            </span>
+            <span class="admin-card-row-actions">
+              <% if card.price_source == "scryfall" && !card.price_reviewed? %>
                 <%= button_to mark_price_reviewed_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success p-0 px-1", title: t('admin.cards.mark_reviewed') do %><i class="fas fa-check"></i><% end %>
               <% end %>
-            </td>
-            <td>
               <%= button_to refresh_price_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success", title: t('admin.cards.refresh_price') do %><i class="fas fa-sync"></i><% end %>
               <%= link_to edit_admin_card_path(card), class: "btn btn-sm btn-outline-secondary", title: t('admin.cards.edit') do %><i class="fas fa-pencil"></i><% end %>
               <%= button_to admin_card_path(card), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.cards.delete'), form: { data: { turbo_confirm: t('admin.cards.delete_confirm') } } do %><i class="fas fa-trash"></i><% end %>
-            </td>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Desktop table %>
+    <div class="d-none d-md-block table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th style="width: 1%;">
+              <input type="checkbox" class="form-check-input"
+                     data-bulk-select-target="selectAll"
+                     data-action="change->bulk-select#toggleAll"
+                     title="<%= t('admin.cards.bulk_select_all') %>">
+            </th>
+            <th><%= t('admin.cards.name') %></th>
+            <th><%= t('admin.cards.edition') %></th>
+            <th><%= t('admin.cards.collector_number') %></th>
+            <th><%= t('admin.cards.condition') %></th>
+            <th><%= t('admin.cards.language') %></th>
+            <th><%= t('admin.cards.foil') %></th>
+            <th><%= t('admin.cards.seller') %></th>
+            <th><%= t('admin.cards.quantity') %></th>
+            <th><%= t('admin.cards.price') %></th>
+            <th></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @cards.each do |card| %>
+            <tr>
+              <td>
+                <input type="checkbox" class="form-check-input"
+                       value="<%= card.id %>"
+                       data-bulk-select-target="checkbox"
+                       data-action="change->bulk-select#refresh">
+              </td>
+              <td><%= card.name %></td>
+              <td><%= card.edition_name %></td>
+              <td><%= card.collector_number %></td>
+              <td><%= card.condition %></td>
+              <td><%= card.language %></td>
+              <td><% if card.foil.present? %><span class="badge bg-info"><%= card.foil_display %></span><% end %></td>
+              <td><%= card.seller.name %></td>
+              <td><%= card.quantity %></td>
+              <td>
+                <%= card.price ? number_to_currency(card.price) : "—" %>
+                <% if card.price_source.present? %>
+                  <%= render "price_source_badge", source: card.price_source %>
+                <% end %>
+                <% if card.price_source == "scryfall" && !card.price_reviewed? %>
+                  <span class="badge bg-warning text-dark" title="<%= t('admin.cards.price_from_scryfall') %>"><i class="fas fa-exclamation-triangle"></i></span>
+                  <%= button_to mark_price_reviewed_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success p-0 px-1", title: t('admin.cards.mark_reviewed') do %><i class="fas fa-check"></i><% end %>
+                <% end %>
+              </td>
+              <td>
+                <%= button_to refresh_price_admin_card_path(card), method: :patch, class: "btn btn-sm btn-outline-success", title: t('admin.cards.refresh_price') do %><i class="fas fa-sync"></i><% end %>
+                <%= link_to edit_admin_card_path(card), class: "btn btn-sm btn-outline-secondary", title: t('admin.cards.edit') do %><i class="fas fa-pencil"></i><% end %>
+                <%= button_to admin_card_path(card), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.cards.delete'), form: { data: { turbo_confirm: t('admin.cards.delete_confirm') } } do %><i class="fas fa-trash"></i><% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <%= paginate @cards %>
+  <%= paginate @cards, params: request.query_parameters.except(:page) %>
 <% else %>
   <div class="alert alert-info"><%= t('admin.cards.no_cards') %></div>
 <% end %>

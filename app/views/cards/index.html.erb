@@ -18,7 +18,7 @@
 <% end %>
 
 <% new_arrivals_count = Card.where("quantity > 0").where("last_stocked_at >= ?", 7.days.ago).select(:edition, :collector_number, :condition, :language, :foil).distinct.count %>
-<% new_set_editions = Card.joins(:seller).merge(Seller.active).where("quantity > 0").where("release_date >= ?", 30.days.ago).group(:edition).order(Arel.sql("MIN(release_date) DESC")).pluck(:edition, Arel.sql("COALESCE(MAX(edition_name), UPPER(edition))")) %>
+<% new_set_editions = Card.joins(:seller).merge(Seller.active).where("quantity > 0").where("release_date >= ?", SiteSetting.new_set_window_days.days.ago).group(:edition).order(Arel.sql("MIN(release_date) DESC")).pluck(:edition, Arel.sql("COALESCE(MAX(edition_name), UPPER(edition))")) %>
 <% if new_arrivals_count > 0 || new_set_editions.any? %>
   <div class="mb-3 d-flex flex-wrap gap-2">
     <% if new_arrivals_count > 0 %>

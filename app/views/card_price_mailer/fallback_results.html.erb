@@ -3,6 +3,7 @@
 <p><%= t('card_price_mailer.fallback_results.summary',
          ck_updated: @ck_updated_cards.size,
          scryfall_updated: @scryfall_updated_cards.size,
+         tcgplayer_updated: @tcgplayer_updated_cards.size,
          not_found: @not_found_cards.size) %></p>
 
 <% if @ck_updated_cards.any? %>
@@ -20,6 +21,34 @@
     </thead>
     <tbody>
       <% @ck_updated_cards.each do |card| %>
+        <tr>
+          <td><%= card.name %></td>
+          <td><%= card.edition_name || card.edition.upcase %></td>
+          <td><%= card.collector_number %></td>
+          <td><%= card.condition %></td>
+          <td><%= card.foil.present? ? "Yes" : "No" %></td>
+          <td><%= number_to_currency(card.price) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% if @tcgplayer_updated_cards.any? %>
+  <h4><%= t('card_price_mailer.fallback_results.tcgplayer_updated_title', count: @tcgplayer_updated_cards.size) %></h4>
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th><%= t('card_price_mailer.fallback_results.card_name') %></th>
+        <th><%= t('card_price_mailer.fallback_results.edition') %></th>
+        <th><%= t('card_price_mailer.fallback_results.collector_number') %></th>
+        <th><%= t('card_price_mailer.fallback_results.condition') %></th>
+        <th><%= t('card_price_mailer.fallback_results.foil') %></th>
+        <th><%= t('card_price_mailer.fallback_results.price') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tcgplayer_updated_cards.each do |card| %>
         <tr>
           <td><%= card.name %></td>
           <td><%= card.edition_name || card.edition.upcase %></td>

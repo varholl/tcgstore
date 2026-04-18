@@ -34,7 +34,7 @@ class CardsController < ApplicationController
       all_cards = all_cards.where("card_type LIKE ?", "%#{params[:card_type]}%")
     end
     if params[:new_set] == "1"
-      all_cards = all_cards.where("release_date >= ?", 30.days.ago)
+      all_cards = all_cards.where("release_date >= ?", SiteSetting.new_set_window_days.days.ago)
     end
 
     # Group cards by identity (across sellers) and pick a representative per group

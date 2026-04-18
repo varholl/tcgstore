@@ -1,0 +1,10 @@
+<%
+  badge = case source
+          when "card_kingdom" then { label: "CK", css: "bg-primary" }
+          when "tcgplayer"    then { label: "TCG", css: "bg-warning text-dark" }
+          when "scryfall"     then { label: "SF", css: "bg-secondary" }
+          end
+%>
+<% if badge %>
+  <span class="badge <%= badge[:css] %>" title="<%= t("admin.cards.price_source_#{source}") %>"><%= badge[:label] %></span>
+<% end %>

@@ -23,6 +23,6 @@ class Admin::SiteSettingsController < ApplicationController
   end
 
   def site_setting_params
-    params.require(:site_setting).permit(:maintenance_mode, :maintenance_message)
+    params.require(:site_setting).permit(:maintenance_mode, :maintenance_message, :new_set_window_days)
   end
 end

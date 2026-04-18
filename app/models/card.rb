@@ -40,7 +40,7 @@ class Card < ApplicationRecord
   end
 
   def from_new_set?
-    release_date.present? && release_date >= 30.days.ago
+    release_date.present? && release_date >= SiteSetting.new_set_window_days.days.ago
   end
 
   def foil_display

@@ -6,9 +6,11 @@ class SingleCardPriceService
   end
 
   def call
+    return new_set_lookup if @card.from_new_set?
+
     # Try CK by scryfall_id first (fast, cached)
     if @card.scryfall_id.present?
-      ck_price = lookup_ck_by_scryfall_id
+      ck_price = lookup_ck_by_scryfall_id(@card.scryfall_id)
       if ck_price
         @card.update_columns(price: ck_price, price_source: "card_kingdom")
         return { source: "card_kingdom", price: ck_price }
@@ -27,40 +29,25 @@ class SingleCardPriceService
 
     # Try CK with the (possibly new) scryfall_id
     if scryfall_id.present?
-      ck_prices = CardKingdomPriceService.pricelist
-      is_foil = @card.foil.present?
-      condition = @card.condition.presence || "NM"
-      ck_price = ck_prices[[scryfall_id, is_foil, condition]]
-      if ck_price && ck_price > 0
+      ck_price = lookup_ck_by_scryfall_id(scryfall_id)
+      if ck_price
         @card.update_columns(price: ck_price, price_source: "card_kingdom")
         return { source: "card_kingdom", price: ck_price }
       end
     end
 
     # Try CK by name + edition
-    ck_by_name = CardKingdomPriceService.pricelist_by_name
-    name = scryfall_data["name"]&.downcase&.strip
-    edition_name = scryfall_data["set_name"]&.downcase&.strip
-    if name.present? && edition_name.present?
-      is_foil = @card.foil.present?
-      condition = @card.condition.presence || "NM"
-      collector = CardKingdomPriceService.normalize_collector(@card.collector_number)
-      # Try exact edition match first
-      ck_price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
-      # Try "promotional" edition (CK lists many promos under this edition)
-      ck_price = ck_by_name[[name, "promotional", collector, is_foil, condition]] unless ck_price && ck_price > 0
-      if ck_price && ck_price > 0
-        @card.update_columns(price: ck_price, price_source: "card_kingdom")
-        return { source: "card_kingdom", price: ck_price }
-      end
+    ck_price = lookup_ck_by_name(scryfall_data)
+    if ck_price
+      @card.update_columns(price: ck_price, price_source: "card_kingdom")
+      return { source: "card_kingdom", price: ck_price }
     end
 
     # Fall back to Scryfall price
-    prices = scryfall_data["prices"] || {}
-    price = @card.foil.present? ? prices["usd_foil"]&.to_f : prices["usd"]&.to_f
-    if price && price > 0
-      @card.update_columns(price: price, price_source: "scryfall", price_reviewed: false)
-      return { source: "scryfall", price: price }
+    scryfall_price = extract_scryfall_price(scryfall_data)
+    if scryfall_price
+      @card.update_columns(price: scryfall_price, price_source: "scryfall", price_reviewed: false)
+      return { source: "scryfall", price: scryfall_price }
     end
 
     { source: nil }
@@ -68,10 +55,82 @@ class SingleCardPriceService
 
   private
 
-  def lookup_ck_by_scryfall_id
+  # New-set cards: take the higher of CK and TCGPlayer to protect margin against
+  # stale CK prices on fresh releases. Fall back to Scryfall if neither has it.
+  def new_set_lookup
+    scryfall_data = fetch_scryfall_card
+    return { source: nil } unless scryfall_data
+
+    scryfall_id = scryfall_data["id"]
+    if scryfall_id.present? && @card.scryfall_id != scryfall_id
+      @card.update_column(:scryfall_id, scryfall_id)
+    end
+
+    ck_price = lookup_ck_by_scryfall_id(scryfall_id) if scryfall_id.present?
+    ck_price ||= lookup_ck_by_name(scryfall_data)
+    tcg_price = TcgplayerPriceService.lookup(scryfall_data["tcgplayer_id"], foil: @card.foil.present?)
+    tcg_price ||= TcgplayerPriceService.lookup_by_search(
+      name: scryfall_data["name"],
+      set_name: scryfall_data["set_name"],
+      collector_number: @card.collector_number,
+      foil: @card.foil.present?
+    )
+
+    winner =
+      if ck_price && tcg_price
+        tcg_price > ck_price ? [:tcgplayer, tcg_price] : [:card_kingdom, ck_price]
+      elsif tcg_price
+        [:tcgplayer, tcg_price]
+      elsif ck_price
+        [:card_kingdom, ck_price]
+      end
+
+    if winner
+      source, price = winner
+      @card.update_columns(price: price, price_source: source.to_s)
+      return { source: source.to_s, price: price }
+    end
+
+    scryfall_price = extract_scryfall_price(scryfall_data)
+    if scryfall_price
+      @card.update_columns(price: scryfall_price, price_source: "scryfall", price_reviewed: false)
+      return { source: "scryfall", price: scryfall_price }
+    end
+
+    { source: nil }
+  end
+
+  def lookup_ck_by_scryfall_id(scryfall_id)
+    return nil if scryfall_id.blank?
     is_foil = @card.foil.present?
     condition = @card.condition.presence || "NM"
-    CardKingdomPriceService.pricelist[[@card.scryfall_id, is_foil, condition]]
+    price = CardKingdomPriceService.pricelist[[scryfall_id, is_foil, condition]]
+    price && price > 0 ? price : nil
+  end
+
+  def lookup_ck_by_name(scryfall_data)
+    name = scryfall_data["name"]&.downcase&.strip
+    edition_name = scryfall_data["set_name"]&.downcase&.strip
+    return nil if name.blank? || edition_name.blank?
+
+    is_foil = @card.foil.present?
+    condition = @card.condition.presence || "NM"
+    collector = CardKingdomPriceService.normalize_collector(@card.collector_number)
+    ck_by_name = CardKingdomPriceService.pricelist_by_name
+
+    price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
+    # Japanese prints: CK lists them under "<edition> jpn" with matching collector numbers.
+    if (!price || price <= 0) && @card.language.to_s.casecmp?("japanese")
+      price = ck_by_name[[name, "#{edition_name} jpn", collector, is_foil, condition]]
+    end
+    price = ck_by_name[[name, "promotional", collector, is_foil, condition]] unless price && price > 0
+    price && price > 0 ? price : nil
+  end
+
+  def extract_scryfall_price(scryfall_data)
+    prices = scryfall_data["prices"] || {}
+    price = @card.foil.present? ? prices["usd_foil"]&.to_f : prices["usd"]&.to_f
+    price && price > 0 ? price : nil
   end
 
   def fetch_scryfall_card

@@ -75,7 +75,21 @@ class CardPriceRefreshService
     updated = 0
     not_found = 0
 
+    # Guard against an empty CK response (rate limit, outage, etc.) — without this,
+    # every CK-sourced card would get nilified and the fallback queue would explode.
+    if ck_prices.empty?
+      Rails.logger.warn("CardPriceRefreshService: CK pricelist empty, skipping update_prices to avoid mass nilification.")
+      return [updated, not_found]
+    end
+
     Card.where.not(scryfall_id: [nil, ""]).find_each do |card|
+      # New-set cards: skip CK so the fallback job can prefer TCGPlayer (Scryfall USD).
+      if card.from_new_set?
+        card.update_column(:price_source, nil)
+        not_found += 1
+        next
+      end
+
       is_foil = card.foil.present?
       condition = card.condition.presence || "NM"
       ck_price = ck_prices[[card.scryfall_id, is_foil, condition]]
@@ -83,7 +97,10 @@ class CardPriceRefreshService
       if ck_price
         card.update_columns(price: ck_price, price_source: "card_kingdom")
         updated += 1
-      else
+      elsif card.price_source == "card_kingdom"
+        # CK used to have this card and no longer does — fall back to other sources.
+        # For non-CK-sourced cards (Scryfall/TCGPlayer/manual), keep the existing price+source
+        # to avoid bloating the fallback queue with cards that don't need reprocessing.
         card.update_column(:price_source, nil)
         not_found += 1
       end

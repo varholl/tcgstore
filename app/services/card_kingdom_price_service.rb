@@ -17,7 +17,12 @@ class CardKingdomPriceService
   # non-variant entries are preferred. Variant cards with different Scryfall
   # IDs will fall through to the by-name pricelist which uses collector_number.
   def self.pricelist
-    Rails.cache.fetch(CACHE_KEY, expires_in: CACHE_TTL) { fetch_pricelist }
+    cached = Rails.cache.read(CACHE_KEY)
+    return cached if cached.is_a?(Hash) && cached.any?
+
+    result = fetch_pricelist
+    Rails.cache.write(CACHE_KEY, result, expires_in: CACHE_TTL) if result.any?
+    result
   end
 
   # Look up prices for a set of scryfall_ids. Returns all condition variants.
@@ -82,7 +87,12 @@ class CardKingdomPriceService
   CACHE_KEY_BY_NAME = "card_kingdom_pricelist_by_name"
 
   def self.pricelist_by_name
-    Rails.cache.fetch(CACHE_KEY_BY_NAME, expires_in: CACHE_TTL) { fetch_pricelist_by_name }
+    cached = Rails.cache.read(CACHE_KEY_BY_NAME)
+    return cached if cached.is_a?(Hash) && cached.any?
+
+    result = fetch_pricelist_by_name
+    Rails.cache.write(CACHE_KEY_BY_NAME, result, expires_in: CACHE_TTL) if result.any?
+    result
   end
 
   def self.fetch_pricelist_by_name

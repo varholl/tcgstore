@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_09_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_18_120000) do
   create_table "addresses", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "address"
@@ -50,7 +50,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_09_000001) do
     t.string "card_subtype"
     t.string "rarity"
     t.date "release_date"
-    t.boolean "showcase", default: false, null: false
     t.index ["edition"], name: "index_cards_on_edition"
     t.index ["name"], name: "index_cards_on_name"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"
@@ -141,6 +140,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_09_000001) do
     t.text "maintenance_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "new_set_window_days", default: 30, null: false
   end
 
   create_table "stock_entries", force: :cascade do |t|
