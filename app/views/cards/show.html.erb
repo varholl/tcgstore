@@ -37,7 +37,7 @@
         <dt class="col-5 col-md-4 col-lg-3"><%= t('cards.show.release_date') %></dt>
         <dd class="col-7 col-md-8 col-lg-9 mb-1">
           <%= @card.release_date.strftime("%d/%m/%Y") %>
-          <% if @card.preorder? %><span class="preorder-badge-inline ms-1"><%= t('cards.preorder_badge') %></span><% end %>
+          <% if @card.from_new_set? %><span class="new-set-badge-inline ms-1"><%= t('cards.new_set_badge') %></span><% end %>
         </dd>
       <% end %>
     </dl>

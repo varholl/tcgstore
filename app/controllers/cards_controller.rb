@@ -33,8 +33,8 @@ class CardsController < ApplicationController
     if params[:card_type].present?
       all_cards = all_cards.where("card_type LIKE ?", "%#{params[:card_type]}%")
     end
-    if params[:preorder] == "1"
-      all_cards = all_cards.where("release_date > ?", Date.current)
+    if params[:new_set] == "1"
+      all_cards = all_cards.where("release_date >= ?", 30.days.ago)
     end
 
     # Group cards by identity (across sellers) and pick a representative per group

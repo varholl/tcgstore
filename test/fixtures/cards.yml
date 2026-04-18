@@ -34,8 +34,8 @@ counterspell:
   price: 3.00
   seller: default_seller
 
-preorder_card:
-  name: "Future Card"
+new_set_card:
+  name: "New Set Card"
   edition: "fdn"
   edition_name: "Foundations"
   collector_number: "1"
@@ -44,7 +44,7 @@ preorder_card:
   quantity: 10
   price: 15.00
   seller: default_seller
-  release_date: <%= 30.days.from_now.to_date %>
+  release_date: <%= 7.days.ago.to_date %>
 
 past_release_card:
   name: "Released Card"
@@ -56,7 +56,7 @@ past_release_card:
   quantity: 5
   price: 8.00
   seller: default_seller
-  release_date: <%= 7.days.ago.to_date %>
+  release_date: <%= 90.days.ago.to_date %>
 
 zero_stock_card:
   name: "Empty Card"

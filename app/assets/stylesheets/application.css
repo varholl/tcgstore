@@ -164,8 +164,8 @@ hr {
   vertical-align: middle;
 }
 
-/* --- Pre-order badge (ribbon on card image) --- */
-.preorder-badge {
+/* --- New set badge (ribbon on card image) --- */
+.new-set-badge {
   position: absolute;
   top: 18px;
   right: -35px;
@@ -185,28 +185,22 @@ hr {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   transition: opacity 0.3s ease;
 }
-.card:hover .preorder-badge {
+.card:hover .new-set-badge {
   opacity: 0;
 }
 
-.btn-outline-preorder {
+.btn-outline-new-set {
   color: #6366f1;
   border-color: #6366f1;
 }
-.btn-outline-preorder:hover,
-.btn-outline-preorder:focus {
+.btn-outline-new-set:hover,
+.btn-outline-new-set:focus {
   background-color: #6366f1;
   border-color: #6366f1;
   color: #fff;
 }
 
-.preorder-release-date {
-  color: #818cf8;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-.preorder-badge-inline {
+.new-set-badge-inline {
   display: inline-block;
   background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #fff;

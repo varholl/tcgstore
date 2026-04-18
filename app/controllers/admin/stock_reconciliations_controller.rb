@@ -24,7 +24,7 @@ class Admin::StockReconciliationsController < ApplicationController
     format = params[:format_type] == "manabox" ? :manabox : :moxfield
     mode = format == :manabox ? :partial : (params[:mode] == "partial" ? :partial : :full)
     seller = Seller.find(params[:seller_id])
-    release_date = params[:preorder] == "1" && params[:release_date].present? ? params[:release_date] : nil
+    release_date = params[:new_set] == "1" && params[:release_date].present? ? params[:release_date] : nil
     service = StockReconciliationService.new(params[:file], mode: mode, format: format, seller: seller, release_date: release_date)
     @result = service.call
     @mode = mode

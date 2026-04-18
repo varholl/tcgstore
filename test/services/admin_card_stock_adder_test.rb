@@ -54,7 +54,7 @@ class AdminCardStockAdderTest < ActiveSupport::TestCase
 
   test "creates card with release_date" do
     params = {
-      name: "New Preorder",
+      name: "New Set Card",
       set_code: "test",
       set_name: "Test Set",
       collector_number: "1",
@@ -64,12 +64,12 @@ class AdminCardStockAdderTest < ActiveSupport::TestCase
       quantity: "1",
       price: "10.00",
       seller_id: @seller.id,
-      release_date: 30.days.from_now.to_date.to_s
+      release_date: 7.days.ago.to_date.to_s
     }
 
     adder = AdminCardStockAdder.new(params)
     assert_equal :added, adder.call
-    assert adder.card.preorder?
+    assert adder.card.from_new_set?
   end
 
   test "finds existing card by scryfall_id" do

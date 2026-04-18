@@ -1,6 +1,6 @@
 <div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="position: relative; overflow: hidden;">
-  <% if card.preorder? %>
-    <span class="preorder-badge"><%= t('cards.preorder_badge') %></span>
+  <% if card.from_new_set? %>
+    <span class="new-set-badge"><%= t('cards.new_set_badge') %></span>
   <% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
     <span class="new-arrival-badge"><%= t('cards.new_badge') %></span>
   <% end %>
@@ -14,9 +14,6 @@
   <div class="card-body p-2 d-flex flex-column">
     <div class="flex-grow-1">
       <h6 class="card-title mb-1"><%= link_to card.name, card_path(card.id), class: "text-decoration-none", data: { turbo_frame: "_top" } %></h6>
-      <% if card.preorder? %>
-        <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: card.release_date.strftime("%d/%m/%Y")) %></small>
-      <% end %>
       <small class="text-muted"><%= card.edition_name || card.edition.upcase %> #<%= card.collector_number %></small>
       <div class="d-flex align-items-center flex-wrap gap-1 mt-1">
         <%= condition_badge(card.condition) %>

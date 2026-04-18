@@ -13,7 +13,7 @@ counterspell_entry:
   quantity: 2
   added_at: <%= 5.days.ago %>
 
-preorder_entry:
-  card: preorder_card
+new_set_entry:
+  card: new_set_card
   quantity: 10
   added_at: <%= 1.day.ago %>

@@ -206,7 +206,7 @@
     <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 mb-3">
       <% items.each do |item| %>
         <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
-        <% price_changed_grid = item.unit_price && item.card.price && item.unit_price != item.card.price %>
+        <% price_changed_grid = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
         <div class="col">
           <div class="card h-100<%= ' foil-card' if item.card.foil.present? %><%= ' border-danger' if stock_short %><%= ' border-warning' if price_changed_grid && !stock_short %>">
             <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
@@ -216,9 +216,8 @@
                  onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
             <div class="card-body p-2">
               <h6 class="card-title mb-1"><%= item.card.name %></h6>
-              <% if item.card.preorder? %>
-                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
-                <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: item.card.release_date.strftime("%d/%m/%Y")) %></small>
+              <% if item.card.from_new_set? %>
+                <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
               <% end %>
               <small class="text-muted">
                 <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
@@ -227,7 +226,7 @@
                   · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= item.card.foil_display %></span>
                 <% end %>
               </small>
-              <% price_changed = item.unit_price && item.card.price && item.unit_price != item.card.price %>
+              <% price_changed = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
               <div class="mt-1">
                 <small class="text-muted"><%= t('admin.reservations.current_price') %>: <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
                   <% if item.card.price_source == "scryfall" && !item.card.price_reviewed? %>
@@ -282,12 +281,12 @@
         </tr>
         <% items.each do |item| %>
           <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
-          <% price_changed = item.unit_price && item.card.price && item.unit_price != item.card.price %>
+          <% price_changed = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
           <tr class="<%= 'table-danger' if stock_short %> <%= 'table-warning' if price_changed && !stock_short %>">
             <td data-label="<%= t('admin.reservations.card_name') %>">
               <%= item.card.name %>
-              <% if item.card.preorder? %>
-                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+              <% if item.card.from_new_set? %>
+                <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
               <% end %>
               <% if stock_short %>
                 <span class="badge bg-danger" title="<%= t('admin.reservations.stock_warning_detail', in_stock: item.card.quantity, reserved: item.quantity) %>">

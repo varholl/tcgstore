@@ -87,15 +87,15 @@ class ReservationCreatorTest < ActiveSupport::TestCase
     end
   end
 
-  test "works with preorder cards" do
-    @user.cart_items.create!(card: cards(:preorder_card), quantity: 2)
+  test "works with new-set cards" do
+    @user.cart_items.create!(card: cards(:new_set_card), quantity: 2)
 
     creator = ReservationCreator.new(@user)
     assert creator.call
 
     item = creator.reservation.reservation_items.first
     assert_equal 2, item.quantity
-    assert item.card.preorder?
+    assert item.card.from_new_set?
   end
 
   test "succeeds and creates reservation on valid cart" do

@@ -12,15 +12,6 @@
 <% end %>
 
 <% if @cart_items.any? %>
-  <% preorder_items = @cart_items.select { |item| item.card.preorder? } %>
-  <% if preorder_items.any? %>
-    <% latest_release = preorder_items.map { |item| item.card.release_date }.max %>
-    <div class="alert alert-info">
-      <i class="fas fa-clock me-1"></i>
-      <strong><%= t('cart_items.preorder_notice') %></strong>
-      <%= t('cart_items.preorder_notice_detail', date: latest_release.strftime("%d/%m/%Y")) %>
-    </div>
-  <% end %>
   <%# Desktop table — hidden on small screens %>
   <div class="d-none d-md-block table-responsive">
     <table class="table table-striped">
@@ -47,8 +38,8 @@
                    loading="lazy"
                    onerror="this.style.display='none'">
               <%= item.card.name %>
-              <% if item.card.preorder? %>
-                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+              <% if item.card.from_new_set? %>
+                <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
               <% end %>
               <% if unavailable %>
                 <span class="badge bg-danger"><%= t('cart_items.not_available') %></span>
@@ -94,8 +85,8 @@
             <div class="flex-grow-1">
               <h6 class="mb-1">
                 <%= item.card.name %>
-                <% if item.card.preorder? %>
-                  <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+                <% if item.card.from_new_set? %>
+                  <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
                 <% end %>
                 <% if unavailable %>
                   <span class="badge bg-danger"><%= t('cart_items.not_available') %></span>

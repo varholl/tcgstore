@@ -21,34 +21,24 @@ class CardTest < ActiveSupport::TestCase
     assert card.valid?
   end
 
-  # --- preorder? ---
+  # --- from_new_set? ---
 
-  test "preorder? returns true when release_date is in the future" do
-    assert cards(:preorder_card).preorder?
+  test "from_new_set? returns true when release_date is within the last 30 days" do
+    assert cards(:new_set_card).from_new_set?
   end
 
-  test "preorder? returns false when release_date is in the past" do
-    assert_not cards(:past_release_card).preorder?
+  test "from_new_set? returns true when release_date is in the future" do
+    card = cards(:new_set_card)
+    card.release_date = 30.days.from_now.to_date
+    assert card.from_new_set?
   end
 
-  test "preorder? returns false when release_date is nil" do
-    assert_not cards(:lightning_bolt).preorder?
+  test "from_new_set? returns false when release_date is older than 30 days" do
+    assert_not cards(:past_release_card).from_new_set?
   end
 
-  test "preorder? returns false when release_date is today" do
-    card = cards(:preorder_card)
-    card.release_date = Date.current
-    assert_not card.preorder?
-  end
-
-  test "preorder? uses Buenos Aires timezone" do
-    # Date.current respects config.time_zone (Buenos Aires)
-    card = cards(:lightning_bolt)
-    card.release_date = Date.current + 1
-    assert card.preorder?
-
-    card.release_date = Date.current
-    assert_not card.preorder?
+  test "from_new_set? returns false when release_date is nil" do
+    assert_not cards(:lightning_bolt).from_new_set?
   end
 
   # --- card_identity ---

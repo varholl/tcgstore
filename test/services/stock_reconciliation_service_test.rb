@@ -63,11 +63,11 @@ class StockReconciliationServiceTest < ActiveSupport::TestCase
   end
 
   test "applies release_date to new cards" do
-    release = 30.days.from_now.to_date
+    release = 7.days.ago.to_date
 
     csv = <<~CSV
       Name,Set code,Set name,Collector number,Foil,Rarity,Quantity,ManaBox ID,Scryfall ID,Purchase price,Misprint,Altered,Condition,Language,Purchase price currency
-      New Preorder Card,fdn,Foundations,99,normal,rare,3,456,,0.00,false,false,near_mint,en,USD
+      New Set Card,fdn,Foundations,99,normal,rare,3,456,,0.00,false,false,near_mint,en,USD
     CSV
 
     service = StockReconciliationService.new(
@@ -76,9 +76,9 @@ class StockReconciliationServiceTest < ActiveSupport::TestCase
     result = service.call
 
     assert result.success
-    card = Card.find_by(name: "New Preorder Card", edition: "fdn", seller: @seller)
+    card = Card.find_by(name: "New Set Card", edition: "fdn", seller: @seller)
     assert_equal release, card.release_date
-    assert card.preorder?
+    assert card.from_new_set?
   end
 
   test "applies release_date to existing cards" do

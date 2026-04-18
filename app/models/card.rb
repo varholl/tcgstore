@@ -39,8 +39,8 @@ class Card < ApplicationRecord
     total_qty - total_reserved
   end
 
-  def preorder?
-    release_date.present? && release_date > Date.current
+  def from_new_set?
+    release_date.present? && release_date >= 30.days.ago
   end
 
   def foil_display

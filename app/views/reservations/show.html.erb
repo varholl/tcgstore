@@ -62,16 +62,6 @@
   </div>
 </div>
 
-<% preorder_items = @reservation.reservation_items.select { |item| item.card.preorder? } %>
-<% if preorder_items.any? %>
-  <% latest_release = preorder_items.map { |item| item.card.release_date }.max %>
-  <div class="alert alert-info">
-    <i class="fas fa-clock me-1"></i>
-    <strong><%= t('reservations.preorder_notice') %></strong>
-    <%= t('reservations.preorder_notice_detail', date: latest_release.strftime("%d/%m/%Y")) %>
-  </div>
-<% end %>
-
 <div id="items" class="d-flex justify-content-between align-items-center mb-2">
   <h4 class="mb-0"><%= t('reservations.items_title') %></h4>
   <div class="btn-group btn-group-sm">
@@ -106,9 +96,8 @@
                    onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
               <div class="card-body p-2">
                 <h6 class="card-title mb-1"><%= item.card.name %></h6>
-                <% if item.card.preorder? %>
-                  <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
-                  <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: item.card.release_date.strftime("%d/%m/%Y")) %></small>
+                <% if item.card.from_new_set? %>
+                  <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
                 <% end %>
                 <small class="text-muted">
                   <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
@@ -145,9 +134,8 @@
                  onerror="this.onerror=null;this.src='https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=large';this.onerror=function(){this.style.display=\'none\'};">
             <div class="card-body p-2">
               <h6 class="card-title mb-1"><%= item.card.name %></h6>
-              <% if item.card.preorder? %>
-                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
-                <small class="d-block preorder-release-date"><i class="fas fa-calendar-alt me-1"></i><%= t('cards.preorder_release', date: item.card.release_date.strftime("%d/%m/%Y")) %></small>
+              <% if item.card.from_new_set? %>
+                <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
               <% end %>
               <small class="text-muted">
                 <%= item.card.edition_name || item.card.edition.upcase %> #<%= item.card.collector_number %><br>
@@ -201,7 +189,7 @@
           </tr>
           <% items.each do |item| %>
             <tr id="<%= @grouped_items ? "grouped_item_#{item.id}" : dom_id(item) %>">
-              <td><%= item.card.name %><% if item.card.preorder? %> <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span><% end %></td>
+              <td><%= item.card.name %><% if item.card.from_new_set? %> <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% end %></td>
               <td><%= item.card.edition_name || item.card.edition.upcase %></td>
               <td><%= item.card.condition %></td>
               <td><%= item.card.language %></td>
@@ -220,7 +208,7 @@
       <% else %>
         <% items_to_show.each do |item| %>
           <tr id="<%= @grouped_items ? "grouped_item_#{item.id}" : dom_id(item) %>">
-            <td><%= item.card.name %><% if item.card.preorder? %> <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span><% end %></td>
+            <td><%= item.card.name %><% if item.card.from_new_set? %> <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% end %></td>
             <td><%= item.card.edition_name || item.card.edition.upcase %></td>
             <td><%= item.card.condition %></td>
             <td><%= item.card.language %></td>

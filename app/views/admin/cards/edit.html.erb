@@ -60,8 +60,8 @@
           <dd class="col-sm-9">
             <% if @card.release_date.present? %>
               <%= @card.release_date.strftime("%d/%m/%Y") %>
-              <% if @card.preorder? %>
-                <span class="preorder-badge-inline"><%= t('cards.preorder_badge') %></span>
+              <% if @card.from_new_set? %>
+                <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span>
               <% end %>
             <% else %>
               —
