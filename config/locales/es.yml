@@ -112,6 +112,7 @@ es:
     price: "Precio"
     qty: "Cant."
     no_price: "Sin precio"
+    no_price_hint: "Esta carta no tiene precio y no puede agregarse al carrito."
     new_badge: "Nuevo"
     new_set_badge: "Nuevo Set"
     new_set_button: "%{set} — Nuevo"
@@ -770,6 +771,7 @@ es:
     cart_items:
       added: "%{name} agregado al carrito."
       add_error: "No se pudo agregar la carta al carrito."
+      no_price_error: "Esta carta no tiene precio y no puede agregarse al carrito."
       updated: "Carrito actualizado."
       update_error: "No se pudo actualizar la cantidad."
       removed: "Artículo eliminado del carrito."

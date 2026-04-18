@@ -14,6 +14,12 @@ class CartItemsController < ApplicationController
 
   def create
     @card = Card.find(params[:card_id])
+
+    if @card.price.blank?
+      redirect_back fallback_location: cards_path, alert: t('controllers.cart_items.no_price_error')
+      return
+    end
+
     @cart_item = current_user.cart_items.find_or_initialize_by(card: @card)
 
     available = @card.grouped_available_quantity
@@ -72,6 +78,7 @@ class CartItemsController < ApplicationController
     card_ids.each do |card_id|
       card = Card.find_by(id: card_id)
       next unless card
+      next if card.price.blank?
 
       cart_item = current_user.cart_items.find_or_initialize_by(card: card)
       available = card.grouped_available_quantity

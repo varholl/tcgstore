@@ -51,7 +51,9 @@
           <strong class="text-price fs-4"><%= @card.price ? number_to_currency(@card.price) : "—" %></strong>
           <div class="text-muted small"><%= t('cards.show.available_quantity') %>: <%= @card_available %></div>
         </div>
-        <% if maintenance_mode? %>
+        <% if @card.price.blank? %>
+          <button class="btn btn-secondary" disabled title="<%= t('cards.no_price_hint') %>"><i class="fa-solid fa-ban"></i><span class="d-none d-md-inline ms-1"><%= t('cards.no_price') %></span></button>
+        <% elsif maintenance_mode? %>
           <button class="btn btn-secondary" disabled title="<%= t('cards.add_to_cart') %>"><i class="fas fa-tools"></i><span class="d-none d-md-inline ms-1"><%= t('cards.add_to_cart') %></span></button>
         <% elsif user_signed_in? %>
           <%= button_to cart_items_path(card_id: @card.id), method: :post, class: "btn btn-primary d-inline-flex align-items-center justify-content-center gap-2", title: t('cards.add_to_cart') do %>

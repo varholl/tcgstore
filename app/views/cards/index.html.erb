@@ -209,6 +209,8 @@
               <div class="w-75">
                 <% if available <= 0 %>
                   <button class="btn btn-sm btn-secondary w-100" disabled><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+                <% elsif card.price.blank? %>
+                  <button class="btn btn-sm btn-secondary w-100" disabled title="<%= t('cards.no_price_hint') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.no_price') %></button>
                 <% elsif maintenance_mode? %>
                   <button class="btn btn-sm btn-secondary w-100" disabled><i class="fas fa-tools"></i> <%= t('cards.add_to_cart') %></button>
                 <% elsif user_signed_in? %>
@@ -267,6 +269,8 @@
               <div class="d-flex align-items-center gap-1">
                 <% if available <= 0 %>
                   <button class="btn btn-sm btn-secondary" disabled title="<%= t('cards.out_of_stock') %>"><i class="fa-solid fa-ban"></i> <%= t('cards.out_of_stock') %></button>
+                <% elsif card.price.blank? %>
+                  <button class="btn btn-sm btn-secondary" disabled title="<%= t('cards.no_price_hint') %>"><i class="fa-solid fa-ban"></i></button>
                 <% elsif maintenance_mode? %>
                   <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-tools"></i></button>
                 <% elsif user_signed_in? %>
