@@ -118,13 +118,24 @@ class SingleCardPriceService
     collector = CardKingdomPriceService.normalize_collector(@card.collector_number)
     ck_by_name = CardKingdomPriceService.pricelist_by_name
 
-    price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
-    # Japanese prints: CK lists them under "<edition> jpn" with matching collector numbers.
-    if (!price || price <= 0) && @card.language.to_s.casecmp?("japanese")
-      price = ck_by_name[[name, "#{edition_name} jpn", collector, is_foil, condition]]
+    # DFC/split cards: CK indexes under the front face name only.
+    name_variants = [name]
+    name_variants << name.split(" // ").first if name.include?(" // ")
+
+    name_variants.each do |n|
+      price = ck_by_name[[n, edition_name, collector, is_foil, condition]]
+      return price if price && price > 0
+
+      if @card.language.to_s.casecmp?("japanese")
+        price = ck_by_name[[n, "#{edition_name} jpn", collector, is_foil, condition]]
+        return price if price && price > 0
+      end
+
+      price = ck_by_name[[n, "promotional", collector, is_foil, condition]]
+      return price if price && price > 0
     end
-    price = ck_by_name[[name, "promotional", collector, is_foil, condition]] unless price && price > 0
-    price && price > 0 ? price : nil
+
+    nil
   end
 
   def extract_scryfall_price(scryfall_data)

@@ -109,18 +109,24 @@ class CardPriceFallbackJob < ApplicationJob
     edition_name = scryfall_data["set_name"]&.downcase&.strip
     return nil if edition_name.blank?
 
-    price = ck_by_name[[name, edition_name, collector, is_foil, condition]]
-    return price if price && price > 0
+    # DFC/split cards: CK indexes under the front face name only.
+    name_variants = [name]
+    name_variants << name.split(" // ").first if name.include?(" // ")
 
-    # Japanese prints: CK lists them under "<edition> jpn" with matching collector numbers.
-    if card.language.to_s.casecmp?("japanese")
-      price = ck_by_name[[name, "#{edition_name} jpn", collector, is_foil, condition]]
+    name_variants.each do |n|
+      price = ck_by_name[[n, edition_name, collector, is_foil, condition]]
+      return price if price && price > 0
+
+      # Japanese prints: CK lists them under "<edition> jpn" with matching collector numbers.
+      if card.language.to_s.casecmp?("japanese")
+        price = ck_by_name[[n, "#{edition_name} jpn", collector, is_foil, condition]]
+        return price if price && price > 0
+      end
+
+      # Try "promotional" edition (CK lists many promos under this edition)
+      price = ck_by_name[[n, "promotional", collector, is_foil, condition]]
       return price if price && price > 0
     end
-
-    # Try "promotional" edition (CK lists many promos under this edition)
-    price = ck_by_name[[name, "promotional", collector, is_foil, condition]]
-    return price if price && price > 0
 
     nil
   end
