@@ -163,6 +163,17 @@ class Admin::CardsController < ApplicationController
     redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.bulk_language_updated", count: count, language: t("languages.#{language.downcase}"))
   end
 
+  def mark_set_as_new
+    edition = params[:edition].to_s.strip
+    if edition.blank?
+      redirect_back fallback_location: admin_cards_path, alert: t("controllers.admin.cards.mark_set_as_new_missing_edition")
+      return
+    end
+
+    count = Card.where(edition: edition).update_all(release_date: Time.current)
+    redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.mark_set_as_new_done", count: count, edition: edition.upcase)
+  end
+
   def mark_price_reviewed
     @card.update_column(:price_reviewed, true)
     redirect_back fallback_location: admin_cards_path, notice: t("controllers.admin.cards.price_reviewed")

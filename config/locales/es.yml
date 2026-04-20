@@ -729,6 +729,8 @@ es:
         updated_desc: "Actualizado Recientemente"
       refresh_prices: "Actualizar Precios"
       refresh_prices_confirm: "Esto actualizará todos los precios de cartas desde Card Kingdom. ¿Continuar?"
+      mark_set_as_new: "Marcar %{edition} como set nuevo"
+      mark_set_as_new_confirm: "¿Marcar todas las cartas de %{edition} como lanzamiento nuevo? Esto establece la fecha de lanzamiento al día de hoy para que las actualizaciones de precio prefieran TCGPlayer sobre Card Kingdom."
       all_price_sources: "Todas las Fuentes de Precio"
       price_source_scryfall: "Scryfall (requiere revisión)"
       price_source_card_kingdom: "Card Kingdom"
@@ -887,6 +889,10 @@ es:
         bulk_language_updated:
           one: "%{count} carta actualizada a %{language}."
           other: "%{count} cartas actualizadas a %{language}."
+        mark_set_as_new_missing_edition: "Seleccioná una edición primero."
+        mark_set_as_new_done:
+          one: "%{count} carta de %{edition} marcada como nueva."
+          other: "%{count} cartas de %{edition} marcadas como nuevas."
       reservation_notes:
         created: "Nota agregada."
         access_denied: "Acceso denegado."

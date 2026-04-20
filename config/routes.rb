@@ -83,6 +83,7 @@ Rails.application.routes.draw do
         post :refresh_prices
         post :fetch_metadata
         patch :bulk_update_language
+        post :mark_set_as_new
       end
       member do
         patch :mark_price_reviewed

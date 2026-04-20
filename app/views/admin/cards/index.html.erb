@@ -43,6 +43,14 @@
   </div>
 <% end %>
 
+<% if params[:edition].present? %>
+  <div class="mb-3">
+    <%= button_to mark_set_as_new_admin_cards_path(edition: params[:edition]), method: :post, class: "btn btn-outline-warning btn-sm", form: { data: { turbo_confirm: t('admin.cards.mark_set_as_new_confirm', edition: params[:edition].upcase) } } do %>
+      <i class="fas fa-star me-1"></i> <%= t('admin.cards.mark_set_as_new', edition: params[:edition].upcase) %>
+    <% end %>
+  </div>
+<% end %>
+
 <div class="d-flex justify-content-between align-items-center mb-3">
   <p class="text-muted mb-0"><%= t('admin.cards.cards_found', count: @cards.total_count) %></p>
   <div class="d-flex align-items-center gap-2">
