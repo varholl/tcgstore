@@ -1,4 +1,4 @@
-<div class="card h-100<%= ' foil-card' if card.foil.present? %>" style="position: relative; overflow: hidden;">
+<div class="card card-product h-100<%= ' foil-card' if card.foil.present? %>">
   <% if card.from_new_set? %>
     <span class="new-set-badge"><%= t('cards.new_set_badge') %></span>
   <% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %>
@@ -19,7 +19,7 @@
         <%= condition_badge(card.condition) %>
         <small><%= language_label(card.language) %></small>
         <% if card.foil.present? %>
-          <span class="badge" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
+          <span class="badge badge-foil"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
         <% end %>
       </div>
     </div>

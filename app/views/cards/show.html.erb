@@ -9,7 +9,7 @@
     <h1 class="mb-1">
       <%= @card.name %>
       <% if @card.foil.present? %>
-        <span class="badge ms-2" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= @card.foil_display %></span>
+        <span class="badge badge-foil ms-2"><i class="fa-solid fa-star"></i> <%= @card.foil_display %></span>
       <% end %>
     </h1>
     <p class="text-muted mb-3">

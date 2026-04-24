@@ -111,7 +111,7 @@ en:
     qty: "Qty"
     no_price: "No price"
     no_price_hint: "This card has no price and cannot be added to cart."
-    new_badge: "New"
+    new_badge: "New In"
     new_set_badge: "New Set"
     new_set_button: "%{set} — New"
     new_arrivals:
@@ -145,6 +145,9 @@ en:
     all_colors: "All Colors"
     all_types: "All Types"
     clear_all_filters: "Clear all filters"
+    filters: "Filters"
+    no_results_title: "No cards match these filters"
+    no_results_body: "Try different search terms or clear the filters to see the full catalog."
     how_it_works_panel:
       title: "How do reservations work?"
     sort:

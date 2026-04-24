@@ -121,6 +121,11 @@ hr {
   border-top-color: var(--vg-border);
 }
 
+/* --- Product card (cards grid) --- */
+.card-product {
+  overflow: hidden;
+}
+
 /* --- Foil cards --- */
 .foil-card {
   border: 2px solid var(--vg-gold);
@@ -135,7 +140,7 @@ hr {
   position: absolute;
   top: 10px;
   right: -30px;
-  background: linear-gradient(135deg, #22c55e, #16a34a, #15803d);
+  background: linear-gradient(135deg, #1f4f73, #2e6e99, var(--vg-accent));
   color: #fff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -144,7 +149,7 @@ hr {
   padding: 3px 35px;
   transform: rotate(45deg);
   z-index: 1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 6px rgba(31, 79, 115, 0.45);
   transition: opacity 0.3s ease;
 }
 .card:hover .new-arrival-badge {
@@ -153,7 +158,7 @@ hr {
 
 .new-arrival-badge-inline {
   display: inline-block;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #1f4f73, #2e6e99);
   color: #fff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -164,13 +169,74 @@ hr {
   vertical-align: middle;
 }
 
+/* --- Cards index header strip --- */
+.cards-header {
+  row-gap: 0.5rem;
+}
+
+.cards-title {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.1;
+}
+
+.cards-help-btn {
+  --bs-btn-padding-y: 0.1rem;
+  --bs-btn-padding-x: 0.45rem;
+  line-height: 1;
+}
+
+.cards-sort-select {
+  width: auto;
+  max-width: 160px;
+}
+
+@media (max-width: 575.98px) {
+  .cards-sort-select {
+    max-width: 130px;
+  }
+}
+
+/* --- Empty state (zero results) --- */
+.cards-empty {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.cards-empty-icon {
+  font-size: 3rem;
+  color: var(--vg-gold);
+  opacity: 0.55;
+}
+
+.cards-empty-title {
+  font-family: 'Cinzel', serif;
+  color: var(--vg-gold);
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- "Fresh / recent" chip (New Arrivals filter) --- */
+.btn-outline-fresh {
+  color: var(--vg-accent-light);
+  border-color: var(--vg-accent);
+}
+.btn-outline-fresh:hover,
+.btn-outline-fresh:focus,
+.btn-outline-fresh:active,
+.btn-outline-fresh.active {
+  background-color: var(--vg-accent);
+  border-color: var(--vg-accent);
+  color: #fff;
+}
+
 /* --- New set badge (ribbon on card image) --- */
 .new-set-badge {
   position: absolute;
   top: 18px;
   right: -35px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5, #4338ca);
-  color: #fff;
+  background: linear-gradient(135deg, var(--vg-gold-light), var(--vg-gold), var(--vg-gold-dark));
+  color: #1a1a1a;
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -182,7 +248,7 @@ hr {
   justify-content: center;
   transform: rotate(45deg);
   z-index: 1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 6px rgba(201, 168, 76, 0.4);
   transition: opacity 0.3s ease;
 }
 .card:hover .new-set-badge {
@@ -190,20 +256,22 @@ hr {
 }
 
 .btn-outline-new-set {
-  color: #6366f1;
-  border-color: #6366f1;
+  color: var(--vg-gold);
+  border-color: var(--vg-gold);
 }
 .btn-outline-new-set:hover,
-.btn-outline-new-set:focus {
-  background-color: #6366f1;
-  border-color: #6366f1;
-  color: #fff;
+.btn-outline-new-set:focus,
+.btn-outline-new-set:active,
+.btn-outline-new-set.active {
+  background-color: var(--vg-gold);
+  border-color: var(--vg-gold);
+  color: #1a1a1a;
 }
 
 .new-set-badge-inline {
   display: inline-block;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: #fff;
+  background: linear-gradient(135deg, var(--vg-gold-light), var(--vg-gold));
+  color: #1a1a1a;
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -408,6 +476,17 @@ hr {
 .badge.bg-secondary {
   background-color: var(--vg-bg-surface) !important;
   border: 1px solid var(--vg-border);
+}
+
+.badge-foil {
+  background-color: #d4a017;
+  color: #1a1a1a;
+}
+.badge-foil .fa-star {
+  color: inherit;
+}
+.text-foil {
+  color: #d4a017;
 }
 
 /* --- Price text --- */
@@ -963,21 +1042,21 @@ span.flatpickr-weekday {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #4f46e5;
-  color: #fff;
+  background: linear-gradient(135deg, var(--vg-gold-light), var(--vg-gold), var(--vg-gold-dark));
+  color: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 14px rgba(201, 168, 76, 0.4), 0 2px 4px rgba(0, 0, 0, 0.35);
   text-decoration: none;
   font-size: 1.25rem;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .mobile-cart-fab:hover,
 .mobile-cart-fab:focus {
-  color: #fff;
+  color: #1a1a1a;
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 18px rgba(201, 168, 76, 0.5), 0 3px 6px rgba(0, 0, 0, 0.4);
 }
 .mobile-cart-fab #mobile_cart_badge {
   position: absolute;

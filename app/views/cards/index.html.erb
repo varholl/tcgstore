@@ -1,11 +1,41 @@
-<h1 class="mb-4"><%= t('cards.title') %></h1>
+<% new_arrivals_count = Card.where("quantity > 0").where("last_stocked_at >= ?", 7.days.ago).select(:edition, :collector_number, :condition, :language, :foil).distinct.count %>
+<% new_set_editions = Card.joins(:seller).merge(Seller.active).where("quantity > 0").where("release_date >= ?", SiteSetting.new_set_window_days.days.ago).group(:edition).order(Arel.sql("MIN(release_date) DESC")).pluck(:edition, Arel.sql("COALESCE(MAX(edition_name), UPPER(edition))")) %>
+<% filters_active = params[:search].present? || params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? || params[:new_set].present? %>
+<% desktop_filters_active = params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? %>
 
-<% if @show_how_it_works %>
-  <div class="alert alert-info alert-dismissible fade show mb-4" role="alert"
+<%# Header: title + help toggle + results meta (count, clear, sort, view) %>
+<div class="cards-header d-flex flex-wrap align-items-center gap-2 mb-2">
+  <h1 class="cards-title mb-0"><%= t('cards.title') %></h1>
+  <button class="btn btn-sm btn-outline-light cards-help-btn" type="button"
+          data-bs-toggle="collapse" data-bs-target="#howItWorksPanel"
+          aria-expanded="<%= @show_how_it_works ? 'true' : 'false' %>"
+          aria-controls="howItWorksPanel"
+          title="<%= t('cards.how_it_works_panel.title') %>">
+    <i class="fas fa-circle-question"></i>
+  </button>
+  <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
+    <span class="text-muted small mb-0 text-nowrap">
+      <%= t('cards.cards_found', count: @cards.total_count) %>
+    </span>
+    <% if filters_active %>
+      <%= link_to cards_path(view: @current_view), class: "btn btn-outline-secondary btn-sm", title: t('cards.clear_all_filters'), aria: { label: t('cards.clear_all_filters') } do %>
+        <i class="fas fa-filter-circle-xmark"></i>
+      <% end %>
+    <% end %>
+    <label class="text-muted mb-0 d-flex align-items-center" for="sort_select">
+      <i class="fas fa-arrow-down-short-wide"></i>
+    </label>
+    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm cards-sort-select", onchange: "Turbo.visit('#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString(), { frame: 'cards-list' })" %>
+  </div>
+</div>
+
+<%# How it works — collapse, open for users who haven't dismissed %>
+<div class="collapse <%= 'show' if @show_how_it_works %>" id="howItWorksPanel">
+  <div class="alert alert-info alert-dismissible fade show mb-2" role="alert"
        data-controller="dismiss-panel"
        data-dismiss-panel-url-value="<%= dismiss_how_it_works_cards_path %>">
-    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> <%= t('cards.how_it_works_panel.title') %></h5>
-    <ol class="mb-2">
+    <h5 class="alert-heading mb-2"><i class="fas fa-info-circle"></i> <%= t('cards.how_it_works_panel.title') %></h5>
+    <ol class="mb-0 ps-3 small">
       <li><strong><%= t('pages.how_it_works.steps.step_1.title') %></strong> — <%= t('pages.how_it_works.steps.step_1.description') %></li>
       <li><strong><%= t('pages.how_it_works.steps.step_2.title') %></strong> — <%= t('pages.how_it_works.steps.step_2.description') %></li>
       <li><strong><%= t('pages.how_it_works.steps.step_3.title') %></strong> — <%= t('pages.how_it_works.steps.step_3.description') %></li>
@@ -15,14 +45,13 @@
     <button type="button" class="btn-close" aria-label="Close"
             data-action="dismiss-panel#dismiss"></button>
   </div>
-<% end %>
+</div>
 
-<% new_arrivals_count = Card.where("quantity > 0").where("last_stocked_at >= ?", 7.days.ago).select(:edition, :collector_number, :condition, :language, :foil).distinct.count %>
-<% new_set_editions = Card.joins(:seller).merge(Seller.active).where("quantity > 0").where("release_date >= ?", SiteSetting.new_set_window_days.days.ago).group(:edition).order(Arel.sql("MIN(release_date) DESC")).pluck(:edition, Arel.sql("COALESCE(MAX(edition_name), UPPER(edition))")) %>
+<%# Featured chips (new arrivals + new sets), only when available %>
 <% if new_arrivals_count > 0 || new_set_editions.any? %>
-  <div class="mb-3 d-flex flex-wrap gap-2">
+  <div class="mb-2 d-flex flex-wrap gap-2">
     <% if new_arrivals_count > 0 %>
-      <%= link_to cards_path(sort: "newest", view: @current_view), class: "btn btn-outline-success" do %>
+      <%= link_to cards_path(sort: "newest", view: @current_view), class: "btn btn-outline-fresh btn-sm" do %>
         <i class="fas fa-sparkles"></i> <span class="d-none d-md-inline"><%= t('cards.new_arrivals', count: new_arrivals_count) %></span><span class="d-md-none"><%= new_arrivals_count %> <%= t('cards.new_short') %></span>
       <% end %>
     <% end %>
@@ -84,84 +113,81 @@
   </div>
 <% end %>
 
-<%# Desktop search — hidden on mobile %>
-<div class="d-none d-lg-block">
-<%= form_tag cards_path, method: :get, class: "mb-4" do %>
-  <div class="row g-2 mb-2">
-    <div class="col">
-      <div class="input-group">
-        <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> <%= t('cards.search') %></button>
+<%# Desktop search — hidden on mobile. Filters collapse inline; open when any filter is active. %>
+<div class="d-none d-lg-block mb-0">
+  <%= form_tag cards_path, method: :get do %>
+    <div class="input-group">
+      <%= text_field_tag :search, params[:search], class: "form-control", placeholder: t('cards.search_placeholder') %>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> <%= t('cards.search') %></button>
+      <button class="btn btn-outline-secondary" type="button"
+              data-bs-toggle="collapse" data-bs-target="#desktopFilters"
+              aria-expanded="<%= desktop_filters_active ? 'true' : 'false' %>"
+              aria-controls="desktopFilters">
+        <i class="fas fa-sliders me-1"></i><%= t('cards.filters') %>
+      </button>
+    </div>
+    <div class="collapse <%= 'show' if desktop_filters_active %>" id="desktopFilters">
+      <div class="row g-2 mt-2">
+        <div class="col-6 col-md-3">
+          <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+        </div>
+        <div class="col-6 col-md-3">
+          <%= select_tag :color, options_for_select(
+            [
+              [t('mtg_colors.W'), "W"],
+              [t('mtg_colors.U'), "U"],
+              [t('mtg_colors.B'), "B"],
+              [t('mtg_colors.R'), "R"],
+              [t('mtg_colors.G'), "G"],
+              [t('mtg_colors.multicolor'), "multicolor"],
+              [t('mtg_colors.colorless'), "colorless"]
+            ], params[:color]), include_blank: t('cards.all_colors'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+        </div>
+        <div class="col-6 col-md-3">
+          <%= select_tag :card_type, options_for_select(
+            Card.where.not(card_type: [nil, '']).distinct.order(:card_type).pluck(:card_type).map { |t_val| [t_val, t_val] },
+            params[:card_type]), include_blank: t('cards.all_types'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+        </div>
+        <div class="col-6 col-md-3">
+          <%= select_tag :foil, options_for_select([[t('cards.foil_only'), "foil"], [t('cards.non_foil_only'), "non_foil"]], params[:foil]), include_blank: t('cards.all_cards'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="row g-2">
-    <div class="col-6 col-md-3">
-      <%= select_tag :edition, options_for_select(Card.distinct.order(:edition_name).pluck(:edition_name, :edition), params[:edition]), include_blank: t('cards.all_editions'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
-    </div>
-    <div class="col-6 col-md-3">
-      <%= select_tag :color, options_for_select(
-        [
-          [t('mtg_colors.W'), "W"],
-          [t('mtg_colors.U'), "U"],
-          [t('mtg_colors.B'), "B"],
-          [t('mtg_colors.R'), "R"],
-          [t('mtg_colors.G'), "G"],
-          [t('mtg_colors.multicolor'), "multicolor"],
-          [t('mtg_colors.colorless'), "colorless"]
-        ], params[:color]), include_blank: t('cards.all_colors'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
-    </div>
-    <div class="col-6 col-md-3">
-      <%= select_tag :card_type, options_for_select(
-        Card.where.not(card_type: [nil, '']).distinct.order(:card_type).pluck(:card_type).map { |t_val| [t_val, t_val] },
-        params[:card_type]), include_blank: t('cards.all_types'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
-    </div>
-    <div class="col-6 col-md-3">
-      <%= select_tag :foil, options_for_select([[t('cards.foil_only'), "foil"], [t('cards.non_foil_only'), "non_foil"]], params[:foil]), include_blank: t('cards.all_cards'), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
-    </div>
-  </div>
-  <%= hidden_field_tag :view, @current_view %>
-  <% if params[:new_set].present? %>
-    <%= hidden_field_tag :new_set, params[:new_set] %>
+    <%= hidden_field_tag :view, @current_view %>
+    <% if params[:new_set].present? %>
+      <%= hidden_field_tag :new_set, params[:new_set] %>
+    <% end %>
   <% end %>
-<% end %>
 </div>
 
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
-  <p class="text-muted mb-0">
-    <%= t('cards.cards_found', count: @cards.total_count) %>
-    <% if params[:search].present? || params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? || params[:new_set].present? %>
-      <%= link_to cards_path(view: @current_view), class: "btn btn-outline-secondary btn-sm ms-2" do %>
+<div class="d-flex justify-content-end mt-3 mb-2">
+  <div class="btn-group" role="group" aria-label="<%= t('cards.list') %> / <%= t('cards.grid') %>">
+    <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{@current_view != 'grid' ? 'btn-primary' : 'btn-outline-primary'}", title: t('cards.list'), aria: { label: t('cards.list') } do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+    <% end %>
+    <%= link_to cards_path(request.query_parameters.merge(view: "grid")), class: "btn btn-sm #{@current_view == 'grid' ? 'btn-primary' : 'btn-outline-primary'}", title: t('cards.grid'), aria: { label: t('cards.grid') } do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
+      </svg>
+    <% end %>
+  </div>
+</div>
+
+<turbo-frame id="cards-list" class="cards-results d-block" data-turbo-action="advance" data-controller="scroll-top">
+<% if @cards.empty? %>
+  <div class="cards-empty text-center">
+    <div class="cards-empty-icon mb-3" aria-hidden="true"><i class="fas fa-hat-wizard"></i></div>
+    <h3 class="cards-empty-title mb-2"><%= t('cards.no_results_title') %></h3>
+    <p class="text-muted mb-4"><%= t('cards.no_results_body') %></p>
+    <% if filters_active %>
+      <%= link_to cards_path(view: @current_view), class: "btn btn-primary" do %>
         <i class="fas fa-filter-circle-xmark me-1"></i><%= t('cards.clear_all_filters') %>
       <% end %>
     <% end %>
-  </p>
-  <div class="d-flex align-items-center gap-2 flex-nowrap">
-    <div class="d-flex align-items-center gap-1 min-width-0 flex-shrink-1">
-      <label class="text-muted mb-0 d-flex align-items-center" for="sort_select">
-        <i class="fas fa-arrow-down-short-wide"></i>
-      </label>
-      <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm", style: "width: auto; max-width: 140px;", onchange: "Turbo.visit('#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString(), { frame: 'cards-list' })" %>
-    </div>
-    <div class="btn-group flex-shrink-0" role="group">
-      <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{@current_view != 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-        </svg>
-        <%= t('cards.list') %>
-      <% end %>
-      <%= link_to cards_path(request.query_parameters.merge(view: "grid")), class: "btn btn-sm #{@current_view == 'grid' ? 'btn-primary' : 'btn-outline-primary'}" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
-        </svg>
-        <%= t('cards.grid') %>
-      <% end %>
-    </div>
   </div>
-</div>
-
-<turbo-frame id="cards-list" data-turbo-action="advance" data-controller="scroll-top">
-<% if @current_view == "grid" %>
+<% elsif @current_view == "grid" %>
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
     <% @cards.each do |card| %>
       <div class="col">
@@ -201,7 +227,7 @@
             <%= condition_badge(card.condition) %>
             <small><%= language_label(card.language) %></small>
             <% if card.foil.present? %>
-              <span class="badge" style="background-color: #d4a017;"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
+              <span class="badge badge-foil"><i class="fa-solid fa-star"></i> <%= card.foil_display %></span>
             <% end %>
           </div>
           <div class="d-flex flex-column gap-1 mt-2">
@@ -255,7 +281,7 @@
               <span class="d-inline-flex align-items-center gap-1">
                 <%= card.name %>
                 <% if card.from_new_set? %><span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% elsif card.last_stocked_at && card.last_stocked_at >= 7.days.ago %><span class="new-arrival-badge-inline"><%= t('cards.new_badge') %></span><% end %>
-                <% if card.foil.present? %><i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= card.foil_display %></span><% end %>
+                <% if card.foil.present? %><i class="fa-solid fa-star text-foil"></i> <span class="badge badge-foil"><%= card.foil_display %></span><% end %>
               </span>
             </td>
             <td><%= card.edition_name || card.edition.upcase %></td>
@@ -293,5 +319,7 @@
   </div>
 <% end %>
 
-<div class="mt-4"><%= paginate @cards %></div>
+<% if @cards.any? %>
+  <div class="mt-4"><%= paginate @cards %></div>
+<% end %>
 </turbo-frame>

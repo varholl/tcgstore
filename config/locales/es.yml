@@ -113,7 +113,7 @@ es:
     qty: "Cant."
     no_price: "Sin precio"
     no_price_hint: "Esta carta no tiene precio y no puede agregarse al carrito."
-    new_badge: "Nuevo"
+    new_badge: "Nueva"
     new_set_badge: "Nuevo Set"
     new_set_button: "%{set} — Nuevo"
     new_arrivals:
@@ -147,6 +147,9 @@ es:
     all_colors: "Todos los Colores"
     all_types: "Todos los Tipos"
     clear_all_filters: "Limpiar todos los filtros"
+    filters: "Filtros"
+    no_results_title: "No encontramos cartas con esos filtros"
+    no_results_body: "Probá con otros términos o limpiá los filtros para ver todo el catálogo."
     how_it_works_panel:
       title: "¿Cómo funcionan las reservas?"
     sort:
