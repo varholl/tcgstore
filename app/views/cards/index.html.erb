@@ -3,7 +3,7 @@
 <% filters_active = params[:search].present? || params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? || params[:new_set].present? %>
 <% desktop_filters_active = params[:edition].present? || params[:color].present? || params[:card_type].present? || params[:foil].present? %>
 
-<%# Header: title + help toggle + results meta (count, clear, sort, view) %>
+<%# Header: title + help toggle + clear filters %>
 <div class="cards-header d-flex flex-wrap align-items-center gap-2 mb-2">
   <h1 class="cards-title mb-0"><%= t('cards.title') %></h1>
   <button class="btn btn-sm btn-outline-light cards-help-btn" type="button"
@@ -13,20 +13,11 @@
           title="<%= t('cards.how_it_works_panel.title') %>">
     <i class="fas fa-circle-question"></i>
   </button>
-  <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
-    <span class="text-muted small mb-0 text-nowrap">
-      <%= t('cards.cards_found', count: @cards.total_count) %>
-    </span>
-    <% if filters_active %>
-      <%= link_to cards_path(view: @current_view), class: "btn btn-outline-secondary btn-sm", title: t('cards.clear_all_filters'), aria: { label: t('cards.clear_all_filters') } do %>
-        <i class="fas fa-filter-circle-xmark"></i>
-      <% end %>
+  <% if filters_active %>
+    <%= link_to cards_path(view: @current_view), class: "btn btn-outline-secondary btn-sm ms-auto", title: t('cards.clear_all_filters'), aria: { label: t('cards.clear_all_filters') } do %>
+      <i class="fas fa-filter-circle-xmark"></i>
     <% end %>
-    <label class="text-muted mb-0 d-flex align-items-center" for="sort_select">
-      <i class="fas fa-arrow-down-short-wide"></i>
-    </label>
-    <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm cards-sort-select", onchange: "Turbo.visit('#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString(), { frame: 'cards-list' })" %>
-  </div>
+  <% end %>
 </div>
 
 <%# How it works — collapse, open for users who haven't dismissed %>
@@ -160,8 +151,15 @@
   <% end %>
 </div>
 
-<div class="d-flex justify-content-end mt-3 mb-2">
-  <div class="btn-group" role="group" aria-label="<%= t('cards.list') %> / <%= t('cards.grid') %>">
+<div class="d-flex align-items-center flex-wrap gap-2 mt-3 mb-2">
+  <span class="text-muted small mb-0 text-nowrap">
+    <%= t('cards.cards_found', count: @cards.total_count) %>
+  </span>
+  <label class="text-muted mb-0 d-flex align-items-center" for="sort_select">
+    <i class="fas fa-arrow-down-short-wide"></i>
+  </label>
+  <%= select_tag :sort, options_for_select(CardsController::SORT_OPTIONS.map { |k, v| [t("cards.sort.#{k}"), k] }, @current_sort), id: "sort_select", class: "form-select form-select-sm cards-sort-select", onchange: "Turbo.visit('#{cards_path}?' + new URLSearchParams({...Object.fromEntries(new URLSearchParams(window.location.search)), sort: this.value}).toString(), { frame: 'cards-list' })" %>
+  <div class="btn-group ms-auto" role="group" aria-label="<%= t('cards.list') %> / <%= t('cards.grid') %>">
     <%= link_to cards_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm #{@current_view != 'grid' ? 'btn-primary' : 'btn-outline-primary'}", title: t('cards.list'), aria: { label: t('cards.list') } do %>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
