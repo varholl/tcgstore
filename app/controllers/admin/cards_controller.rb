@@ -1,7 +1,7 @@
 class Admin::CardsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed, :refresh_price, :add_stock, :remove_stock_entry]
+  before_action :set_card, only: [:edit, :update, :destroy, :mark_price_reviewed, :refresh_price, :add_stock, :update_stock_entry, :remove_stock_entry]
 
   LANGUAGES = %w[English Spanish Japanese Italian Portuguese].freeze
 
@@ -106,19 +106,56 @@ class Admin::CardsController < ApplicationController
     end
   end
 
+  def update_stock_entry
+    entry = @card.stock_entries.find(params[:stock_entry_id])
+    new_qty = params[:quantity].to_i
+
+    if new_qty < 1
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),
+        alert: t("controllers.admin.cards.stock_invalid_quantity")
+      return
+    end
+
+    delta = new_qty - entry.quantity
+
+    if delta == 0
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to])
+      return
+    end
+
+    protected_reserved = @card.reservation_items.joins(:reservation)
+      .where(reservations: { status: %w[prepared paid] })
+      .sum(:quantity)
+    projected_card_quantity = [@card.quantity + delta, 0].max
+
+    if projected_card_quantity < protected_reserved
+      redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),
+        alert: t("controllers.admin.cards.stock_update_protected", count: protected_reserved)
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      entry.update!(quantity: new_qty)
+      @card.update!(quantity: projected_card_quantity)
+    end
+
+    redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),
+      notice: t("controllers.admin.cards.stock_updated", count: new_qty)
+  end
+
   def remove_stock_entry
     entry = @card.stock_entries.find(params[:stock_entry_id])
     protected_reserved = @card.reservation_items.joins(:reservation)
       .where(reservations: { status: %w[prepared paid] })
       .sum(:quantity)
-    remaining_quantity = @card.quantity - entry.quantity
+    remaining_quantity = [@card.quantity - entry.quantity, 0].max
 
     if remaining_quantity < protected_reserved
       redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),
         alert: t("controllers.admin.cards.stock_remove_protected", count: protected_reserved)
     else
       ActiveRecord::Base.transaction do
-        @card.decrement!(:quantity, entry.quantity)
+        @card.update!(quantity: remaining_quantity)
         entry.destroy!
       end
       redirect_to edit_admin_card_path(@card, return_to: params[:return_to]),

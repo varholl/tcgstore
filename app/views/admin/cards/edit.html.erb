@@ -92,10 +92,23 @@
         <tbody>
           <% @stock_entries.each do |entry| %>
             <tr>
-              <td><%= entry.quantity %></td>
+              <td style="width: 140px;">
+                <%= form_with url: update_stock_entry_admin_card_path(@card), method: :patch, class: "d-flex align-items-center gap-1" do %>
+                  <%= hidden_field_tag :stock_entry_id, entry.id %>
+                  <%= hidden_field_tag :return_to, @return_to %>
+                  <%= number_field_tag :quantity, entry.quantity, min: 1, class: "form-control form-control-sm", style: "width: 70px;" %>
+                  <button type="submit"
+                          class="btn btn-outline-primary btn-sm"
+                          title="<%= t('admin.cards.update_stock') %>"
+                          data-turbo-confirm="<%= t('admin.cards.confirm_update_stock', count: entry.quantity) %>">
+                    <i class="fas fa-check"></i>
+                  </button>
+                <% end %>
+              </td>
               <td><%= entry.added_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
               <td class="text-end">
-                <% can_remove = (@card.quantity - entry.quantity) >= protected_reserved %>
+                <% remaining_after_remove = [@card.quantity - entry.quantity, 0].max %>
+                <% can_remove = remaining_after_remove >= protected_reserved %>
                 <%= button_to remove_stock_entry_admin_card_path(@card, stock_entry_id: entry.id, return_to: @return_to),
                       method: :delete,
                       class: "btn btn-outline-danger btn-sm",

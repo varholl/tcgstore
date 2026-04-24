@@ -681,10 +681,13 @@ en:
       total_quantity: "Total"
       add_stock: "Add Stock"
       remove_stock: "Remove"
+      update_stock: "Save"
       stock_protected_hint: "Cannot remove — stock is backing prepared or paid reservations"
+      stock_update_protected_hint: "Cannot reduce below stock backing prepared or paid reservations"
       confirm_remove_stock:
         one: "Remove %{count} unit of stock?"
         other: "Remove %{count} units of stock?"
+      confirm_update_stock: "Update stock entry to %{count}?"
       all_editions: "All Editions"
       all_sellers: "All Sellers"
       seller: "Seller"
@@ -846,6 +849,12 @@ en:
         stock_remove_protected:
           one: "Cannot remove — %{count} unit is backing prepared or paid reservations."
           other: "Cannot remove — %{count} units are backing prepared or paid reservations."
+        stock_update_protected:
+          one: "Cannot reduce — %{count} unit is backing prepared or paid reservations."
+          other: "Cannot reduce — %{count} units are backing prepared or paid reservations."
+        stock_updated:
+          one: "Stock entry updated to %{count} unit."
+          other: "Stock entry updated to %{count} units."
         prices_refreshed: "Prices refreshed: %{scryfall_ids_fetched} Scryfall IDs backfilled, %{prices_updated} prices updated, %{prices_not_found} not found on Card Kingdom."
         prices_refresh_started: "Price refresh started in the background. It may take a few minutes to complete."
         metadata_fetch_started: "Metadata fetch started in the background. It may take a few minutes to complete."

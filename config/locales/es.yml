@@ -707,10 +707,13 @@ es:
       total_quantity: "Total"
       add_stock: "Agregar Stock"
       remove_stock: "Eliminar"
+      update_stock: "Guardar"
       stock_protected_hint: "No se puede eliminar — el stock respalda reservas preparadas o pagadas"
+      stock_update_protected_hint: "No se puede reducir por debajo del stock que respalda reservas preparadas o pagadas"
       confirm_remove_stock:
         one: "¿Eliminar %{count} unidad de stock?"
         other: "¿Eliminar %{count} unidades de stock?"
+      confirm_update_stock: "¿Actualizar entrada de stock a %{count}?"
       all_editions: "Todas las Ediciones"
       all_sellers: "Todos los Vendedores"
       seller: "Vendedor"
@@ -879,6 +882,12 @@ es:
         stock_remove_protected:
           one: "No se puede eliminar — %{count} unidad respalda reservas preparadas o pagadas."
           other: "No se puede eliminar — %{count} unidades respaldan reservas preparadas o pagadas."
+        stock_update_protected:
+          one: "No se puede reducir — %{count} unidad respalda reservas preparadas o pagadas."
+          other: "No se puede reducir — %{count} unidades respaldan reservas preparadas o pagadas."
+        stock_updated:
+          one: "Entrada de stock actualizada a %{count} unidad."
+          other: "Entrada de stock actualizada a %{count} unidades."
         prices_refreshed: "Precios actualizados: %{scryfall_ids_fetched} IDs de Scryfall completados, %{prices_updated} precios actualizados, %{prices_not_found} no encontrados en Card Kingdom."
         prices_refresh_started: "La actualización de precios se inició en segundo plano. Puede tardar unos minutos en completarse."
         metadata_fetch_started: "La obtención de metadata se inició en segundo plano. Puede tardar unos minutos en completarse."

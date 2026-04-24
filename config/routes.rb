@@ -89,6 +89,7 @@ Rails.application.routes.draw do
         patch :mark_price_reviewed
         patch :refresh_price
         post :add_stock
+        patch :update_stock_entry
         delete :remove_stock_entry
       end
     end
