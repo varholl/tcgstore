@@ -75,24 +75,34 @@ class ReservationsController < ApplicationController
       return
     end
 
-    item = @reservation.reservation_items.find(params[:item_id])
-    item.destroy!
-    @reservation.reload
-    ReservationMailer.updated(@reservation).deliver_later
+    representative = @reservation.reservation_items.find(params[:item_id])
 
-    respond_to do |format|
-      format.turbo_stream do
-        total = @reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }
-        render turbo_stream: [
-          turbo_stream.remove(item),
-          turbo_stream.replace("reservation_total",
-            html: "<tr id=\"reservation_total\"><td colspan=\"#{@reservation.pending? ? 7 : 6}\" class=\"text-end\"><strong>#{t('reservations.total')}</strong></td><td><strong>#{helpers.number_to_currency(total)}</strong></td></tr>".html_safe
-          )
-        ]
+    if admin_or_seller?
+      representative.destroy!
+      @reservation.reload
+      ReservationMailer.updated(@reservation).deliver_later
+
+      respond_to do |format|
+        format.turbo_stream do
+          total = @reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }
+          render turbo_stream: [
+            turbo_stream.remove(representative),
+            turbo_stream.replace("reservation_total",
+              html: "<tr id=\"reservation_total\"><td colspan=\"7\" class=\"text-end\"><strong>#{t('reservations.total')}</strong></td><td><strong>#{helpers.number_to_currency(total)}</strong></td></tr>".html_safe
+            )
+          ]
+        end
+        format.html do
+          redirect_to reservation_path(@reservation, view: params[:view], anchor: "items"), notice: t('controllers.reservations.item_removed')
+        end
       end
-      format.html do
-        redirect_to reservation_path(@reservation, view: params[:view], anchor: "items"), notice: t('controllers.reservations.item_removed')
-      end
+    else
+      identity = representative.card.card_identity
+      @reservation.reservation_items.includes(:card).select { |i| i.card.card_identity == identity }.each(&:destroy!)
+      @reservation.reload
+      ReservationMailer.updated(@reservation).deliver_later
+
+      redirect_to reservation_path(@reservation, view: params[:view], anchor: "items"), notice: t('controllers.reservations.item_removed')
     end
   end
 

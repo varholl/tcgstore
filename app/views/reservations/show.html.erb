@@ -111,7 +111,7 @@
                   <small class="text-muted ms-1">x<%= item.quantity %></small>
                 </div>
                 <small class="text-muted"><%= t('admin.cards.seller') %>: <%= item.card.seller.name %></small>
-                <% if @reservation.pending? && !@grouped_items %>
+                <% if @reservation.pending? %>
                   <div class="mt-1">
                     <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
                   </div>
@@ -148,7 +148,7 @@
                 <strong class="text-price"><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></strong>
                 <small class="text-muted ms-1">x<%= item.quantity %></small>
               </div>
-              <% if @reservation.pending? && !@grouped_items %>
+              <% if @reservation.pending? %>
                 <div class="mt-1">
                   <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
                 </div>
@@ -174,22 +174,26 @@
         <% end %>
         <th><%= t('reservations.price') %></th>
         <th><%= t('reservations.subtotal') %></th>
-        <% if @reservation.pending? && !@grouped_items %>
-          <th></th>
-        <% end %>
       </tr>
     </thead>
     <tbody>
       <% items_to_show = @grouped_items || @reservation.reservation_items %>
       <% if admin_or_seller? %>
-        <% col_count = 7 + (admin_or_seller? ? 1 : 0) + (@reservation.pending? && !@grouped_items ? 1 : 0) %>
+        <% col_count = 7 + (admin_or_seller? ? 1 : 0) %>
         <% group_items_by_color_and_type(items_to_show).each do |category, items| %>
           <tr>
             <td colspan="<%= col_count %>" class="fw-bold text-white" style="background-color: #6c757d;"><%= color_category_label(category) %></td>
           </tr>
           <% items.each do |item| %>
             <tr id="<%= @grouped_items ? "grouped_item_#{item.id}" : dom_id(item) %>">
-              <td><%= item.card.name %><% if item.card.from_new_set? %> <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% end %></td>
+              <td>
+                <% if @reservation.pending? %>
+                  <%= button_to remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-link text-danger p-0 me-2 align-baseline", form: { class: "d-inline", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } }, title: t('reservations.remove_item') do %>
+                    <i class="fas fa-trash"></i>
+                  <% end %>
+                <% end %>
+                <%= item.card.name %><% if item.card.from_new_set? %> <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% end %>
+              </td>
               <td><%= item.card.edition_name || item.card.edition.upcase %></td>
               <td><%= item.card.condition %></td>
               <td><%= item.card.language %></td>
@@ -197,36 +201,33 @@
               <td><%= item.card.seller.name %></td>
               <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
               <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
-              <% if @reservation.pending? && !@grouped_items %>
-                <td>
-                  <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
-                </td>
-              <% end %>
             </tr>
           <% end %>
         <% end %>
       <% else %>
         <% items_to_show.each do |item| %>
           <tr id="<%= @grouped_items ? "grouped_item_#{item.id}" : dom_id(item) %>">
-            <td><%= item.card.name %><% if item.card.from_new_set? %> <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% end %></td>
+            <td>
+              <% if @reservation.pending? %>
+                <%= button_to remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-link text-danger p-0 me-2 align-baseline", form: { class: "d-inline", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } }, title: t('reservations.remove_item') do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              <% end %>
+              <%= item.card.name %><% if item.card.from_new_set? %> <span class="new-set-badge-inline"><%= t('cards.new_set_badge') %></span><% end %>
+            </td>
             <td><%= item.card.edition_name || item.card.edition.upcase %></td>
             <td><%= item.card.condition %></td>
             <td><%= item.card.language %></td>
             <td><%= item.quantity %></td>
             <td><%= item.unit_price ? number_to_currency(item.unit_price) : "—" %></td>
             <td><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
-            <% if @reservation.pending? && !@grouped_items %>
-              <td>
-                <%= button_to t('reservations.remove_item'), remove_item_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: t('reservations.remove_item_confirm', name: item.card.name) } %>
-              </td>
-            <% end %>
           </tr>
         <% end %>
       <% end %>
     </tbody>
     <tfoot>
       <tr id="reservation_total">
-        <% extra_cols = (admin_or_seller? ? 1 : 0) + (@reservation.pending? && !@grouped_items ? 1 : 0) %>
+        <% extra_cols = admin_or_seller? ? 1 : 0 %>
         <td colspan="<%= 6 + extra_cols %>" class="text-end"><strong><%= t('reservations.total') %></strong></td>
         <td><strong><%= number_to_currency((@grouped_items || @reservation.reservation_items).sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
