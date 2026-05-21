@@ -1000,6 +1000,8 @@ es:
     R: "Rojo"
     G: "Verde"
     multicolor: "Multicolor"
+    artifact: "Artefacto"
+    vehicle: "Vehículo"
     land: "Tierra"
     colorless: "Incoloro"
 

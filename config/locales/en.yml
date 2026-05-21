@@ -967,6 +967,8 @@ en:
     R: "Red"
     G: "Green"
     multicolor: "Multicolor"
+    artifact: "Artifact"
+    vehicle: "Vehicle"
     land: "Land"
     colorless: "Colorless"
 

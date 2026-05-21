@@ -38,19 +38,69 @@ module ApplicationHelper
     when :R then I18n.t("mtg_colors.R")
     when :G then I18n.t("mtg_colors.G")
     when :multicolor then I18n.t("mtg_colors.multicolor")
+    when :artifact then I18n.t("mtg_colors.artifact")
+    when :vehicle then I18n.t("mtg_colors.vehicle")
     when :land then I18n.t("mtg_colors.land")
     when :colorless then I18n.t("mtg_colors.colorless")
     end
   end
 
-  COLOR_CATEGORY_ORDER = [:W, :U, :B, :R, :G, :multicolor, :colorless, :land].freeze
+  COLOR_CATEGORY_ORDER = [:W, :U, :B, :R, :G, :multicolor, :colorless, :artifact, :vehicle, :land].freeze
+
+  RARITY_RANK = { "mythic" => 0, "rare" => 1, "uncommon" => 2, "common" => 3, "special" => 4, "bonus" => 5 }.freeze
+
+  def reservation_section(card)
+    type = card.card_type.to_s.downcase
+    return :land if type.match?(/\bland\b/)
+    return :vehicle if type.match?(/\bvehicle\b/)
+    return :artifact if type.match?(/\bartifact\b/)
+    return :colorless if card.colors.blank?
+    codes = card.colors.split(",").map(&:strip)
+    return :multicolor if codes.size > 1
+    codes.first.to_sym
+  end
+
+  def color_section_type_rank(card)
+    type = card.card_type.to_s.downcase
+    if type.include?("creature")
+      type.include?("legendary") ? 0 : 1
+    elsif type.include?("enchantment")
+      2
+    elsif type.include?("instant")
+      3
+    elsif type.include?("sorcery")
+      4
+    elsif type.include?("planeswalker")
+      5
+    elsif type.include?("battle")
+      6
+    else
+      7
+    end
+  end
+
+  def rarity_rank(card)
+    RARITY_RANK[card.rarity.to_s.downcase] || 99
+  end
+
+  def foil_rank(card)
+    card.foil.present? ? 0 : 1
+  end
 
   def group_items_by_color_and_type(items)
-    grouped = items.group_by { |item| color_category(item.card) }
-    COLOR_CATEGORY_ORDER.filter_map do |cat|
-      next unless grouped[cat]
-      sorted = grouped[cat].sort_by { |item| [item.card.card_type.to_s, item.card.name] }
-      [cat, sorted]
+    grouped = items.group_by { |item| reservation_section(item.card) }
+    COLOR_CATEGORY_ORDER.filter_map do |section|
+      section_items = grouped[section]
+      next unless section_items
+      sorted = case section
+      when :artifact, :vehicle
+        section_items.sort_by { |i| [rarity_rank(i.card), foil_rank(i.card), i.card.name.to_s] }
+      when :land
+        section_items.sort_by { |i| [foil_rank(i.card), i.card.name.to_s] }
+      else
+        section_items.sort_by { |i| [color_section_type_rank(i.card), rarity_rank(i.card), foil_rank(i.card), i.card.name.to_s] }
+      end
+      [section, sorted]
     end
   end
 
@@ -61,6 +111,17 @@ module ApplicationHelper
     "Italian" => "\u{1F1EE}\u{1F1F9}",
     "Portuguese" => "\u{1F1E7}\u{1F1F7}"
   }.freeze
+
+  URL_REGEX = %r{(https?://[^\s<]+[^\s<.,;:!?)\]'"])}i
+
+  def format_note_body(text)
+    return "" if text.blank?
+    escaped = ERB::Util.html_escape(text)
+    linked = escaped.gsub(URL_REGEX) do |url|
+      %(<a href="#{url}" target="_blank" rel="noopener noreferrer">#{url}</a>)
+    end
+    simple_format(linked.html_safe, {}, sanitize: false)
+  end
 
   def language_label(language)
     flag = LANGUAGE_FLAGS[language]

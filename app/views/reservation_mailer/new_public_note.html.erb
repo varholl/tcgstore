@@ -3,7 +3,7 @@
 <p><%= t('reservation_mailer.new_public_note.body', id: @reservation.id, author: @author.name) %></p>
 
 <blockquote style="border-left: 3px solid #ccc; padding-left: 10px; color: #555;">
-  <%= simple_format(@reservation.reservation_notes.public_notes.order(created_at: :desc).first&.body) %>
+  <%= format_note_body(@reservation.reservation_notes.public_notes.order(created_at: :desc).first&.body) %>
 </blockquote>
 
 <p><%= t('reservation_mailer.new_public_note.closing') %></p>

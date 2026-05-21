@@ -489,7 +489,7 @@
           <div class="mb-2">
             <strong><%= note.user&.admin? ? t('reservations.notes.admin_label') : note.user&.name %></strong>
             <small class="text-muted ms-2"><%= note.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></small>
-            <p class="mb-0"><%= simple_format(note.body) %></p>
+            <p class="mb-0"><%= format_note_body(note.body) %></p>
           </div>
           <hr class="my-1">
         <% end %>
