@@ -208,7 +208,7 @@
         <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
         <% price_changed_grid = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
         <div class="col">
-          <div class="card h-100<%= ' foil-card' if item.card.foil.present? %><%= ' border-danger' if stock_short %><%= ' border-warning' if price_changed_grid && !stock_short %>">
+          <div class="card h-100<%= ' foil-card' if item.card.foil.present? %><%= ' border-danger' if stock_short %><%= ' border-info' if price_changed_grid && !stock_short %>">
             <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
                  class="card-img-top"
                  alt="<%= item.card.name %>"
@@ -282,7 +282,7 @@
         <% items.each do |item| %>
           <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
           <% price_changed = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
-          <tr class="<%= 'table-danger' if stock_short %> <%= 'table-warning' if price_changed && !stock_short %>">
+          <tr class="<%= 'table-danger' if stock_short %> <%= 'table-info' if price_changed && !stock_short %>">
             <td data-label="<%= t('admin.reservations.card_name') %>">
               <%= item.card.name %>
               <% if item.card.from_new_set? %>
