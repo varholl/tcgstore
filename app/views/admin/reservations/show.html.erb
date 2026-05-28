@@ -261,10 +261,10 @@
               <% end %>
               <div class="mt-1">
                 <% if item.prepared? %>
-                  <span class="badge bg-success" title="<%= t('admin.reservations.item_prepared') %>"><i class="fas fa-check me-1"></i><%= t('admin.reservations.item_prepared') %></span>
+                  <span class="badge bg-success" title="<%= t('admin.reservations.item_prepared') %>"><i class="fas fa-check"></i></span>
                 <% end %>
                 <% if item.issue.present? %>
-                  <span class="badge bg-warning text-dark" title="<%= item.issue_note.presence || t("admin.reservations.issues.#{item.issue}") %>"><i class="fas fa-flag me-1"></i><%= t("admin.reservations.issues.#{item.issue}") %></span>
+                  <span class="badge bg-warning text-dark" title="<%= [t("admin.reservations.issues.#{item.issue}"), item.issue_note.presence].compact.join(' — ') %>"><i class="fas fa-flag"></i></span>
                 <% end %>
               </div>
               <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
@@ -325,12 +325,10 @@
                 </span>
               <% end %>
               <% if item.prepared? %>
-                <span class="badge bg-success" title="<%= t('admin.reservations.item_prepared') %>"><i class="fas fa-check me-1"></i><%= t('admin.reservations.item_prepared') %></span>
+                <span class="badge bg-success" title="<%= t('admin.reservations.item_prepared') %>"><i class="fas fa-check"></i></span>
               <% end %>
               <% if item.issue.present? %>
-                <span class="badge bg-warning text-dark" title="<%= item.issue_note.presence || t("admin.reservations.issues.#{item.issue}") %>">
-                  <i class="fas fa-flag me-1"></i><%= t("admin.reservations.issues.#{item.issue}") %>
-                </span>
+                <span class="badge bg-warning text-dark" title="<%= [t("admin.reservations.issues.#{item.issue}"), item.issue_note.presence].compact.join(' — ') %>"><i class="fas fa-flag"></i></span>
               <% end %>
             </td>
             <td data-label="<%= t('admin.reservations.edition') %>"><%= item.card.edition_name || item.card.edition.upcase %></td>
@@ -355,7 +353,7 @@
             <td data-label="<%= t('admin.reservations.subtotal') %>"><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
             <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
               <td data-label="">
-                <div class="d-flex flex-column gap-1">
+                <div class="d-flex gap-1">
                   <%= button_to toggle_item_prepared_admin_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :patch, class: "btn btn-sm #{item.prepared? ? 'btn-success' : 'btn-outline-success'}", title: item.prepared? ? t('admin.reservations.unmark_prepared') : t('admin.reservations.mark_prepared') do %><i class="fas fa-check"></i><% end %>
                   <button type="button" class="btn btn-sm <%= item.issue.present? ? 'btn-warning' : 'btn-outline-warning' %>" data-bs-toggle="modal" data-bs-target="#issueModal<%= item.id %>" title="<%= t('admin.reservations.flag_issue') %>">
                     <i class="fas fa-flag"></i>
