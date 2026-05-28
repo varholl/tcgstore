@@ -2,6 +2,10 @@ pending_reservation:
   user: alice
   status: "pending"
 
+in_preparation_reservation:
+  user: alice
+  status: "in_preparation"
+
 prepared_reservation:
   user: alice
   status: "prepared"

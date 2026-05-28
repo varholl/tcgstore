@@ -57,7 +57,7 @@ class AdminReservationCreator
 
     reserved_per_card = ReservationItem.joins(:reservation)
       .where(card_id: siblings.keys)
-      .where(reservations: { status: %w[pending prepared paid shipped] })
+      .where(reservations: { status: %w[pending in_preparation prepared paid shipped] })
       .group(:card_id).sum(:quantity)
 
     available_per_card = siblings.transform_values do |c|

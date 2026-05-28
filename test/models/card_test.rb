@@ -92,6 +92,14 @@ class CardTest < ActiveSupport::TestCase
     assert_equal 2, counterspell.available_quantity
   end
 
+  test "available_quantity counts in_preparation reservations as reserved" do
+    counterspell = cards(:counterspell)
+    assert_equal 2, counterspell.available_quantity
+    reservation = Reservation.create!(user: users(:alice), status: :in_preparation)
+    reservation.reservation_items.create!(card: counterspell, quantity: 1, unit_price: counterspell.price)
+    assert_equal 1, counterspell.reload.available_quantity
+  end
+
   # --- grouped_available_quantity ---
 
   test "grouped_available_quantity sums across active siblings only" do

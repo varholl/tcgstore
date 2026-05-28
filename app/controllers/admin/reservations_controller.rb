@@ -148,10 +148,22 @@ class Admin::ReservationsController < ApplicationController
     render partial: "add_item_search_results", locals: { cards: @cards, reservation: @reservation }
   end
 
-  def prepare
+  def in_preparation
     @reservation = Reservation.find(params[:id])
 
     if @reservation.pending?
+      @reservation.update!(status: :in_preparation)
+      ReservationMailer.in_preparation(@reservation).deliver_later
+      redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.in_preparation')
+    else
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.in_preparation_error')
+    end
+  end
+
+  def prepare
+    @reservation = Reservation.find(params[:id])
+
+    if @reservation.pending? || @reservation.in_preparation?
       @reservation.update!(status: :prepared)
       ReservationMailer.prepared(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.prepared')
@@ -245,7 +257,7 @@ class Admin::ReservationsController < ApplicationController
   def expire
     @reservation = Reservation.find(params[:id])
 
-    if @reservation.pending? || @reservation.prepared?
+    if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared?
       @reservation.update!(status: :expired, message: params[:message].presence)
       ReservationMailer.expired(@reservation).deliver_later
       redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.expired')
@@ -315,7 +327,7 @@ class Admin::ReservationsController < ApplicationController
   def add_item
     @reservation = Reservation.find(params[:id])
 
-    unless @reservation.pending? || @reservation.prepared?
+    unless @reservation.pending? || @reservation.in_preparation? || @reservation.prepared?
       redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.add_item_error")
       return
     end
@@ -342,7 +354,7 @@ class Admin::ReservationsController < ApplicationController
   def remove_item
     @reservation = Reservation.find(params[:id])
 
-    unless @reservation.pending? || @reservation.prepared?
+    unless @reservation.pending? || @reservation.in_preparation? || @reservation.prepared?
       redirect_to admin_reservation_path(@reservation), alert: t("controllers.admin.reservations.remove_item_error")
       return
     end
@@ -357,6 +369,23 @@ class Admin::ReservationsController < ApplicationController
     item = @reservation.reservation_items.find(params[:item_id])
     item.update!(unit_price: params[:unit_price])
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.item_price_updated')
+  end
+
+  def toggle_item_prepared
+    @reservation = Reservation.find(params[:id])
+    item = @reservation.reservation_items.find(params[:item_id])
+    item.update!(prepared: !item.prepared)
+    notice = item.prepared? ? t('controllers.admin.reservations.item_marked_prepared', name: item.card.name) : t('controllers.admin.reservations.item_unmarked_prepared', name: item.card.name)
+    redirect_to admin_reservation_path(@reservation, view: params[:view], anchor: "items"), notice: notice
+  end
+
+  def update_item_issue
+    @reservation = Reservation.find(params[:id])
+    item = @reservation.reservation_items.find(params[:item_id])
+    issue = params[:issue].presence
+    item.update!(issue: issue, issue_note: issue ? params[:issue_note].presence : nil)
+    notice = issue ? t('controllers.admin.reservations.item_issue_flagged', name: item.card.name) : t('controllers.admin.reservations.item_issue_cleared', name: item.card.name)
+    redirect_to admin_reservation_path(@reservation, view: params[:view], anchor: "items"), notice: notice
   end
 
   private

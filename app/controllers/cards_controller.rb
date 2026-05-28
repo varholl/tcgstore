@@ -43,7 +43,7 @@ class CardsController < ApplicationController
 
     reserved_by_card = ReservationItem
       .joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid shipped] }, card_id: all_card_ids)
+      .where(reservations: { status: %w[pending in_preparation prepared paid shipped] }, card_id: all_card_ids)
       .group(:card_id)
       .sum(:quantity)
 
@@ -111,7 +111,7 @@ class CardsController < ApplicationController
 
     reserved_by_card = ReservationItem
       .joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid shipped] }, card_id: listings.map(&:id))
+      .where(reservations: { status: %w[pending in_preparation prepared paid shipped] }, card_id: listings.map(&:id))
       .group(:card_id)
       .sum(:quantity)
 

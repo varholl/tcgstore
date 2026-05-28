@@ -56,7 +56,7 @@
         </tr>
       </thead>
       <tbody>
-        <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+        <% status_colors = { "pending" => "warning", "in_preparation" => "warning-subtle text-warning-emphasis", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
         <% @reservations.each do |reservation| %>
           <tr>
             <td data-label="<%= t('admin.users.reservation_date') %>"><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>

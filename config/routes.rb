@@ -50,6 +50,7 @@ Rails.application.routes.draw do
         post :create_import
       end
       member do
+        patch :in_preparation
         patch :prepare
         patch :pay
         patch :ship
@@ -64,6 +65,8 @@ Rails.application.routes.draw do
         patch :force_decrement
         patch :toggle_trade
         patch :update_item_price
+        patch :toggle_item_prepared
+        patch :update_item_issue
         delete :remove_item
         post :add_item
         get :search_cards_for_add

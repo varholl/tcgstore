@@ -45,7 +45,7 @@ class BulkSearchMatcherService
       if cards.any?
         reserved = ReservationItem
           .joins(:reservation)
-          .where(reservations: { status: %w[pending prepared paid shipped] }, card_id: cards.map(&:id))
+          .where(reservations: { status: %w[pending in_preparation prepared paid shipped] }, card_id: cards.map(&:id))
           .group(:card_id)
           .sum(:quantity)
 

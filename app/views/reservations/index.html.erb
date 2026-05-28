@@ -21,7 +21,7 @@
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td><%= number_to_currency(reservation.total_price) %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "prepared" => "primary", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+              <% status_colors = { "pending" => "warning", "in_preparation" => "warning-subtle text-warning-emphasis", "prepared" => "primary", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td>

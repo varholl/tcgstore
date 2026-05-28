@@ -30,7 +30,7 @@
 
     <hr>
 
-    <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+    <% status_colors = { "pending" => "warning", "in_preparation" => "warning-subtle text-warning-emphasis", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
     <p><strong><%= t('admin.reservations.status_label') %></strong> <span class="badge bg-<%= status_colors[@reservation.status] %>"><%= t("statuses.#{@reservation.status}") %></span></p>
     <p><strong><%= t('admin.reservations.date_label') %></strong> <%= @reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></p>
     <% if @reservation.message.present? %>
@@ -200,13 +200,26 @@
   </div>
 </div>
 
+<% if @reservation.reservation_items.size > 0 %>
+  <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+    <span class="badge bg-success-subtle text-success-emphasis">
+      <i class="fas fa-check-circle me-1"></i><%= t('admin.reservations.prepared_progress', prepared: @reservation.prepared_items_count, total: @reservation.reservation_items.size) %>
+    </span>
+    <% if @reservation.flagged_items_count > 0 %>
+      <span class="badge bg-danger">
+        <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.flagged_count', count: @reservation.flagged_items_count) %>
+      </span>
+    <% end %>
+  </div>
+<% end %>
+
 <% if params[:view] == "grid" %>
   <% group_items_by_color_and_type(@reservation.reservation_items).each do |category, items| %>
     <h5 class="mt-3 mb-2"><%= color_category_label(category) %></h5>
     <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 mb-3">
       <% items.each do |item| %>
-        <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
-        <% price_changed_grid = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
+        <% stock_short = (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
+        <% price_changed_grid = (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
         <div class="col">
           <div class="card h-100<%= ' foil-card' if item.card.foil.present? %><%= ' border-danger' if stock_short %><%= ' border-info' if price_changed_grid && !stock_short %>">
             <img src="https://api.scryfall.com/cards/<%= item.card.edition %>/<%= item.card.collector_number %>?format=image&version=normal"
@@ -226,7 +239,7 @@
                   · <i class="fa-solid fa-star" style="color: #d4a017;"></i> <span class="badge" style="background-color: #d4a017;"><%= item.card.foil_display %></span>
                 <% end %>
               </small>
-              <% price_changed = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
+              <% price_changed = (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
               <div class="mt-1">
                 <small class="text-muted"><%= t('admin.reservations.current_price') %>: <%= item.card.price ? number_to_currency(item.card.price) : "—" %>
                   <% if item.card.price_source == "scryfall" && !item.card.price_reviewed? %>
@@ -245,9 +258,21 @@
                   <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.low_stock') %>
                 </span>
               <% end %>
-              <% if @reservation.pending? || @reservation.prepared? %>
-                <div class="mt-2">
-                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash me-1"></i><%= t('admin.reservations.remove_item') %><% end %>
+              <div class="mt-1">
+                <% if item.prepared? %>
+                  <span class="badge bg-success" title="<%= t('admin.reservations.item_prepared') %>"><i class="fas fa-check me-1"></i><%= t('admin.reservations.item_prepared') %></span>
+                <% end %>
+                <% if item.issue.present? %>
+                  <span class="badge bg-warning text-dark" title="<%= item.issue_note.presence || t("admin.reservations.issues.#{item.issue}") %>"><i class="fas fa-flag me-1"></i><%= t("admin.reservations.issues.#{item.issue}") %></span>
+                <% end %>
+              </div>
+              <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
+                <div class="mt-2 d-flex gap-1">
+                  <%= button_to toggle_item_prepared_admin_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :patch, class: "btn btn-sm #{item.prepared? ? 'btn-success' : 'btn-outline-success'}", title: item.prepared? ? t('admin.reservations.unmark_prepared') : t('admin.reservations.mark_prepared') do %><i class="fas fa-check"></i><% end %>
+                  <button type="button" class="btn btn-sm <%= item.issue.present? ? 'btn-warning' : 'btn-outline-warning' %>" data-bs-toggle="modal" data-bs-target="#issueModal<%= item.id %>" title="<%= t('admin.reservations.flag_issue') %>">
+                    <i class="fas fa-flag"></i>
+                  </button>
+                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
                 </div>
               <% end %>
             </div>
@@ -270,18 +295,18 @@
         <th><%= t('admin.reservations.current_price') %></th>
         <th><%= t('admin.reservations.price') %></th>
         <th><%= t('admin.reservations.subtotal') %></th>
-        <% if @reservation.pending? || @reservation.prepared? %><th></th><% end %>
+        <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %><th></th><% end %>
       </tr>
     </thead>
     <tbody>
-      <% col_count = (@reservation.pending? || @reservation.prepared?) ? 10 : 9 %>
+      <% col_count = (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared?) ? 10 : 9 %>
       <% group_items_by_color_and_type(@reservation.reservation_items).each do |category, items| %>
         <tr>
           <td colspan="<%= col_count %>" class="fw-bold text-white" style="background-color: #6c757d;"><%= color_category_label(category) %></td>
         </tr>
         <% items.each do |item| %>
-          <% stock_short = (@reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
-          <% price_changed = (@reservation.pending? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
+          <% stock_short = (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared? || @reservation.paid? || @reservation.shipped?) && item.card.quantity < item.quantity %>
+          <% price_changed = (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared?) && item.unit_price && item.card.price && item.unit_price != item.card.price %>
           <tr class="<%= 'table-danger' if stock_short %> <%= 'table-info' if price_changed && !stock_short %>">
             <td data-label="<%= t('admin.reservations.card_name') %>">
               <%= item.card.name %>
@@ -298,6 +323,14 @@
                   <i class="fas fa-exclamation-triangle me-1"></i><%= t('admin.reservations.price_changed_badge') %>
                 </span>
               <% end %>
+              <% if item.prepared? %>
+                <span class="badge bg-success" title="<%= t('admin.reservations.item_prepared') %>"><i class="fas fa-check me-1"></i><%= t('admin.reservations.item_prepared') %></span>
+              <% end %>
+              <% if item.issue.present? %>
+                <span class="badge bg-warning text-dark" title="<%= item.issue_note.presence || t("admin.reservations.issues.#{item.issue}") %>">
+                  <i class="fas fa-flag me-1"></i><%= t("admin.reservations.issues.#{item.issue}") %>
+                </span>
+              <% end %>
             </td>
             <td data-label="<%= t('admin.reservations.edition') %>"><%= item.card.edition_name || item.card.edition.upcase %></td>
             <td data-label="<%= t('admin.reservations.condition') %>"><%= item.card.condition %></td>
@@ -312,16 +345,22 @@
             </td>
             <td data-label="<%= t('admin.reservations.price') %>">
               <%= item.unit_price ? number_to_currency(item.unit_price) : "—" %>
-              <% if @reservation.pending? || @reservation.prepared? || @reservation.paid? || @reservation.shipped? %>
+              <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? || @reservation.paid? || @reservation.shipped? %>
                 <button type="button" class="btn btn-sm btn-link p-0 ms-1" data-bs-toggle="modal" data-bs-target="#editPriceModal<%= item.id %>" title="<%= t('admin.reservations.edit_price') %>">
                   <i class="fas fa-pencil-alt"></i>
                 </button>
               <% end %>
             </td>
             <td data-label="<%= t('admin.reservations.subtotal') %>"><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
-            <% if @reservation.pending? || @reservation.prepared? %>
+            <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
               <td data-label="">
-                <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
+                <div class="d-flex gap-1">
+                  <%= button_to toggle_item_prepared_admin_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :patch, class: "btn btn-sm #{item.prepared? ? 'btn-success' : 'btn-outline-success'}", title: item.prepared? ? t('admin.reservations.unmark_prepared') : t('admin.reservations.mark_prepared') do %><i class="fas fa-check"></i><% end %>
+                  <button type="button" class="btn btn-sm <%= item.issue.present? ? 'btn-warning' : 'btn-outline-warning' %>" data-bs-toggle="modal" data-bs-target="#issueModal<%= item.id %>" title="<%= t('admin.reservations.flag_issue') %>">
+                    <i class="fas fa-flag"></i>
+                  </button>
+                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
+                </div>
               </td>
             <% end %>
           </tr>
@@ -330,11 +369,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 9 : 8 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
+        <td colspan="<%= (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared?) ? 9 : 8 %>" class="text-end"><strong><%= t('admin.reservations.original_total') %></strong></td>
         <td><strong><%= number_to_currency(@reservation.reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }) %></strong></td>
       </tr>
       <tr>
-        <td colspan="<%= (@reservation.pending? || @reservation.prepared?) ? 9 : 8 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
+        <td colspan="<%= (@reservation.pending? || @reservation.in_preparation? || @reservation.prepared?) ? 9 : 8 %>" class="text-end"><strong><%= t('admin.reservations.final_price') %></strong></td>
         <td>
           <%= form_tag update_final_price_admin_reservation_path(@reservation), method: :patch, class: "d-flex align-items-center gap-1" do %>
             <input type="number" name="final_price" step="0.01" min="0" value="<%= @reservation.final_price %>" class="form-control form-control-sm" style="width: 120px;" placeholder="—">
@@ -371,9 +410,43 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="issueModal<%= item.id %>" tabindex="-1" aria-labelledby="issueModalLabel<%= item.id %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_tag update_item_issue_admin_reservation_path(@reservation, view: params[:view]), method: :patch do %>
+          <input type="hidden" name="item_id" value="<%= item.id %>">
+          <div class="modal-header">
+            <h5 class="modal-title" id="issueModalLabel<%= item.id %>"><%= t('admin.reservations.flag_issue_title') %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong><%= item.card.name %></strong></p>
+            <div class="mb-3">
+              <label for="issue_<%= item.id %>" class="form-label"><%= t('admin.reservations.issue_type_label') %></label>
+              <select name="issue" id="issue_<%= item.id %>" class="form-select">
+                <option value=""><%= t('admin.reservations.issue_none') %></option>
+                <% ReservationItem.issues.keys.each do |key| %>
+                  <option value="<%= key %>" <%= 'selected' if item.issue == key %>><%= t("admin.reservations.issues.#{key}") %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="mb-1">
+              <label for="issue_note_<%= item.id %>" class="form-label"><%= t('admin.reservations.issue_note_label') %></label>
+              <textarea name="issue_note" id="issue_note_<%= item.id %>" class="form-control" rows="3" maxlength="500" placeholder="<%= t('admin.reservations.issue_note_placeholder') %>"><%= item.issue_note %></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('admin.reservations.cancel_modal') %></button>
+            <%= submit_tag t('admin.reservations.save_issue'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 <% end %>
 
-<% if @reservation.pending? || @reservation.prepared? %>
+<% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
   <div class="card mb-4 mt-4" data-controller="add-item-search" data-search-url="<%= search_cards_for_add_admin_reservation_path(@reservation) %>">
     <div class="card-body">
       <h5><%= t('admin.reservations.add_cards') %></h5>
@@ -508,6 +581,35 @@
 </div>
 
 <% if @reservation.pending? %>
+  <div class="mt-3 d-flex gap-2">
+    <%= button_to t('admin.reservations.in_preparation'), in_preparation_admin_reservation_path(@reservation), method: :patch, class: "btn btn-outline-primary" %>
+    <%= button_to t('admin.reservations.prepare'), prepare_admin_reservation_path(@reservation), method: :patch, class: "btn btn-primary" %>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#expireModal">
+      <%= t('admin.reservations.expire') %>
+    </button>
+  </div>
+
+  <div class="modal fade" id="expireModal" tabindex="-1" aria-labelledby="expireModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <%= form_tag expire_admin_reservation_path(@reservation), method: :patch do %>
+          <div class="modal-header">
+            <h5 class="modal-title" id="expireModalLabel"><%= t('admin.reservations.expire') %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <label for="expire_message" class="form-label"><%= t('admin.reservations.expire_message_label') %></label>
+            <textarea name="message" id="expire_message" class="form-control" rows="5" placeholder="<%= t('admin.reservations.expire_message_placeholder') %>"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('admin.reservations.cancel_modal') %></button>
+            <%= submit_tag t('admin.reservations.confirm_expire'), class: "btn btn-warning" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% elsif @reservation.in_preparation? %>
   <div class="mt-3 d-flex gap-2">
     <%= button_to t('admin.reservations.prepare'), prepare_admin_reservation_path(@reservation), method: :patch, class: "btn btn-primary" %>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#expireModal">

@@ -179,7 +179,7 @@ class StockReconciliationService
           ids_to_zero = cards_to_zero_with_stock.map(&:id)
 
           conflict_items = ReservationItem.joins(:reservation)
-            .where(card_id: ids_to_zero, reservations: { status: %w[pending paid] })
+            .where(card_id: ids_to_zero, reservations: { status: %w[pending in_preparation paid] })
             .includes(:card, :reservation)
 
           conflict_items.group_by(&:card_id).each do |card_id, items|

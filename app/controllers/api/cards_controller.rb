@@ -17,7 +17,7 @@ module Api
 
       reserved_by_card = ReservationItem
         .joins(:reservation)
-        .where(reservations: { status: %w[pending prepared paid shipped] }, card_id: all_cards.map(&:id))
+        .where(reservations: { status: %w[pending in_preparation prepared paid shipped] }, card_id: all_cards.map(&:id))
         .group(:card_id)
         .sum(:quantity)
 

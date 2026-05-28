@@ -64,12 +64,12 @@ class Admin::CardsController < ApplicationController
     @return_to = request.referer
     @pending_reserved = @card.reservation_items
       .joins(:reservation)
-      .where(reservations: { status: "pending" })
+      .where(reservations: { status: %w[pending in_preparation] })
       .sum(:quantity)
     @stock_entries = @card.stock_entries.order(added_at: :desc)
     @active_reservations = Reservation.joins(:reservation_items)
       .where(reservation_items: { card_id: @card.id })
-      .where(status: %w[pending prepared paid shipped fulfilled])
+      .where(status: %w[pending in_preparation prepared paid shipped fulfilled])
       .distinct
       .order(created_at: :desc)
   end
@@ -86,7 +86,7 @@ class Admin::CardsController < ApplicationController
       @stock_entries = @card.stock_entries.order(added_at: :desc)
       @active_reservations = Reservation.joins(:reservation_items)
         .where(reservation_items: { card_id: @card.id })
-        .where(status: %w[pending prepared paid shipped fulfilled])
+        .where(status: %w[pending in_preparation prepared paid shipped fulfilled])
         .distinct
         .order(created_at: :desc)
       render :edit, status: :unprocessable_entity

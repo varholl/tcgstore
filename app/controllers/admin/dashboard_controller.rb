@@ -10,8 +10,8 @@ class Admin::DashboardController < ApplicationController
     paid_reservations = non_trade.where(status: %w[paid shipped fulfilled])
     @total_income = paid_reservations.sum { |r| r.total_price }
 
-    # Pending: pending + prepared (non-trade)
-    pending_reservations = non_trade.where(status: %w[pending prepared])
+    # Pending: pending + in preparation + prepared (non-trade)
+    pending_reservations = non_trade.where(status: %w[pending in_preparation prepared])
     @pending_total = pending_reservations.sum { |r| r.total_price }
     @pending_count = pending_reservations.count
 
@@ -23,13 +23,13 @@ class Admin::DashboardController < ApplicationController
     @income_fulfilled = non_trade.where(status: :fulfilled).sum { |r| r.total_price }
     @income_fulfilled_count = non_trade.where(status: :fulfilled).count
 
-    @pending_pending = non_trade.where(status: :pending).sum { |r| r.total_price }
-    @pending_pending_count = non_trade.where(status: :pending).count
+    @pending_pending = non_trade.where(status: %w[pending in_preparation]).sum { |r| r.total_price }
+    @pending_pending_count = non_trade.where(status: %w[pending in_preparation]).count
     @pending_prepared = non_trade.where(status: :prepared).sum { |r| r.total_price }
     @pending_prepared_count = non_trade.where(status: :prepared).count
 
     # Trades
-    active_trades = trade.where(status: %w[pending prepared paid shipped fulfilled])
+    active_trades = trade.where(status: %w[pending in_preparation prepared paid shipped fulfilled])
     @trade_total = active_trades.sum { |r| r.total_price }
     @trade_count = active_trades.count
 

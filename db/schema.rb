@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_18_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_28_120000) do
   create_table "addresses", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "address"
@@ -74,6 +74,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_18_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "unit_price", precision: 10, scale: 2
+    t.boolean "prepared", default: false, null: false
+    t.string "issue"
+    t.string "issue_note"
     t.index ["card_id"], name: "index_reservation_items_on_card_id"
     t.index ["reservation_id"], name: "index_reservation_items_on_reservation_id"
   end

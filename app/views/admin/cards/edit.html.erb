@@ -161,7 +161,7 @@
             <td><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.display_name %></td>
             <td>
-              <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success" } %>
+              <% status_colors = { "pending" => "warning", "in_preparation" => "warning-subtle text-warning-emphasis", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
             </td>
             <td class="text-end">

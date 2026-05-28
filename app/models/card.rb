@@ -34,7 +34,7 @@ class Card < ApplicationRecord
     total_qty = active_siblings.sum(:quantity)
     total_reserved = ReservationItem.joins(:reservation)
       .where(card_id: active_siblings.select(:id))
-      .where(reservations: { status: %w[pending prepared paid shipped] })
+      .where(reservations: { status: %w[pending in_preparation prepared paid shipped] })
       .sum(:quantity)
     total_qty - total_reserved
   end
@@ -55,7 +55,7 @@ class Card < ApplicationRecord
     return 0 if seller.suspended?
 
     reserved = reservation_items.joins(:reservation)
-      .where(reservations: { status: %w[pending prepared paid shipped] })
+      .where(reservations: { status: %w[pending in_preparation prepared paid shipped] })
       .sum(:quantity)
     quantity - reserved
   end

@@ -77,7 +77,7 @@ class ReservationCreator
     # Pre-compute reserved quantities per card
     reserved_per_card = ReservationItem.joins(:reservation)
       .where(card_id: siblings.keys)
-      .where(reservations: { status: %w[pending prepared paid shipped] })
+      .where(reservations: { status: %w[pending in_preparation prepared paid shipped] })
       .group(:card_id).sum(:quantity)
 
     # Build available quantity per card

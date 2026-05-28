@@ -58,7 +58,7 @@ class ReservationsController < ApplicationController
   def cancel
     @reservation = current_user.reservations.find(params[:id])
 
-    if @reservation.pending? || @reservation.prepared?
+    if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared?
       @reservation.update!(status: :cancelled)
       ReservationMailer.cancelled(@reservation).deliver_later
       redirect_to reservations_path, notice: t('controllers.reservations.cancelled')
@@ -70,7 +70,7 @@ class ReservationsController < ApplicationController
   def remove_item
     @reservation = current_user.reservations.find(params[:id])
 
-    unless @reservation.pending?
+    unless @reservation.pending? || (@reservation.in_preparation? && admin_or_seller?)
       redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
       return
     end
@@ -109,7 +109,7 @@ class ReservationsController < ApplicationController
   def add_item
     @reservation = current_user.reservations.find(params[:id])
 
-    unless @reservation.pending?
+    unless @reservation.pending? || @reservation.in_preparation?
       redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
       return
     end
@@ -179,7 +179,7 @@ class ReservationsController < ApplicationController
   def update_shipping_method
     @reservation = current_user.reservations.find(params[:id])
 
-    unless @reservation.pending? || @reservation.prepared? || @reservation.paid?
+    unless @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? || @reservation.paid?
       redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
       return
     end
@@ -204,7 +204,7 @@ class ReservationsController < ApplicationController
   def update_shipping_info
     @reservation = current_user.reservations.find(params[:id])
 
-    unless @reservation.pending? || @reservation.prepared? || @reservation.paid?
+    unless @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? || @reservation.paid?
       redirect_to reservation_path(@reservation), alert: t('controllers.reservations.edit_error')
       return
     end

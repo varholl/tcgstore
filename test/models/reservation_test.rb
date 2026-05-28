@@ -63,10 +63,25 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 7.00, reservation.remaining_balance
   end
 
+  # --- item preparation tracking ---
+
+  test "prepared_items_count and flagged_items_count reflect item flags" do
+    reservation = reservations(:pending_reservation)
+    assert_equal 0, reservation.prepared_items_count
+    assert_equal 0, reservation.flagged_items_count
+
+    reservation.reservation_items.first.update!(prepared: true, issue: "out_of_stock")
+    reservation.reload
+
+    assert_equal 1, reservation.prepared_items_count
+    assert_equal 1, reservation.flagged_items_count
+  end
+
   # --- status enum ---
 
   test "status enum values" do
     assert reservations(:pending_reservation).pending?
+    assert reservations(:in_preparation_reservation).in_preparation?
     assert reservations(:prepared_reservation).prepared?
     assert reservations(:paid_reservation).paid?
     assert reservations(:fulfilled_reservation).fulfilled?

@@ -103,7 +103,7 @@
             <td data-label="<%= t('admin.reservations.items_count') %>"><%= reservation.reservation_items.sum(:quantity) %></td>
             <td data-label="<%= t('admin.reservations.total') %>"><%= number_to_currency(reservation.total_price) %></td>
             <td data-label="<%= t('admin.reservations.status') %>">
-              <% status_colors = { "pending" => "warning", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
+              <% status_colors = { "pending" => "warning", "in_preparation" => "warning-subtle text-warning-emphasis", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
               <span class="badge bg-<%= status_colors[reservation.status] %>"><%= t("statuses.#{reservation.status}") %></span>
               <% if reservation.trade? %>
                 <span class="badge bg-info"><%= t('admin.reservations.trade_badge') %></span>

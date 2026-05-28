@@ -8,10 +8,10 @@ class Reservation < ApplicationRecord
   has_many :reservation_notes, dependent: :destroy
   has_many :reservation_payments, dependent: :destroy
 
-  enum :status, { pending: "pending", prepared: "prepared", paid: "paid", shipped: "shipped", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
+  enum :status, { pending: "pending", in_preparation: "in_preparation", prepared: "prepared", paid: "paid", shipped: "shipped", fulfilled: "fulfilled", expired: "expired", cancelled: "cancelled" }
 
   scope :with_price_changes, -> {
-    where(status: [:pending, :prepared])
+    where(status: [:pending, :in_preparation, :prepared])
       .where(
         id: ReservationItem.joins(:card)
           .where.not(unit_price: nil)
@@ -22,6 +22,14 @@ class Reservation < ApplicationRecord
 
   def total_price
     final_price.presence || reservation_items.sum { |i| (i.unit_price || 0) * i.quantity }
+  end
+
+  def prepared_items_count
+    reservation_items.count(&:prepared?)
+  end
+
+  def flagged_items_count
+    reservation_items.count { |i| i.issue.present? }
   end
 
   def total_paid
