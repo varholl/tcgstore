@@ -361,7 +361,7 @@ class Admin::ReservationsController < ApplicationController
 
     item = @reservation.reservation_items.find(params[:item_id])
     item.destroy!
-    redirect_to admin_reservation_path(@reservation, anchor: "items"), notice: t("controllers.admin.reservations.item_removed")
+    redirect_to admin_reservation_path(@reservation, view: params[:view], anchor: "items"), notice: t("controllers.admin.reservations.item_removed")
   end
 
   def update_item_price

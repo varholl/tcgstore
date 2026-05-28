@@ -45,6 +45,12 @@ class Admin::ReservationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_reservation_path(reservation)
   end
 
+  test "item prep controls render inside the reservation_items turbo frame" do
+    get admin_reservation_path(reservations(:pending_reservation))
+    assert_response :success
+    assert_select "turbo-frame#reservation_items form[action*=?]", "toggle_item_prepared"
+  end
+
   test "toggle_item_prepared flips the item's prepared flag" do
     item = reservation_items(:pending_bolt)
     assert_not item.prepared?

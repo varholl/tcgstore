@@ -200,6 +200,7 @@
   </div>
 </div>
 
+<%= turbo_frame_tag "reservation_items" do %>
 <% if @reservation.reservation_items.size > 0 %>
   <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
     <span class="badge bg-success-subtle text-success-emphasis">
@@ -272,7 +273,7 @@
                   <button type="button" class="btn btn-sm <%= item.issue.present? ? 'btn-warning' : 'btn-outline-warning' %>" data-bs-toggle="modal" data-bs-target="#issueModal<%= item.id %>" title="<%= t('admin.reservations.flag_issue') %>">
                     <i class="fas fa-flag"></i>
                   </button>
-                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
+                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
                 </div>
               <% end %>
             </div>
@@ -354,12 +355,12 @@
             <td data-label="<%= t('admin.reservations.subtotal') %>"><%= item.unit_price ? number_to_currency(item.unit_price * item.quantity) : "—" %></td>
             <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
               <td data-label="">
-                <div class="d-flex gap-1">
+                <div class="d-flex flex-column gap-1">
                   <%= button_to toggle_item_prepared_admin_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :patch, class: "btn btn-sm #{item.prepared? ? 'btn-success' : 'btn-outline-success'}", title: item.prepared? ? t('admin.reservations.unmark_prepared') : t('admin.reservations.mark_prepared') do %><i class="fas fa-check"></i><% end %>
                   <button type="button" class="btn btn-sm <%= item.issue.present? ? 'btn-warning' : 'btn-outline-warning' %>" data-bs-toggle="modal" data-bs-target="#issueModal<%= item.id %>" title="<%= t('admin.reservations.flag_issue') %>">
                     <i class="fas fa-flag"></i>
                   </button>
-                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
+                  <%= button_to remove_item_admin_reservation_path(@reservation, item_id: item.id, view: params[:view]), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: t('admin.reservations.remove_item_confirm', name: item.card.name) } } do %><i class="fas fa-trash"></i><% end %>
                 </div>
               </td>
             <% end %>
@@ -444,6 +445,7 @@
       </div>
     </div>
   </div>
+<% end %>
 <% end %>
 
 <% if @reservation.pending? || @reservation.in_preparation? || @reservation.prepared? %>
@@ -790,6 +792,17 @@
         setTimeout(function() { icon.className = 'fas fa-copy'; }, 1500);
       });
     });
+  });
+
+  // When the items Turbo Frame re-renders (e.g. after marking an item prepared
+  // or flagging a problem from a modal), tidy up any Bootstrap modal backdrop
+  // left behind so the page doesn't end up greyed out / locked.
+  document.addEventListener("turbo:frame-render", function (event) {
+    if (event.target.id !== "reservation_items") return;
+    document.querySelectorAll(".modal-backdrop").forEach(function (b) { b.remove(); });
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
   });
 </script>
 <% end %>
