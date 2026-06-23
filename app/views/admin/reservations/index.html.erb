@@ -46,7 +46,7 @@
   </li>
 </ul>
 
-<% if %w[prepared paid].include?(active_status) %>
+<% if %w[pending prepared paid].include?(active_status) %>
   <div class="d-flex flex-wrap gap-2 mb-3">
     <% base_params = { status: params[:status], card_name: params[:card_name].presence } %>
     <%= link_to t('admin.reservations.shipping_filter.all'), admin_reservations_path(base_params), class: "btn btn-sm #{params[:shipping].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
