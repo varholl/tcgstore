@@ -12,6 +12,13 @@
     <p><strong><%= t('admin.users.phone_label') %></strong> <%= @user.phone_number || t('admin.users.na') %></p>
     <p><strong><%= t('admin.users.dni_label') %></strong> <%= @user.dni || t('admin.users.na') %></p>
     <p><strong><%= t('admin.users.joined_label') %></strong> <%= @user.created_at.in_time_zone.strftime("%d/%m/%Y") %></p>
+    <p><strong><%= t('admin.users.status') %>:</strong>
+      <% if @user.confirmed? %>
+        <span class="badge bg-success"><%= t('admin.users.active') %></span>
+      <% else %>
+        <span class="badge bg-secondary"><%= t('admin.users.inactive') %></span>
+      <% end %>
+    </p>
     <% addr = @user.addresses.first %>
     <% if addr&.address.present? %>
       <hr>
@@ -26,6 +33,9 @@
 </div>
 
 <div class="d-flex gap-2 mb-4">
+  <% unless @user.confirmed? %>
+    <%= button_to t('admin.users.activate'), activate_admin_user_path(@user), method: :patch, class: "btn btn-success" %>
+  <% end %>
   <%= link_to t('admin.users.edit'), edit_admin_user_path(@user), class: "btn btn-primary" %>
   <%= button_to t('admin.users.delete'), admin_user_path(@user), method: :delete, class: "btn btn-danger", data: { turbo_confirm: t('admin.users.delete_confirm') } %>
 </div>

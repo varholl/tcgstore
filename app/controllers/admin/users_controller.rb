@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :activate]
 
   def index
     @users = User.where(admin: false).order(created_at: :desc)
@@ -41,6 +41,15 @@ class Admin::UsersController < ApplicationController
       redirect_to admin_user_path(@user), notice: t('controllers.admin.users.updated')
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def activate
+    if @user.confirmed?
+      redirect_to admin_user_path(@user), alert: t('controllers.admin.users.already_active')
+    else
+      @user.confirm
+      redirect_to admin_user_path(@user), notice: t('controllers.admin.users.activated')
     end
   end
 

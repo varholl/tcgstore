@@ -74,7 +74,11 @@ Rails.application.routes.draw do
       resources :notes, only: [:create], controller: 'reservation_notes'
       resources :payments, only: [:create, :destroy], controller: 'reservation_payments'
     end
-    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+      member do
+        patch :activate
+      end
+    end
     resources :sellers, except: [:show] do
       member do
         patch :toggle_suspended

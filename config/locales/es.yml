@@ -474,6 +474,9 @@ es:
       view: "Ver"
       edit: "Editar"
       delete: "Eliminar"
+      activate: "Activar"
+      active: "Activo"
+      inactive: "Inactivo"
       delete_confirm: "¿Estás seguro de que querés eliminar este usuario? También se eliminarán todas sus reservas."
       no_users: "No se encontraron usuarios."
       back: "Volver a Usuarios"
@@ -839,6 +842,8 @@ es:
         updated: "Usuario actualizado exitosamente."
         created: "Usuario creado exitosamente."
         deleted: "Usuario eliminado exitosamente."
+        activated: "Usuario activado exitosamente."
+        already_active: "Este usuario ya está activo."
         cannot_delete_fulfilled: "No se puede eliminar un usuario con reservas entregadas."
         access_denied: "Acceso denegado."
       reservations:
