@@ -23,6 +23,9 @@ class Admin::ReservationsController < ApplicationController
         @reservations = @reservations.where(shipping_method: %w[andreani correo_argentino])
       when "pickup"
         @reservations = @reservations.where(shipping_method: "store_pickup")
+        if Reservation::PICKUP_LOCATIONS.include?(params[:pickup_location])
+          @reservations = @reservations.where(pickup_location: params[:pickup_location])
+        end
       when "none"
         @reservations = @reservations.where(shipping_method: [nil, ""])
       end

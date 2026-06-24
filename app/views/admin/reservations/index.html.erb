@@ -46,7 +46,7 @@
   </li>
 </ul>
 
-<% if %w[pending prepared paid].include?(active_status) %>
+<% if %w[pending in_preparation prepared paid].include?(active_status) %>
   <div class="d-flex flex-wrap gap-2 mb-3">
     <% base_params = { status: params[:status], card_name: params[:card_name].presence } %>
     <%= link_to t('admin.reservations.shipping_filter.all'), admin_reservations_path(base_params), class: "btn btn-sm #{params[:shipping].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
@@ -63,6 +63,17 @@
       <i class="fas fa-question-circle me-1"></i><%= t('admin.reservations.shipping_filter.none') %>
     <% end %>
   </div>
+
+  <% if params[:shipping] == "pickup" %>
+    <div class="d-flex flex-wrap gap-2 mb-3 ms-3">
+      <%= link_to t('admin.reservations.shipping_filter.all'), admin_reservations_path(base_params.merge(shipping: "pickup")), class: "btn btn-sm #{params[:pickup_location].blank? ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+      <% Reservation::PICKUP_LOCATIONS.each do |location| %>
+        <%= link_to admin_reservations_path(base_params.merge(shipping: "pickup", pickup_location: location)), class: "btn btn-sm #{params[:pickup_location] == location ? 'btn-secondary' : 'btn-outline-secondary'}" do %>
+          <i class="fas fa-store me-1"></i><%= t("admin.reservations.delivery_locations.#{location}") %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
 <% if @reservations.any? %>
