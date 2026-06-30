@@ -47,6 +47,20 @@ class Reservation < ApplicationRecord
     user_id.blank?
   end
 
+  # A public note authored by someone other than the owner (i.e. an admin/seller
+  # reply) that the owner hasn't seen yet. Works on a preloaded association
+  # without firing per-record queries when reservation_notes is included.
+  def unread_notes_for_owner?
+    return false if guest?
+
+    latest = reservation_notes
+      .select { |n| n.public? && n.user_id != user_id }
+      .map(&:created_at).max
+    return false if latest.nil?
+
+    owner_notes_read_at.nil? || latest > owner_notes_read_at
+  end
+
   def display_name
     guest? ? guest_name : user.name
   end

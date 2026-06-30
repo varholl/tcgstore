@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :set_maintenance_mode
   before_action :capture_attribution
   before_action :backfill_user_attribution
-  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?, :admin_or_seller?, :current_attribution
+  helper_method :current_theme, :blue_dollar_rate, :maintenance_mode?, :admin_or_seller?, :current_attribution, :current_announcements
 
   def set_language
     locale = params[:locale].to_s
@@ -76,6 +76,12 @@ class ApplicationController < ActionController::Base
 
   def admin_or_seller?
     user_signed_in? && (current_user.admin? || current_user.seller.present?)
+  end
+
+  # Lazily loaded so non-HTML responses don't query. Rendered as a banner in
+  # the layout; per-announcement dismissal is handled client-side.
+  def current_announcements
+    @current_announcements ||= Announcement.visible.to_a
   end
 
   def require_no_maintenance!

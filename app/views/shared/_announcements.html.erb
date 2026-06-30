@@ -1,0 +1,16 @@
+<% if current_announcements.any? %>
+  <div class="announcements mb-3">
+    <% current_announcements.each do |announcement| %>
+      <div class="alert alert-<%= announcement.level %> alert-dismissible announcement-banner"
+           role="alert"
+           data-controller="announcement"
+           data-announcement-key-value="announcement-<%= announcement.id %>-<%= announcement.updated_at.to_i %>">
+        <% if announcement.title.present? %>
+          <h5 class="alert-heading mb-1"><i class="fas fa-bullhorn me-2"></i><%= announcement.title %></h5>
+        <% end %>
+        <div class="announcement-body"><%= simple_format(announcement.body) %></div>
+        <button type="button" class="btn-close" aria-label="<%= t('announcements.dismiss') %>" data-action="announcement#dismiss"></button>
+      </div>
+    <% end %>
+  </div>
+<% end %>

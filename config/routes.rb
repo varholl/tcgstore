@@ -43,6 +43,11 @@ Rails.application.routes.draw do
     get "dashboard/search_cards", to: "dashboard#search_cards", as: :dashboard_search_cards
     post "dashboard/walk_in", to: "dashboard#walk_in", as: :dashboard_walk_in
     resource :site_settings, only: [:edit, :update]
+    resources :announcements, except: [:show] do
+      member do
+        patch :toggle_active
+      end
+    end
     resources :reservations, only: [:index, :show, :new, :create] do
       collection do
         get :search_cards

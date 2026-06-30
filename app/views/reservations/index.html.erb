@@ -16,7 +16,12 @@
       <tbody>
         <% @reservations.each do |reservation| %>
           <tr>
-            <td><%= reservation.id %></td>
+            <td>
+              <%= reservation.id %>
+              <% if reservation.unread_notes_for_owner? %>
+                <span class="badge bg-info ms-1"><i class="fas fa-comment-dots"></i> <%= t('reservations.notes.new_badge') %></span>
+              <% end %>
+            </td>
             <td><%= reservation.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></td>
             <td><%= reservation.reservation_items.sum(:quantity) %></td>
             <td><%= number_to_currency(reservation.total_price) %></td>

@@ -358,6 +358,7 @@ en:
       placeholder: "Write a note..."
       add: "Add Note"
       admin_label: "Admin"
+      new_badge: "New"
 
   admin:
     sidebar:
@@ -366,6 +367,7 @@ en:
       sellers: "Sellers"
       cards: "Cards"
       stock: "Stock"
+      announcements: "Announcements"
       settings: "Settings"
     dashboard:
       walk_in:
@@ -415,6 +417,40 @@ en:
       reservations: "Reservations"
       back: "Back"
       export: "Export for Moxfield"
+    announcements:
+      title: "Announcements"
+      new_announcement: "New Announcement"
+      new_title: "New Announcement"
+      edit_title: "Edit Announcement"
+      back: "Back"
+      create: "Create"
+      save: "Save"
+      message: "Message"
+      level: "Type"
+      schedule: "Schedule"
+      status: "Status"
+      always: "Always shown"
+      active: "Active"
+      inactive: "Inactive"
+      no_announcements: "No announcements yet."
+      title_label: "Title (optional)"
+      title_hint: "Shown in bold above the message. Leave blank for a message-only banner."
+      body_label: "Message"
+      level_hint: "Controls the banner color."
+      starts_at: "Start (optional)"
+      ends_at: "End (optional)"
+      schedule_hint: "Leave both blank to show the announcement immediately and indefinitely while active."
+      active_label: "Active"
+      edit: "Edit"
+      activate: "Activate"
+      deactivate: "Deactivate"
+      delete: "Delete"
+      delete_confirm: "Delete this announcement?"
+      levels:
+        info: "Info"
+        success: "Success"
+        warning: "Warning"
+        danger: "Important"
     sellers:
       title: "Sellers"
       new_seller: "New Seller"
@@ -854,6 +890,12 @@ en:
         remove_item_error: "Items can only be removed from pending reservations."
         item_added: "%{name} added to reservation."
         add_item_error: "Items can only be added to pending reservations."
+      announcements:
+        created: "Announcement created."
+        updated: "Announcement updated."
+        activated: "Announcement activated."
+        deactivated: "Announcement deactivated."
+        deleted: "Announcement deleted."
       sellers:
         created: "Seller created successfully."
         updated: "Seller updated successfully."
@@ -1015,6 +1057,9 @@ en:
 
   maintenance:
     default_message: "We're currently updating our inventory. Reservations are temporarily paused — please check back soon!"
+
+  announcements:
+    dismiss: "Dismiss"
 
   footer:
     tagline: "MTG singles & more"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_28_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_30_120000) do
   create_table "addresses", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "address"
@@ -22,6 +22,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_28_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_addresses_on_user_id"
+  end
+
+  create_table "announcements", force: :cascade do |t|
+    t.string "title"
+    t.text "body", null: false
+    t.boolean "active", default: true, null: false
+    t.string "level", default: "info", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "cards", force: :cascade do |t|
@@ -123,6 +134,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_28_120000) do
     t.string "source"
     t.string "campaign"
     t.string "referrer"
+    t.datetime "owner_notes_read_at"
     t.index ["status"], name: "index_reservations_on_status"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end

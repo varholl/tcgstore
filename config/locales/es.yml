@@ -360,6 +360,7 @@ es:
       placeholder: "Escribí una nota..."
       add: "Agregar Nota"
       admin_label: "Admin"
+      new_badge: "Nueva"
 
   admin:
     sidebar:
@@ -369,6 +370,7 @@ es:
       sellers: "Vendedores"
       cards: "Cartas"
       stock: "Stock"
+      announcements: "Anuncios"
       settings: "Configuración"
     dashboard:
       title: "Resumen"
@@ -423,6 +425,40 @@ es:
       reservations: "Reservas"
       back: "Volver"
       export: "Exportar para Moxfield"
+    announcements:
+      title: "Anuncios"
+      new_announcement: "Nuevo Anuncio"
+      new_title: "Nuevo Anuncio"
+      edit_title: "Editar Anuncio"
+      back: "Volver"
+      create: "Crear"
+      save: "Guardar"
+      message: "Mensaje"
+      level: "Tipo"
+      schedule: "Programación"
+      status: "Estado"
+      always: "Siempre visible"
+      active: "Activo"
+      inactive: "Inactivo"
+      no_announcements: "Todavía no hay anuncios."
+      title_label: "Título (opcional)"
+      title_hint: "Se muestra en negrita arriba del mensaje. Dejalo vacío para un banner solo con el mensaje."
+      body_label: "Mensaje"
+      level_hint: "Controla el color del banner."
+      starts_at: "Inicio (opcional)"
+      ends_at: "Fin (opcional)"
+      schedule_hint: "Dejá ambos vacíos para mostrar el anuncio de inmediato y de forma indefinida mientras esté activo."
+      active_label: "Activo"
+      edit: "Editar"
+      activate: "Activar"
+      deactivate: "Desactivar"
+      delete: "Eliminar"
+      delete_confirm: "¿Eliminar este anuncio?"
+      levels:
+        info: "Información"
+        success: "Éxito"
+        warning: "Advertencia"
+        danger: "Importante"
     sellers:
       title: "Vendedores"
       new_seller: "Nuevo Vendedor"
@@ -887,6 +923,12 @@ es:
         created: "Pago registrado."
         deleted: "Pago eliminado."
         not_prepared: "Solo se pueden registrar pagos en reservas preparadas."
+      announcements:
+        created: "Anuncio creado."
+        updated: "Anuncio actualizado."
+        activated: "Anuncio activado."
+        deactivated: "Anuncio desactivado."
+        deleted: "Anuncio eliminado."
       sellers:
         created: "Vendedor creado exitosamente."
         updated: "Vendedor actualizado exitosamente."
@@ -1048,6 +1090,9 @@ es:
 
   maintenance:
     default_message: "Estamos actualizando nuestro inventario. Las reservas están temporalmente pausadas — ¡volvé pronto!"
+
+  announcements:
+    dismiss: "Descartar"
 
   footer:
     tagline: "Singles de MTG y más"

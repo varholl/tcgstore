@@ -463,6 +463,28 @@ hr {
   color: #f0a0a8;
 }
 
+.alert-success {
+  background-color: rgba(25, 135, 84, 0.15);
+  border-color: var(--vg-success);
+  color: var(--vg-text);
+}
+
+/* Highlight for unread/new reservation notes — theme-aware (works in light + dark) */
+.note-unread {
+  background-color: rgba(74, 109, 140, 0.18);
+  border-left: 3px solid var(--vg-accent);
+  color: var(--vg-text);
+}
+
+/* --- Announcement banner --- */
+.announcement-banner .announcement-body p:last-child {
+  margin-bottom: 0;
+}
+
+.announcement-banner .btn-close {
+  filter: var(--vg-btn-close-filter);
+}
+
 /* --- Badges --- */
 .badge.bg-primary {
   background-color: var(--vg-accent) !important;
@@ -471,6 +493,7 @@ hr {
 
 .badge.bg-info {
   background-color: var(--vg-accent) !important;
+  color: #fff;
 }
 
 .badge.bg-secondary {

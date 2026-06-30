@@ -486,9 +486,11 @@
       <% public_notes = @reservation.reservation_notes.public_notes.order(created_at: :asc) %>
       <% if public_notes.any? %>
         <% public_notes.each do |note| %>
-          <div class="mb-2">
+          <% is_new = note.user_id != @reservation.user_id && (@notes_read_before.nil? || note.created_at > @notes_read_before) %>
+          <div class="mb-2 <%= 'note-unread rounded p-2' if is_new %>">
             <strong><%= note.user&.admin? ? t('reservations.notes.admin_label') : note.user&.name %></strong>
             <small class="text-muted ms-2"><%= note.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></small>
+            <% if is_new %><span class="badge bg-info ms-1"><%= t('reservations.notes.new_badge') %></span><% end %>
             <p class="mb-0"><%= format_note_body(note.body) %></p>
           </div>
           <hr class="my-1">

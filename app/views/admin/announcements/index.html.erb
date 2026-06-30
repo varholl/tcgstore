@@ -1,0 +1,66 @@
+<%= render layout: 'layouts/admin_sidebar' do %>
+<div class="d-flex justify-content-between align-items-center mb-4 admin-header-actions">
+  <h1><%= t('admin.announcements.title') %></h1>
+  <%= link_to t('admin.announcements.new_announcement'), new_admin_announcement_path, class: "btn btn-primary" %>
+</div>
+
+<% if @announcements.any? %>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover admin-mobile-table">
+      <thead class="table-dark">
+        <tr>
+          <th><%= t('admin.announcements.message') %></th>
+          <th><%= t('admin.announcements.level') %></th>
+          <th><%= t('admin.announcements.schedule') %></th>
+          <th><%= t('admin.announcements.status') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @announcements.each do |announcement| %>
+          <tr>
+            <td data-label="<%= t('admin.announcements.message') %>">
+              <% if announcement.title.present? %><strong><%= announcement.title %></strong><br><% end %>
+              <span class="text-muted"><%= truncate(announcement.body, length: 80) %></span>
+            </td>
+            <td data-label="<%= t('admin.announcements.level') %>">
+              <span class="badge bg-<%= announcement.level == 'danger' ? 'danger' : (announcement.level == 'warning' ? 'warning text-dark' : (announcement.level == 'success' ? 'success' : 'info')) %>">
+                <%= t("admin.announcements.levels.#{announcement.level}") %>
+              </span>
+            </td>
+            <td data-label="<%= t('admin.announcements.schedule') %>">
+              <% if announcement.starts_at || announcement.ends_at %>
+                <small>
+                  <%= announcement.starts_at&.in_time_zone&.strftime("%d/%m/%Y %H:%M") || "—" %>
+                  →
+                  <%= announcement.ends_at&.in_time_zone&.strftime("%d/%m/%Y %H:%M") || "—" %>
+                </small>
+              <% else %>
+                <span class="text-muted"><%= t('admin.announcements.always') %></span>
+              <% end %>
+            </td>
+            <td data-label="<%= t('admin.announcements.status') %>">
+              <% if announcement.active? %>
+                <span class="badge bg-success"><%= t('admin.announcements.active') %></span>
+              <% else %>
+                <span class="badge bg-secondary"><%= t('admin.announcements.inactive') %></span>
+              <% end %>
+            </td>
+            <td data-label="">
+              <div class="d-flex gap-1">
+                <%= link_to edit_admin_announcement_path(announcement), class: "btn btn-sm btn-outline-secondary", title: t('admin.announcements.edit') do %><i class="fas fa-pencil"></i><% end %>
+                <%= button_to toggle_active_admin_announcement_path(announcement), method: :patch, class: "btn btn-sm btn-outline-warning", title: announcement.active? ? t('admin.announcements.deactivate') : t('admin.announcements.activate'), form_class: "d-inline" do %>
+                  <i class="fas fa-<%= announcement.active? ? 'eye-slash' : 'eye' %>"></i>
+                <% end %>
+                <%= button_to admin_announcement_path(announcement), method: :delete, class: "btn btn-sm btn-outline-danger", title: t('admin.announcements.delete'), form_class: "d-inline", data: { turbo_confirm: t('admin.announcements.delete_confirm') } do %><i class="fas fa-trash"></i><% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="alert alert-info"><%= t('admin.announcements.no_announcements') %></div>
+<% end %>
+<% end %>

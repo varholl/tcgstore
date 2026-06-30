@@ -5,11 +5,18 @@ class ReservationsController < ApplicationController
   before_action :require_no_maintenance!, only: [:create, :add_item]
 
   def index
-    @reservations = current_user.reservations.includes(:reservation_items).order(created_at: :desc).page(params[:page]).per(20)
+    @reservations = current_user.reservations.includes(:reservation_items, :reservation_notes).order(created_at: :desc).page(params[:page]).per(20)
   end
 
   def show
     @reservation = current_user.reservations.includes(reservation_items: { card: :seller }).find(params[:id])
+
+    # Remember the prior read mark so the view can highlight unseen replies,
+    # then mark the owner's public notes as read on this visit.
+    @notes_read_before = @reservation.owner_notes_read_at
+    if @reservation.unread_notes_for_owner?
+      @reservation.update_column(:owner_notes_read_at, Time.current)
+    end
 
     unless admin_or_seller?
       @grouped_items = @reservation.reservation_items.group_by { |i| i.card.card_identity }.map do |_identity, items|
