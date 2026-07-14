@@ -28,6 +28,19 @@
     </p>
     <p><strong><%= t('admin.reservations.phone_label') %></strong> <%= @reservation.display_phone || t('admin.reservations.na') %></p>
 
+    <div class="mb-3">
+      <strong><%= t('admin.reservations.reassign_user_label') %></strong>
+      <%= form_tag reassign_user_admin_reservation_path(@reservation), method: :patch, class: "d-inline-flex align-items-center gap-2 ms-2" do %>
+        <select name="user_id" class="form-select form-select-sm" style="width: auto;" required>
+          <option value=""></option>
+          <% @users.each do |user| %>
+            <option value="<%= user.id %>" <%= 'selected' if @reservation.user_id == user.id %>><%= user.name %> (<%= user.email %>)</option>
+          <% end %>
+        </select>
+        <%= submit_tag t('admin.reservations.reassign_user_save'), class: "btn btn-sm btn-outline-primary", data: { confirm: t('admin.reservations.reassign_user_confirm') } %>
+      <% end %>
+    </div>
+
     <hr>
 
     <% status_colors = { "pending" => "warning", "in_preparation" => "warning-subtle text-warning-emphasis", "prepared" => "primary", "paid" => "info", "shipped" => "dark", "fulfilled" => "success", "expired" => "secondary", "cancelled" => "danger" } %>
@@ -747,6 +760,7 @@
   </div>
 <% elsif @reservation.fulfilled? %>
   <div class="mt-3 d-flex gap-2">
+    <%= button_to t('admin.reservations.revert_to_prepared'), revert_to_prepared_admin_reservation_path(@reservation), method: :patch, class: "btn btn-outline-warning", form: { data: { turbo_confirm: t('admin.reservations.revert_to_prepared_confirm') } } %>
     <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#revertToPaidModal">
       <%= t('admin.reservations.revert_to_paid') %>
     </button>

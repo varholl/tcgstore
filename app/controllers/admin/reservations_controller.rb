@@ -42,6 +42,7 @@ class Admin::ReservationsController < ApplicationController
 
   def show
     @reservation = Reservation.includes(:user, :reservation_notes, reservation_items: :card).find(params[:id])
+    @users = User.where(admin: false).order(:name)
   end
 
   def new
@@ -239,6 +240,41 @@ class Admin::ReservationsController < ApplicationController
     end
   end
 
+  def quick_fulfill
+    @reservation = Reservation.find(params[:id])
+
+    unless @reservation.prepared?
+      redirect_back fallback_location: admin_reservations_path, alert: t('controllers.admin.reservations.quick_fulfill_error')
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @reservation.update!(status: :fulfilled)
+      @reservation.reservation_items.includes(:card).each do |item|
+        item.card.decrement!(:quantity, item.quantity)
+      end
+    end
+    ReservationMailer.fulfilled(@reservation).deliver_later
+    redirect_back fallback_location: admin_reservations_path, notice: t('controllers.admin.reservations.fulfilled')
+  end
+
+  def revert_to_prepared
+    @reservation = Reservation.find(params[:id])
+
+    unless @reservation.fulfilled?
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.revert_to_prepared_error')
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @reservation.reservation_items.includes(:card).each do |item|
+        item.card.increment!(:quantity, item.quantity)
+      end
+      @reservation.update!(status: :prepared)
+    end
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.reverted_to_prepared')
+  end
+
   def revert_to_paid
     @reservation = Reservation.find(params[:id])
 
@@ -290,6 +326,19 @@ class Admin::ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
     @reservation.update!(trade: !@reservation.trade)
     redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.trade_toggled')
+  end
+
+  def reassign_user
+    @reservation = Reservation.find(params[:id])
+    user = User.find_by(id: params[:user_id])
+
+    if user.nil?
+      redirect_to admin_reservation_path(@reservation), alert: t('controllers.admin.reservations.reassign_user_not_found')
+      return
+    end
+
+    @reservation.update!(user: user, guest_name: nil, guest_contact: nil)
+    redirect_to admin_reservation_path(@reservation), notice: t('controllers.admin.reservations.reassigned_user', name: user.name)
   end
 
   def update_shipping_method

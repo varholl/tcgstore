@@ -61,7 +61,9 @@ Rails.application.routes.draw do
         patch :ship
         patch :update_tracking
         patch :fulfill
+        patch :quick_fulfill
         patch :revert_to_paid
+        patch :revert_to_prepared
         patch :expire
         patch :update_final_price
         patch :update_delivery
@@ -69,6 +71,7 @@ Rails.application.routes.draw do
         patch :update_shipping_address
         patch :force_decrement
         patch :toggle_trade
+        patch :reassign_user
         patch :update_item_price
         patch :toggle_item_prepared
         patch :update_item_issue
